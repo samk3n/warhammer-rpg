@@ -1,3 +1,4 @@
+import { redirect } from '@sveltejs/kit';
 
 
 export async function load({params, fetch, locals}){
@@ -90,49 +91,27 @@ export async function load({params, fetch, locals}){
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-    deleteCharac: async ({fetch, request}) => {
+    deleteGame: async ({request, fetch}) => {
         const data = await request.formData();
         const id = data.get("id");
-        const user = data.get("user");
-        const game = data.get("game");
-
-        // If character has a user, remove the game from the user.
-        if(user){
-            const update = await fetch('/api/updateRecord', {
-				method: 'PUT',
-				body: JSON.stringify({collection: "users", updates: {'games+': "888"}, id: user}),
-				headers: {
-					'content-type': "application/json"
-				}
-			});
-            
-            const updateJson = await update.json();
-            console.log(updateJson);
-            
-            if(updateJson.error){
-                console.log("Error!");
-                return;
-            }
-            
-        }
 
         try {
-            // const response = await fetch("/api/deleteRecord", {
-            //     method: "DELETE",
-            //     body: JSON.stringify({collection: "characters", id: id}),
-            //     headers: {
-            //         'content-type': "application/json"
-            //     }
-            // });
-
-            // const respJson = await response.json();
-
-            // if(respJson.error) {
-            //     return {
-            //         error: true,
-            //         message: "Un problème est survenu."
-            //     }
-            // }
+            const response = await fetch("/api/deleteRecord", {
+                method: "DELETE",
+                body: JSON.stringify({collection: "games", id: id}),
+                headers: {
+                    'content-type': "application/json"
+                }
+            });
+    
+            const respJson = await response.json();
+    
+            if(respJson.error) {
+                return {
+                    error: true,
+                    message: "Un problème est survenu."
+                }
+            }
         }
         catch(err) {
             console.log("Error: " + err);
@@ -141,9 +120,51 @@ export const actions = {
                 message: "Un problème est survenu."
             }
         }
+
+        throw redirect(303, "/yourgames");
     },
 
-    deleteGame: async ({request, fetch}) => {
+    joinGame: async ({request, fetch, locals}) => {
+        const data = await request.formData();
+        const characId = data.get("characId");
+        const gameId = data.get("gameId");
 
+        try {
+            const updateCharac = await fetch('/api/updateRecord', {
+                method: 'PUT',
+                body: JSON.stringify({collection: "characters", updates: {user: locals.user.id}, id: characId}),
+                headers: {
+                    'content-type': "application/json"
+                }
+            });
+            
+            const updateCharacJson = await updateCharac.json();
+
+            const updateUser = await fetch('/api/updateRecord', {
+                method: 'PUT',
+                body: JSON.stringify({collection: "users", updates: {'games+': gameId}, id: locals.user.id}),
+                headers: {
+                    'content-type': "application/json"
+                }
+            });
+            
+            const updateUserJson = await updateUser.json();
+            
+            if(updateCharacJson.error || updateUserJson.error){
+                return{
+                    error: true,
+                    message: "Un problème est survenu."
+                };
+            }
+        }
+        catch(err) {
+            console.log("Error: " + err);
+            return {
+                error: true,
+                message: "Un problème est survenu."
+            }
+        }
+
+        throw redirect(303, "/character/"+characId);
     }
 }

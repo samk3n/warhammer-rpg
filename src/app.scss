@@ -30,6 +30,10 @@ a.highlight {
     color: var(--warningColor);
 }
 
+.delete {
+    background-color: var(--warningColor);
+}
+
 .italic {
     font-style: italic;
 }
@@ -54,6 +58,18 @@ a.highlight {
 .h2 {
     font-size: 35px;
     font-weight: bold;
+}
+
+.modal {
+    background-color: white;
+    border-radius: 20px;
+
+    padding: 50px 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 30px;
 }
 
 input {

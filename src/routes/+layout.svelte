@@ -14,7 +14,7 @@
             const tmpList = get(pathsList);
             // If we are on the home page, empty the list if previous paths.
             if($page.url.pathname == "/"){
-                pathsList.set([]);
+                pathsList.set(["/"]);
             }
             // If we went back and forth (ex: / -> /aaa -> /bbb -> /aaa),
             // Remove the "loop" (/aaa to /bbb)
@@ -26,13 +26,11 @@
             }
             // Add the previous page to the paths list.
             else {
-                pathsList.update(items => [...items, previousPage]);
+                if(previousPage != "/"){
+                    pathsList.update(items => [...items, previousPage]);
+                }
             }
         }
-    });
-
-    pathsList.subscribe((value) => {
-        console.log("--- " + value);
     });
 
     export let data;

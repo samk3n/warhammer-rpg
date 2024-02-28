@@ -7,21 +7,12 @@
     export let user;
     let lastPage = "/";
 
-    $: console.log("lastPage: " + lastPage);
-
     pathsList.subscribe((value) => {
         const values = Object.values(value);
         lastPage = values[values.length-1];
     });
 
     let mobileMenuOpen = false;
-
-    function removeLastPath(){
-        // pathsList.update(items => {
-        //     items.pop();
-        //     return items;
-        // });
-    }
 </script>
 
 <header>
@@ -29,8 +20,8 @@
         <section class="backBtn">
         {#if !pageExcludeBackButton.includes($page.url.pathname) }
         <a href={lastPage}>
-            <button class="pc" on:click={() => removeLastPath()}>Retour</button>
-            <button class="mobile" on:click={() => removeLastPath()}>^</button>
+            <button class="pc" >Retour</button>
+            <button class="mobile" >^</button>
         </a>
         {/if}
         </section>

@@ -1,3 +1,3 @@
 import { writable } from 'svelte/store';
 
-export const pathsList = writable([]);
+export const pathsList = writable(["/"]);

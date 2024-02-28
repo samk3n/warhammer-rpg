@@ -1,10 +1,16 @@
 <script>
     import {getRecordFromId} from "$lib/utils.js"
     import Modal from "../../../lib/Components/Modal.svelte";
-    export let data;
 
-    let deleteCharacModalOpen = false;
+    export let data;
+    export let form;
+
+    $: if(form && form.message){
+        formModalOpen = true;
+    }
+
     let deleteGameModalOpen = false;
+    let formModalOpen = false;
 
 </script>
 
@@ -28,33 +34,21 @@
         <div class="whiteCard">
             <h2 class="h3">{character.name}</h2>
             <p>{character.isPlayable ? "Jouable" : "Non jouable"}</p>
-            <a href="/">
+            <a href={"/character/" + character.id}>
                 <button>Voir</button>
             </a>
-
-            <button class="delete" on:click={() => deleteCharacModalOpen = true}>Supprimer</button>
-            <Modal isOpen={deleteCharacModalOpen} >
-                <form method="POST" action="?/deleteCharac">
-                    <input type="hidden" name="id" value={character.id} />
-                    <input type="hidden" name="user" value={character.user} />
-                    <input type="hidden" name="game" value={character.game} />
-                    <section class="modal">
-                        <p>Voulez-vous vraiment supprimer ce personnage?</p>
-                        <button class="delete" type="submit" on:click={() => deleteCharacModalOpen = false}>Supprimer</button>
-                    </section>
-                </form>
-            </Modal>
             
         </div>
         {/each}
         
-        <button class="delete" on:click={() => deleteCharacModalOpen = true}>Supprimer la partie</button>
+        <button class="delete" on:click={() => deleteGameModalOpen = true}>Supprimer la partie</button>
         <Modal isOpen={deleteGameModalOpen} >
             <form method="POST" action="?/deleteGame">
                 <input type="hidden" name="id" value={data.game.id} />
                 <section class="modal">
-                    <p>Voulez-vous vraiment supprimer ce personnage?</p>
-                    <button class="delete" type="submit" on:click={() => deleteCharacModalOpen = false}>Supprimer la partie</button>
+                    <p>Voulez-vous vraiment supprimer cette partie?</p>
+                    <button type="button" on:click={() => deleteGameModalOpen = false}>Fermer</button>
+                    <button class="delete" type="submit" on:click={() => deleteGameModalOpen = false}>Supprimer la partie</button>
                 </section>
             </form>
         </Modal>
@@ -78,7 +72,12 @@
             {#each data.characters as character}
             <div class="whiteCard">
                 <h2 class="h3">{character.name}</h2>
-                <button>Choisir</button>
+                <form method="POST" action="?/joinGame">
+                    <input type="hidden" name="characId" value={character.id} />
+                    <input type="hidden" name="gameId" value={data.game.id} />
+                    <button>Choisir</button>
+                </form>
+                
             </div>
             {/each}
         </section>
@@ -93,10 +92,22 @@
         <p class="h2">Votre personnage</p>
         <section class="whiteCard">
             <h2 class="h3">{data.characters[0].name}</h2>
+            <a href={"/character/" + data.characters[0].id}>
+                <button>Jouer</button>
+            </a>
         </section>
 
         {/if}
 
+    {/if}
+
+    {#if form && form.message}
+    <Modal isOpen={formModalOpen}>
+        <section class="modal">
+            <p>{form.message}</p>
+            <button on:click={() => formModalOpen = false}>Fermer</button>
+        </section>
+    </Modal>
     {/if}
 
 {/if}
@@ -112,19 +123,5 @@
 
 
 <style lang="scss">
-    .delete {
-        background-color: var(--warningColor);
-    }
 
-    .modal {
-        background-color: white;
-        border-radius: 20px;
-
-        padding: 50px 10px;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        gap: 30px;
-    }
 </style>
