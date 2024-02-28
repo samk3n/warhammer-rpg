@@ -1,0 +1,138 @@
+/* Write your global styles here, in SCSS syntax. Variables and mixins from the src/variables.scss file are available here without importing */
+
+html, body {
+    --primaryColor: rgb(139, 93, 59);
+    --secondaryColor: rgb(92, 60, 37);
+    --tertiaryColor: rgb(56, 36, 22);
+    --primaryTextColor: #111111;
+    --secondaryTextColor: #756862;
+    --warningColor: rgb(223, 47, 16);
+    --bgColor: rgb(255, 236, 224);
+    width: 100%;
+    margin: 0;
+}
+
+body {
+    height: 100%;
+    font-size: 20px;
+    font-family: sans-serif, system-ui;
+    color: var(--primaryTextColor);
+    background-color: var(--bgColor);
+}
+
+
+a.highlight {
+    color: var(--primaryColor);
+    text-decoration: underline var(--primaryColor);
+}
+
+.warning {
+    color: var(--warningColor);
+}
+
+.italic {
+    font-style: italic;
+}
+
+.txt1 {
+    font-size: 26px;
+}
+
+.btn1 {
+    font-size: 40px;
+}
+
+.btn2 {
+    font-size: 30px;
+}
+
+.h1 {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.h2 {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+input {
+    padding-left: 20px;
+}
+
+input[type="checkbox"] {
+    accent-color: var(--primaryColor);
+}
+
+input[type="text"], input[type="password"] {
+    border-radius: 10px;
+    border: solid 2px var(--secondaryColor);
+    // background-color: var(--bgColor);
+}
+
+label {
+    margin-left: 10px;
+    margin-bottom: 10px;
+    color: var(--secondaryTextColor);
+}
+
+button {
+    color: white;
+    background-color: var(--secondaryColor);
+    border: 0;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+
+    &:hover {
+        background-color: var(--tertiaryColor);
+    }
+}
+
+%card {
+    background-color: white;
+    border-radius: 20px;
+
+    &:hover {
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.25);
+    }
+}
+
+.whiteCard {
+    @extend %card;
+    padding: 20px 10px;
+}
+
+@media (max-width: 768px) {
+
+    body {
+        font-size: max(15px, 3vw);
+    }
+
+    .txt1 {
+        font-size: max(20px, 4vw);
+    }    
+
+    .btn1 {
+        font-size: max(20px, 6vw);
+    }
+
+    .btn2 {
+        font-size: max(20px, 5vw);
+    }
+
+    .h1 {
+        font-size: max(30px, 8vw);
+    }
+
+    .h2 {
+        font-size: max(25px, 6vw);
+    }
+
+}
+
+@media (min-width: 800px){
+    .clickable {
+        cursor: pointer;
+    }
+}
