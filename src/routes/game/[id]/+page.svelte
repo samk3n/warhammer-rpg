@@ -1,6 +1,6 @@
 <script>
     import {getRecordFromId} from "$lib/utils.js"
-    import Modal from "../../../lib/Components/Modal.svelte";
+    import Modal from "$lib/Components/Modal.svelte";
 
     export let data;
     export let form;
@@ -32,8 +32,21 @@
         {/if}
         {#each data.characters as character}
         <div class="whiteCard">
+
             <h2 class="h3">{character.name}</h2>
-            <p>{character.isPlayable ? "Jouable" : "Non jouable"}</p>
+
+            {#if character.isPlayable && character.user}
+                {#await getRecordFromId("users", character.user)}
+                <p>Joueur: </p>
+                {:then user}
+                <p>Joueur: {user.username}</p>
+                {/await}
+            {:else if character.isPlayable}
+                <p>Joueur: aucun</p>
+            {:else}
+                <p>Non jouable</p>
+            {/if}
+
             <a href={"/character/" + character.id}>
                 <button>Voir</button>
             </a>

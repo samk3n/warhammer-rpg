@@ -1,9 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 
 export async function load({locals, fetch}) {
-	if(!locals.pb.authStore.isValid) {
-		throw redirect(303, "/login");
-	}
 
     const games = [];
     const userGames = locals.user.games;

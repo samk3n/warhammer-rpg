@@ -2,7 +2,6 @@
     import { getRecordFromId } from '$lib/utils.js';
 
     export let data;
-
 </script>
 
 <div>

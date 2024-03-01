@@ -44,8 +44,10 @@ export const actions = {
         const data = await request.formData();
         const characId = data.get("characId");
         const gameId = data.get("gameId");
+        const userId = data.get("userId");
 
         try {
+            // Remove the user from the character
             const updateCharac = await fetch('/api/updateRecord', {
                 method: 'PUT',
                 body: JSON.stringify({collection: "characters", updates: {user: ''}, id: characId}),
@@ -55,10 +57,18 @@ export const actions = {
             });
 
             const updateCharacJson = await updateCharac.json();
+
+            if(updateCharacJson.error){
+                return{
+                    error: true,
+                    message: "Un problème est survenu."
+                };
+            }
     
+            // Remove the game from the user
             const updateUser = await fetch('/api/updateRecord', {
                 method: 'PUT',
-                body: JSON.stringify({collection: "users", updates: {'games-': gameId}, id: locals.user.id}),
+                body: JSON.stringify({collection: "users", updates: {'games-': gameId}, id: userId}),
                 headers: {
                     'content-type': "application/json"
                 }
@@ -66,7 +76,7 @@ export const actions = {
 
             const updateUserJson = await updateUser.json();
             
-            if(updateCharacJson.error || updateUserJson.error){
+            if(updateUserJson.error){
                 return{
                     error: true,
                     message: "Un problème est survenu."

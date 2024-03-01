@@ -4,10 +4,10 @@ import { json } from '@sveltejs/kit';
 export async function POST({ request, locals }) {
 	const { collection } = await request.json();
 
-    let games;
+    let records;
     
     try {
-        games = await locals.pb.collection(collection).getFullList();
+        records = await locals.pb.collection(collection).getFullList();
     }
     catch(err) {
         console.log("Error: " + err);
@@ -16,5 +16,8 @@ export async function POST({ request, locals }) {
         }
     }
     
-	return json(games);
+	return json({
+        success: true,
+        records: records
+    });
 }

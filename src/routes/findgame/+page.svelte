@@ -1,10 +1,27 @@
 <script>
     import { getRecordFromId } from '$lib/utils.js';
+    import Modal from "$lib/Components/Modal.svelte";
+    import { redirect } from '@sveltejs/kit';
+    import { goto } from '$app/navigation';
+
     export let data;
 
+    let passwordModalOpen = false;
+    let passwordModalMessage = "";
+
+    let typedPassword;
+
+    function validatePassword(password, gameId){
+        if(password == typedPassword){
+            goto("/game/"+gameId);
+        }
+        else {
+            passwordModalMessage = "Mot de passe incorrect."
+        }
+    }
 </script>
 
-<div>
+<div class="container">
     {#if data.games.length == 0}
     <h1 class="h2">Aucune partie trouvée.</h1>
     {/if}
@@ -19,9 +36,25 @@
         {/await}
         <p class="txt1">Nbre de personnages: {game.characters.length}</p>
     
-        <a href={"/game/" + game.id}>
-            <button class="btn2">Rejoindre</button>
-        </a>
+        {#if game.password}
+            <button class="btn2" on:click={() => passwordModalOpen = true} >Rejoindre</button>
+            <Modal isOpen={passwordModalOpen}>
+                <div class="modal">
+                    <p class="txt1">Entrez le mot de passe</p>
+                    {#if passwordModalMessage != ""}
+                    <p class="warning">{passwordModalMessage}</p>
+                    {/if}
+                    <input class="txt1" type="password" name="typedPassword" bind:value={typedPassword} />
+                    <button on:click={() => validatePassword(game.password, game.id)}>Valider</button>
+                    <button class="delete" on:click={() => passwordModalOpen = false} >Fermer</button>
+                </div>
+            </Modal>
+        {:else}
+            <a href={"/game/" + game.id}>
+                <button class="btn2">Rejoindre</button>
+            </a>
+        {/if}
+
     </section>
     {/each}
 </div>
@@ -32,7 +65,7 @@
         text-align: center;
     }
 
-    div {
+    .container {
         margin: 30px 0;
         width: 80%;
         display: flex;

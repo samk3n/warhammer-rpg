@@ -1,11 +1,8 @@
 import { redirect } from '@sveltejs/kit';
 
 export async function load({locals, fetch}) {
-	if(!locals.pb.authStore.isValid) {
-		throw redirect(303, "/login");
-	}
 
-    const collection = await fetch('/api/getFullCollection', {
+    const response = await fetch('/api/getFullCollection', {
         method: 'POST',
         body: JSON.stringify({collection: "games"}),
         headers: {
@@ -14,7 +11,8 @@ export async function load({locals, fetch}) {
     });
 
     // List of created games
-    let games = await collection.json();
+    const json = await response.json();
+    let games = json.records;
     // List of games the currently logged in user has already joined
     const userGamesList = locals.user.games;
 

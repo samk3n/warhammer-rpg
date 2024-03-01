@@ -1,16 +1,11 @@
 import { redirect } from '@sveltejs/kit';
 
-export function load({locals}) {
-	if(!locals.pb.authStore.isValid) {
-		throw redirect(303, "/login");
-	}
-}
-
 /** @type {import('./$types').Actions} */
 export const actions = {
 	creategame: async ({ locals, request, fetch }) => {
 		const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
+		console.log(data);
 
 		let game;
 

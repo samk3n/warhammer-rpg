@@ -18,7 +18,7 @@
         {#if passwordEnabled}
         <div>
             <label for="password">Mot de passe</label>
-            <input class="txt1" type="text" name="password"/>
+            <input class="txt1" type="password" name="password"/>
         </div>
         {/if}
         

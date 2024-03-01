@@ -57,7 +57,7 @@ export async function load({params, fetch, locals}){
             else {
                 const response = await fetch("/api/findRecord", {
                     method: "POST",
-                    body: JSON.stringify({collection: "characters", filter: 'user="' + locals.user.id + '"'}),
+                    body: JSON.stringify({collection: "characters", filter: 'user="' + locals.user.id + '" && game="' + gameId + '"'}),
                     headers: {
                         'content-type': "application/json"
                     }
@@ -140,6 +140,13 @@ export const actions = {
             
             const updateCharacJson = await updateCharac.json();
 
+            if(updateCharacJson.error){
+                return{
+                    error: true,
+                    message: "Un problème est survenu."
+                };
+            }
+
             const updateUser = await fetch('/api/updateRecord', {
                 method: 'PUT',
                 body: JSON.stringify({collection: "users", updates: {'games+': gameId}, id: locals.user.id}),
@@ -150,7 +157,7 @@ export const actions = {
             
             const updateUserJson = await updateUser.json();
             
-            if(updateCharacJson.error || updateUserJson.error){
+            if(updateUserJson.error){
                 return{
                     error: true,
                     message: "Un problème est survenu."

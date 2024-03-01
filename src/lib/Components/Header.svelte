@@ -37,7 +37,7 @@
         <section class="menu" class:mobileMenuOpen>
             <p>{user?.username ?? ''}</p>
             {#if user}
-            <form method="POST" action="/logout">
+            <form method="POST" action="/api/logout">
                 <button>Déconnexion</button>
             </form>
             {/if}

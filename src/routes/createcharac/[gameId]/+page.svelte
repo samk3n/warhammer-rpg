@@ -18,7 +18,6 @@
         <label for="isPlayable">Jouable</label>
         <input class="txt1" type="checkbox" name="isPlayable"/>
     </div>
-    <input type="checkbox" name="test" value={false}/>
     <input type="hidden" name="game" value={data.gameId} />
 
     <button class="btn1">Créer</button>

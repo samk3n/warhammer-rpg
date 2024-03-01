@@ -15,6 +15,10 @@ export const actions = {
         
         const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
+        
+        if(data.isPlayable == 'on') {
+            data.isPlayable = true;
+        }
 
         if (data.name.length < 3){
             return {

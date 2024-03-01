@@ -15,5 +15,8 @@ export async function POST({ request, locals }) {
         });
     }
     
-	return json({record: record});
+	return json({
+        success: true,
+        record: record
+    });
 }
