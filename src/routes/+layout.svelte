@@ -37,40 +37,15 @@
     
 </script>
 
-<div class="app">
+<div class="min-h-screen flex flex-col gap-20 relative overflow-x-hidden">
     <Header user={data?.user} />
-    <main class="main">
+    <main class="flex-1 flex flex-col items-center">
          <slot />
     </main>
   
 </div>
   
 <style lang="scss">
-    .app {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
-
-        position: relative;
-        overflow-x: hidden;
-    }
-  
-    .main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        // justify-content: center;
-
-        padding-top: 80px;
-        width: 60%;
-    }
-
-    @media (max-width: 768px) {
-        .main {
-            width: 90%;
-        }
-    }
+    
 
   </style>

@@ -2,38 +2,21 @@
 
 </script>
 
-<section>
-    <a href="/creategame">
-        <button class="btn1">Créer une partie</button>
+<section class="flex flex-col gap-8 items-center w-full md:w-1/2 lg:w-1/4">
+    <a href="/creategame" class="w-full flex justify-center">
+        <button class="w-full mx-2 bg-brown-500 p-5 text-2xl font-semibold text-center hover:bg-brown-700 rounded-2xl">Créer une partie</button>
     </a>
-    <a href="/findgame">
-        <button class="btn1">Trouver une partie</button>
+    <a href="/findgame" class="w-full flex justify-center">
+        <button class="w-full mx-2 bg-brown-500 p-5 text-2xl font-semibold text-center hover:bg-brown-700 rounded-2xl">Trouver une partie</button>
     </a>
-    <a href="/yourgames">
-        <button class="btn1">Vos parties</button>
+    <a href="/yourgames" class="w-full flex justify-center">
+        <button class="w-full mx-2 bg-brown-500 p-5 text-2xl font-semibold text-center hover:bg-brown-700 rounded-2xl">Vos parties</button>
     </a>
 </section>
 
 
 <style lang="scss">
 
-    section {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 40px;
-
-        a {
-            width:100%;
-            display: flex;
-            justify-content: center;
-            text-decoration: none;
-        }
-
-        button {
-            width: 100%;
-        }
-    }
+   
 </style>
 
