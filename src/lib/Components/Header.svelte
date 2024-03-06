@@ -1,6 +1,6 @@
 <script>
     import { page } from '$app/stores';
-    import {pathsList} from "$lib/Stores/pathStore.js";
+    import {pathsList} from "$lib/stores/pathStore.js";
 
     const pageExcludeBackButton = ["/", "/login", "/register"];
 
@@ -27,14 +27,14 @@
         </section>
 
         <section class="basis-4/12 flex justify-center items-center">
-            <a href="/" class="text-base-content text-3xl font-bold uppercase">Warhammer</a>
+            <a href="/" class="text-base-content text-3xl font-bold uppercase hidden sm:block">Warhammer</a>
         </section>
 
         <section class="md:hidden basis-2/12 flex justify-center items-center">
             <button class="btn btn-neutral font-semibold "  on:click={() => mobileMenuOpen = !mobileMenuOpen}>E</button>
         </section>
 
-        <section class="basis-2/12 flex bg-base-300 absolute z-10 top-20 right-0 h-screen w-2/5 flex-col justify-start items-center gap-5 pt-6 translate-x-96 transition-transform duration-1000 md:static md:h-auto md:flex-row md:justify-center md:p-0 md:translate-x-0" class:mobileMenuOpen>
+        <section class="basis-2/12 flex bg-base-300 absolute z-10 top-20 right-0 h-[calc(100vh-5rem)] w-2/5 flex-col justify-start items-center gap-5 pt-6 translate-x-96 transition-transform duration-1000 md:static md:h-auto md:flex-row md:justify-center md:p-0 md:translate-x-0" class:mobileMenuOpen>
             {#if user}
             <p class="text-lg text-base-content">{user.username}</p>
             <form method="POST" action="/api/logout">

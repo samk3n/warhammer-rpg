@@ -5,9 +5,13 @@ export async function handle({event, resolve}) {
     event.locals.pb = new PocketBase('http://localhost:8090');
     event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
     
-    if(event.locals.pb.authStore.isValid) {
-        await event.locals.pb.collection("users").authRefresh();
+
+    try {
+        event.locals.pb.authStore.isValid && await await event.locals.pb.collection("users").authRefresh();
         event.locals.user = event.locals.pb.authStore.model;
+    }
+    catch(_){
+        event.locals.pb.authStore.clear();
     }
 
     const response = await resolve(event);

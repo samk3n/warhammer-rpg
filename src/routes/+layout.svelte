@@ -1,10 +1,10 @@
 <script>
     import "../app.scss";
     import 'iconify-icon';
-    import Header from "$lib/Components/Header.svelte";
+    import Header from "$lib/components/Header.svelte";
     import {afterNavigate} from "$app/navigation";
     import { page } from '$app/stores';
-    import {pathsList} from "$lib/Stores/pathStore.js";
+    import {pathsList} from "$lib/stores/pathStore.js";
     import { get } from "svelte/store";
 
     afterNavigate(({from}) => {

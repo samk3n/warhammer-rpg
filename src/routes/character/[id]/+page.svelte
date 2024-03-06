@@ -1,14 +1,42 @@
 <script>
-    import {getRecordFromId} from "$lib/utils.js"
+    import {getRecordFromId, updateRecord} from "$lib/utils.js"
+    import { onDestroy, onMount } from "svelte";
+    import PocketBase from 'pocketbase';
 
     export let data;
     export let form;
+
+    let pb;
 
     let characFormModal;
 
     $: if(form && form.message){
         characFormModal.showModal();
     }
+
+    async function plusCarac(character) {
+        character.carac.init += 1;
+        await updateRecord("characters", character.id, {carac: character.carac});
+    }
+    async function minusCarac(character) {
+        character.carac.init -= 1;
+        await updateRecord("characters", character.id, {carac: character.carac});
+    }
+
+    onMount(async () => {
+        pb = new PocketBase("http://localhost:8090");
+        pb.authStore?.loadFromCookie(document.cookie || '');
+
+        pb.collection("characters").subscribe('*', (e) => {
+            if("update" == e.action) {
+                data.character = e.record;
+            }
+        })
+    });
+
+    onDestroy(() => {
+        if(pb) pb.collection("characters").unsubscribe();
+    });
 
 </script>
 
@@ -18,6 +46,16 @@
     <h1 class="text-3xl font-bold">{data.character.name}</h1>
 
     {#if data.isMaster}
+
+        <div>{data.character.carac?.init}</div>
+        <!-- <form method="POST" action="?/updateCharac">
+            <input type="hidden" name="id" value={data.character.id} />
+            <input type="hidden" name="carac" value={JSON.stringify(data.character.carac)} />
+            <button class="btn btn-success">+</button>
+        </form> -->
+
+        <button class="btn btn-success" on:click={() => plusCarac(data.character)}>+</button>
+        <button class="btn btn-warning" on:click={() => minusCarac(data.character)}>-</button>
 
         {#if data.character.isPlayable && data.character.user}
             {#await getRecordFromId("users", data.character.user)}

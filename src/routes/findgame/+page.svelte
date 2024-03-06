@@ -42,7 +42,10 @@
 </script>
 
 {#if data.games.length == 0}
-<h1 class="text-3xl font-semibold">Aucune partie trouvée.</h1>
+<h1 class="text-3xl font-semibold text-center">Aucune partie trouvée.</h1>
+<a href="/creategame">
+    <button class="btn btn-neutral xs:btn-wide mt-5" >Créer une partie</button>
+</a>
 {/if}
 
 {#each data?.games as game}
