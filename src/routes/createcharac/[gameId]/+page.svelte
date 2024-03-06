@@ -3,46 +3,26 @@
     export let form;
 </script>
 
-<h1 class="h1">Créer un personnage</h1>
+<h1 class="text-3xl font-semibold">Créer un personnage</h1>
 
 {#if form}
-<p class="warning">{form.message}</p>
+<p class="text-warning font-semibold mt-5">{form.message}</p>
 {/if}
 
-<form class="whiteCard" method="POST">
-    <div>
-        <label for="name">Nom</label>
-        <input class="txt1" type="text" name="name"/>
-    </div>
-    <div>
-        <label for="isPlayable">Jouable</label>
-        <input class="txt1" type="checkbox" name="isPlayable"/>
-    </div>
-    <input type="hidden" name="game" value={data.gameId} />
+<form class="card bg-base-200 shadow-lg mt-10 w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6" method="POST">
+    <section class="card-body">
+        <div class="form-control">
+            <label for="name">Nom</label>
+            <input class="input input-bordered" type="text" name="name"/>
+        </div>
+        <div class="form-control">
+            <label for="isPlayable">Jouable</label>
+            <input class="checkbox checkbox-lg ml-2" type="checkbox" name="isPlayable"/>
+        </div>
+        <input type="hidden" name="game" value={data.gameId} />
+    </section>
 
-    <button class="btn1">Créer</button>
+    <section class="card-actions justify-center">
+        <button class="btn btn-neutral btn-wide">Créer</button>
+    </section>
 </form>
-
-<style lang="scss">
-    form {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 30px;
-
-        padding: 10px;
-
-        div {
-            display: flex;
-            flex-direction: column;
-
-            input[type="checkbox"] {
-                width: 25px;
-                height: 25px;
-            }
-        }
-
-    }
-
-</style>

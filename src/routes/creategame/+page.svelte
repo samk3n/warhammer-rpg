@@ -3,64 +3,37 @@
     export let form;
 </script>
 
-<h1 class="h1">Créer une partie</h1>
+<h1 class="text-3xl font-semibold">Créer une partie</h1>
 
-<section class="whiteCard">
-    <form method="POST" action="?/creategame">
-        <div>
-            <label for="name">Nom</label>
-            <input class="txt1" name="name" type="text"/>
+<form class="card bg-base-200 shadow-lg mt-10 w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6" method="POST" action="?/creategame">
+    <section class="card-body">
+        <div class="form-control">
+            <label class="label" for="name">Nom</label>
+            <input class="input input-bordered" name="name" type="text"/>
         </div>
-        <div>
-            <label for="passwordEnabled">Activer mot de passe</label>
-            <input type="checkbox" name="passwordEnabled" bind:checked={passwordEnabled}/>
+        <div class="form-control">
+            <label class="label" for="passwordEnabled">Activer mot de passe</label>
+            <input class="checkbox checkbox-lg ml-2" type="checkbox" name="passwordEnabled" bind:checked={passwordEnabled}/>
         </div>
         {#if passwordEnabled}
-        <div>
-            <label for="password">Mot de passe</label>
-            <input class="txt1" type="password" name="password"/>
+        <div class="form-control">
+            <label class="label" for="password">Mot de passe</label>
+            <input class="input input-bordered" type="password" name="password"/>
         </div>
         {/if}
-        
-        <button class="btn2">Créer</button>
-    </form>
-</section>
+    </section>
+
+    <section class="card-actions justify-center">
+        <button class="btn btn-neutral btn-wide">Créer</button>
+    </section>
+</form>
 
 {#if form}
-    <p class="warning">{form.message}</p>
+    <p class="mt-5 font-semibold text-warning">{form.message}</p>
 {/if}
 
 
 
 <style lang="scss">
-    h1, p {
-        text-align: center;
-    }
-
-    section {
-        width: 100%;
-
-        padding: 20px;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-
-        div {
-            display: flex;
-            flex-direction: column;
-        }
-
-        input:not([type="checkbox"]) {
-            height: 50px;
-        }
-
-        input[type="checkbox"] {
-            height: 30px;
-            width: 30px;
-            margin-right: 10px;
-        }
-    }
+    
 </style>

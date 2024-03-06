@@ -3,22 +3,18 @@ export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
     extend: {},
-    colors: {
-      'brown': {
-        '50': '#f7f3ef',
-        '100': '#ece2d5',
-        '200': '#dac6ae',
-        '300': '#c5a27f',
-        '400': '#b4835b',
-        '500': '#a6724e',
-        '600': '#8d5b41',
-        '700': '#724436',
-        '800': '#603b33',
-        '900': '#54342f',
-        '950': '#301a18',
-    },
-    }
+    colors: {}
   },
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: true, // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
+    darkTheme: "dark", // name of one of the included themes for dark mode
+    base: true, // applies background color and foreground color for root element by default
+    styled: true, // include daisyUI colors and design decisions for all components
+    utils: true, // adds responsive and modifier utility classes
+    prefix: "", // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
+    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
+    themeRoot: ":root", // The element that receives theme color CSS variables
+  },
 }
 

@@ -4,55 +4,36 @@
     export let data;
 </script>
 
-<div>
-    {#if data.games.length == 0}
-    <h1 class="h2">Vous n'avez rejoint aucune partie pour le moment.</h1>
-    {/if}
+{#if data.games.length == 0}
+<h1 class="text-3xl font-semibold">Vous n'avez rejoint aucune partie pour le moment.</h1>
+<a href={"/findgame"}>
+    <button class="btn btn-neutral btn-wide mt-10">Trouver une partie</button>
+</a>
+{/if}
 
-    {#each data?.games as game}
-    <section class="whiteCard">
-        <h1 class="h2 name">{game.name}{game.password ? " *" : ""}</h1>
-
+{#each data?.games as game}
+<section class="card bg-base-200 shadow-lg mt-10 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6">
+    <div class="card-body items-center">
+        <h2 class="text-2xl font-semibold">{game.name}{game.password ? " *" : ""}</h2>
+        <div class="divider"></div>
         {#if data.user.id === game.owner}
-        <p class="italic">Vous êtes le maître du jeu!</p>
+        <p class="italic text-xl text-center">Vous êtes le maître du jeu!</p>
         {:else}
         {#await getRecordFromId("users", game.owner)}
-        <p class="italic">Maître du jeu: </p>
+        <p class="italic text-xl text-center">Maître du jeu: </p>
         {:then user}
-        <p class="italic">Maître du jeu: {user.username}</p>
+        <p class="italic text-xl text-center">Maître du jeu: {user.username}</p>
         {/await}
         {/if}
 
-        <p class="txt1">Nbre de personnages: {game.characters.length}</p>
-    
+        <p class="mt-2 text-2xl text-center">Nbre de personnages: {game.characters.length}</p>
+    </div>
+
+    <div class="card-actions justify-center">
         <a href={"/game/" + game.id}>
-            <button class="btn2">Jouer</button>
+            <button class="btn btn-neutral btn-wide">Jouer</button>
         </a>
-    </section>
-    {/each}
-</div>
-
-<style lang="scss">
-    h1, p {
-        margin: 0;
-        text-align: center;
-    }
-
-    div {
-        margin: 50px 0;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-
-        section {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-    }
-</style>
+    </div>
+    
+</section>
+{/each}

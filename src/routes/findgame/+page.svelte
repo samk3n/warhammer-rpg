@@ -1,85 +1,83 @@
 <script>
     import { getRecordFromId } from '$lib/utils.js';
-    import Modal from "$lib/Components/Modal.svelte";
-    import { redirect } from '@sveltejs/kit';
     import { goto } from '$app/navigation';
 
     export let data;
 
-    let passwordModalOpen = false;
+    // Error message in the modal
     let passwordModalMessage = "";
 
+    // The input value
     let typedPassword;
 
-    function validatePassword(password, gameId){
-        if(password == typedPassword){
-            goto("/game/"+gameId);
+    // Ref to the password modal
+    let passwordModal;
+
+    // Game instance for the password modal
+    let currentGame;
+
+    // Validate the password in the modal
+    function validatePassword(){        
+        if(currentGame.password == typedPassword){
+            goto("/game/"+currentGame.id);
+            passwordModalMessage = "";
         }
         else {
             passwordModalMessage = "Mot de passe incorrect."
         }
+
+        typedPassword = "";
+    }
+
+    // Open the modal if there is a password, or just go to the selected game page
+    function joinGame(game) {
+        if(game && game.password) {
+            currentGame = game;
+            passwordModal.showModal();
+        }
+        else {
+            goto("/game/" + game.id);
+        }
     }
 </script>
 
-<div class="container">
-    {#if data.games.length == 0}
-    <h1 class="h2">Aucune partie trouvée.</h1>
-    {/if}
+{#if data.games.length == 0}
+<h1 class="text-3xl font-semibold">Aucune partie trouvée.</h1>
+{/if}
 
-    {#each data?.games as game}
-    <section class="whiteCard">
-        <h1 class="h2 name">{game.name}{game.password ? " *" : ""}</h1>
+{#each data?.games as game}
+<section class="card bg-base-200 shadow-lg mt-10 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6">
+    <div class="card-body items-center">
+        <h2 class="text-base-content text-2xl font-semibold">{game.name}{game.password ? " *" : ""}</h2>
+        <div class="divider"></div>
         {#await getRecordFromId("users", game.owner)}
-        <p class="italic">Maître du jeu: </p>
+        <p class="italic text-xl text-center">Maître du jeu: </p>
         {:then user}
-        <p class="italic">Maître du jeu: {user.username}</p>
+        <p class="italic text-xl text-center">Maître du jeu: {user.username}</p>
         {/await}
-        <p class="txt1">Nbre de personnages: {game.characters.length}</p>
-    
-        {#if game.password}
-            <button class="btn2" on:click={() => passwordModalOpen = true} >Rejoindre</button>
-            <Modal isOpen={passwordModalOpen}>
-                <div class="modal">
-                    <p class="txt1">Entrez le mot de passe</p>
-                    {#if passwordModalMessage != ""}
-                    <p class="warning">{passwordModalMessage}</p>
-                    {/if}
-                    <input class="txt1" type="password" name="typedPassword" bind:value={typedPassword} />
-                    <button on:click={() => validatePassword(game.password, game.id)}>Valider</button>
-                    <button class="delete" on:click={() => passwordModalOpen = false} >Fermer</button>
-                </div>
-            </Modal>
-        {:else}
-            <a href={"/game/" + game.id}>
-                <button class="btn2">Rejoindre</button>
-            </a>
+        <p class="mt-2 text-2xl text-center">Nbre de personnages: {game.characters.length}</p>
+    </div>
+
+    <div class="card-actions justify-center">
+        <button class="btn btn-neutral btn-wide" on:click={() => joinGame(game)} >Rejoindre</button>
+    </div>
+</section>
+{/each}
+
+<dialog id="passwordModal" class="modal modal-bottom sm:modal-middle" bind:this={passwordModal}>
+    <div class="modal-box form-control bg-base-200">
+        {#if passwordModalMessage != ""}
+        <p class="text-lg text-warning font-medium">{passwordModalMessage}</p>
         {/if}
+        <label for="typedPassword" class="label text-xl">Entrez le mot de passe</label>
+        <input class="input input-bordered" type="password" name="typedPassword" bind:value={typedPassword} />
 
-    </section>
-    {/each}
-</div>
-
-<style lang="scss">
-    h1, p {
-        margin: 0;
-        text-align: center;
-    }
-
-    .container {
-        margin: 30px 0;
-        width: 80%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-
-        section {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-    }
-</style>
+        <div class="modal-action">
+            <button class="btn btn-error" on:click={() => passwordModal.close()} >Fermer</button>
+            <button class="btn btn-neutral" on:click={() => validatePassword()}>Valider</button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>

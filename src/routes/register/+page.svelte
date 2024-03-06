@@ -2,63 +2,29 @@
     export let form;
 </script>
 
-<section id="register">
+<section class="w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
     {#if form}
-    <p class="warning">{form.message}</p>
+    <p class="text-warning font-semibold text-center">{form.message}</p>
     {/if}
-    <form method="POST" action="?/register">
-        <div class="user">
-            <label for="username">Nom d'utilisateur</label>
-            <input class="txt1" type="text" name="username" value={form?.username ?? ""} />
-        </div>
-        <div class="email">
-            <label for="user">Adresse email</label>
-            <input class="txt1" type="text" name="email" value={form?.email ?? ""}/>
-        </div>
-        <div class="password">
-            <label for="password">Mot de passe</label>
-            <input class="txt1" type="password" name="password" value={form?.password ?? ""}/>
-        </div>
-        <button class="btn2">Inscription</button>
+    <form class="card bg-base-200 shadow-lg mt-10 w-full" method="POST" action="?/register">
+        <section class="card-body">
+            <div class="form-control">
+                <label class="label" for="username">Nom d'utilisateur</label>
+                <input class="input input-bordered" type="text" name="username" value={form?.username ?? ""} />
+            </div>
+            <div class="form-control">
+                <label class="label" for="user">Adresse email</label>
+                <input class="input input-bordered" type="text" name="email" value={form?.email ?? ""}/>
+            </div>
+            <div class="form-control">
+                <label class="label" for="password">Mot de passe</label>
+                <input class="input input-bordered" type="password" name="password" value={form?.password ?? ""}/>
+            </div>
+        </section>
+        
+        <section class="card-actions justify-center">
+            <button class="btn btn-neutral btn-wide">Inscription</button>
+        </section>
     </form>
-    <p>Si vous avez déjà un compte, <a href="/login" class="highlight" >connectez-vous!</a></p>
 </section>
-
-<style lang="scss">
-    section {
-        width: 100%;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-
-        p {
-            text-align: center;
-        }
-
-        form {
-            width: 100%;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-        }
-
-        div {
-            display: flex;
-            flex-direction: column;
-            width: 80%;
-
-            input {
-                height: 50px;
-            }
-        }
-
-        button {
-            width: 80%;
-        }
-    }
-</style>
+<p class="mt-5">Si vous avez déjà un compte, <a href="/login" class="underline" >connectez-vous!</a></p>

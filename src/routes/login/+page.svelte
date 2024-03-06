@@ -2,60 +2,24 @@
     export let form;
 </script>
 
-<section id="login">
+<section class="w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
     {#if form}
-        <p class="warning">{form.message}</p>
+        <p class="text-warning font-semibold text-center">{form.message}</p>
     {/if}
-    <form method="POST" action="?/login">
-        <div class="user">
-            <label for="user">Nom d'utilisateur ou email</label>
-            <input class="txt1" type="text" name="user" />
-        </div>
-        <div class="password">
-            <label for="password">Mot de passe</label>
-            <input class="txt1" type="password" name="password" />
-        </div>
-        <button class="btn2">Connexion</button>
+    <form class="card bg-base-200 shadow-lg mt-10 w-full" method="POST" action="?/login">
+        <section class="card-body">
+            <div class="form-control">
+                <label class="label" for="user">Nom d'utilisateur ou email</label>
+                <input class="input input-bordered" type="text" name="user" />
+            </div>
+            <div class="form-control">
+                <label class="label" for="password">Mot de passe</label>
+                <input class="input input-bordered" type="password" name="password" />
+            </div>
+        </section>
+        <section class="card-actions justify-center">
+            <button class="btn btn-neutral btn-wide">Connexion</button>
+        </section>
     </form>
-    <p>Si vous n'avez pas encore de compte, <a href="/register" class="highlight" >inscrivez-vous!</a></p>
 </section>
-
-
-<style lang="scss">
-    section {
-        width: 100%;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-
-        p {
-            text-align: center;
-        }
-
-        form {
-            width: 100%;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-        }
-
-        div {
-            display: flex;
-            flex-direction: column;
-            width: 80%;
-
-            input {
-                height: 50px;
-            }
-        }
-
-        button {
-            width: 80%;
-        }
-    }
-</style>
+<p class="mt-5">Si vous n'avez pas encore de compte, <a href="/register" class="underline" >inscrivez-vous!</a></p>
