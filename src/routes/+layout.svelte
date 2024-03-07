@@ -37,7 +37,7 @@
     
 </script>
 
-<div class="min-h-screen flex flex-col gap-20 relative overflow-x-hidden">
+<div class="min-h-screen flex flex-col gap-20 relative overflow-x-hidden pb-20">
     <Header user={data?.user} />
     <main class="flex-1 flex flex-col items-center">
          <slot />

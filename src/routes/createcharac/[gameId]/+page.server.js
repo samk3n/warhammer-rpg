@@ -11,7 +11,7 @@ export function load({params}) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-    default: async ({request, fetch}) => {
+    createCharac: async ({request, fetch}) => {
         
         const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
@@ -171,6 +171,34 @@ export const actions = {
                 data: data
             }
         }
+
+        if(data.capCombat < 0 || data.capCombat > 100 || data.capTir < 0 || data.capTir > 100 ||
+            data.force < 0 || data.force > 100 || data.endurance < 0 || data.endurance > 100 ||
+            data.initiative < 0 || data.initiative > 100 || data.agilite < 0 || data.agilite > 100 ||
+            data.dexterite < 0 || data.dexterite > 100 || data.intelligence < 0 || data.intelligence > 100 ||
+            data.forceMentale < 0 || data.forceMentale > 100 || data.sociabilite < 0 || data.sociabilite > 100 ) {
+                return {
+                    error: true,
+                    message: "Les caractéristiques doivent être entre 0 et 100.",
+                    data: data
+                }
+            }
+
+
+        const baseCharacteristics = (init) => {
+            return {"init": Number.parseInt(init), "aug": 0};
+        }
+
+        data.capCombat = baseCharacteristics(data.capCombat);
+        data.capTir = baseCharacteristics(data.capTir);
+        data.force = baseCharacteristics(data.force);
+        data.endurance = baseCharacteristics(data.endurance);
+        data.initiative = baseCharacteristics(data.initiative);
+        data.agilite = baseCharacteristics(data.agilite);
+        data.dexterite = baseCharacteristics(data.dexterite);
+        data.intelligence = baseCharacteristics(data.intelligence);
+        data.forceMentale = baseCharacteristics(data.forceMentale);
+        data.sociabilite = baseCharacteristics(data.sociabilite);
 
         try {
             // Creates the new character
