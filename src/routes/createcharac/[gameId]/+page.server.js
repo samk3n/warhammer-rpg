@@ -186,7 +186,7 @@ export const actions = {
 
 
         const baseCharacteristics = (init) => {
-            return {"init": Number.parseInt(init), "aug": 0};
+            return {"init": Number.parseInt(init), "aug": 0, "editable": false};
         }
 
         data.capCombat = baseCharacteristics(data.capCombat);
