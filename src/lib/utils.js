@@ -127,3 +127,11 @@ export async function decreaseSkill(character, skill) {
         }
     }
 }
+
+export function calculateWoundsMax(character){
+    const bf = Math.floor( (character.force.init + character.force.aug) / 10 );
+    const be = Math.floor( (character.endurance.init + character.endurance.aug) / 10 );
+    const bfm = Math.floor( (character.forceMentale.init + character.forceMentale.aug) / 10 );
+
+    return bf + 2*be + bfm;
+}

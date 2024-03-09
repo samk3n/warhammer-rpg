@@ -5,7 +5,8 @@
         updateAttribute, 
         updateCharacteristic, 
         increaseSkill, 
-        decreaseSkill} from "$lib/utils.js"
+        decreaseSkill, 
+        calculateWoundsMax} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
 
@@ -513,7 +514,7 @@
         </section>
     </section>
 
-
+    <!-- COMPETENCES DE BASE -->
     <section class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Compétences de base</h2>
@@ -1124,7 +1125,68 @@
 
 
 
+    <!-- RICHESSES -->
+    <section class="card bg-base-300 w-full">
+        <section class="card-body">
+            <h2 class="card-title self-center mb-5">Richesses</h2>
+            <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
+                <div class="form-control items-center">
+                    <label class="label" for="gold">Couronnes d'Or</label>
+                    <input on:change={(event) => updateAttribute(data.character, "gold", parseInt(event.target.value))} 
+                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    disabled={!data.isMaster} 
+                    type="number" name="gold" value={data.character.gold} />
+                </div>
 
+                <div class="form-control items-center">
+                    <label class="label" for="silver">Pièces d'Argent</label>
+                    <input on:change={(event) => updateAttribute(data.character, "silver", parseInt(event.target.value))} 
+                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    disabled={!data.isMaster}  
+                    type="number" name="silver" value={data.character.silver} />
+                </div>
+
+                <div class="form-control items-center">
+                    <label class="label" for="copper">Sous de Cuivre</label>
+                    <input  on:change={(event) => updateAttribute(data.character, "copper", parseInt(event.target.value))} 
+                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    disabled={!data.isMaster}  
+                    type="number" name="copper" value={data.character.copper} />
+                </div>
+            </section>
+        </section>
+    </section>
+
+    <!-- BLESSURES -->
+    <section class="card bg-base-300 w-full">
+        <section class="card-body">
+            <h2 class="card-title self-center mb-5">Blessures</h2>
+            <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
+                <div class="form-control items-center">
+                    <label class="label" for="blessuresMax">Max</label>
+                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    disabled type="number" name="blessuresMax" value={calculateWoundsMax(data.character)} />
+                </div>
+
+                <div class="form-control items-center">
+                    <label class="label" for="blessuresInfligees">Infligées</label>
+                    <input on:change={(event) => updateAttribute(data.character, "blessuresInfligees", parseInt(event.target.value))} 
+                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    disabled={!data.isMaster}  
+                    type="number" name="blessuresInfligees" value={data.character.blessuresInfligees} />
+                </div>
+
+                <div class="form-control items-center">
+                    <label class="label" for="blessuresRestantes">Restantes</label>
+                    <input class="text-center text-2xl font-bold input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    class:disabled:text-success={calculateWoundsMax(data.character) - data.character.blessuresInfligees > calculateWoundsMax(data.character) / 2}
+                    class:disabled:text-warning={calculateWoundsMax(data.character) - data.character.blessuresInfligees <= calculateWoundsMax(data.character) / 2}
+                    class:disabled:text-error={calculateWoundsMax(data.character) - data.character.blessuresInfligees == 0}
+                    disabled type="number" name="blessuresRestantes" value={calculateWoundsMax(data.character) - data.character.blessuresInfligees} />
+                </div>
+            </section>
+        </section>
+    </section>
 
 
 
