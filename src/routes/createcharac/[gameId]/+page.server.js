@@ -15,6 +15,7 @@ export const actions = {
         
         const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
+        console.log(data);
         
         if(data.isPlayable == 'on') {
             data.isPlayable = true;
@@ -176,17 +177,49 @@ export const actions = {
             data.force < 0 || data.force > 100 || data.endurance < 0 || data.endurance > 100 ||
             data.initiative < 0 || data.initiative > 100 || data.agilite < 0 || data.agilite > 100 ||
             data.dexterite < 0 || data.dexterite > 100 || data.intelligence < 0 || data.intelligence > 100 ||
-            data.forceMentale < 0 || data.forceMentale > 100 || data.sociabilite < 0 || data.sociabilite > 100 ) {
+            data.forceMentale < 0 || data.forceMentale > 100 || data.sociabilite < 0 || data.sociabilite > 100 ||
+            data.capCombat == "" || data.capTir == "" || data.force == "" || data.endurance == "" ||
+            data.initiative == "" || data.agilite == "" || data.dexterite == "" || data.intelligence == "" ||
+            data.forceMentale == "" || data.sociabilite == "") {
                 return {
                     error: true,
                     message: "Les caractéristiques doivent être entre 0 et 100.",
                     data: data
                 }
             }
+        
+        // if(data.art < 0 || data.art > 100 || data.athletisme < 0 || data.athletisme > 100 ||
+        //     data.calme < 0 || data.calme > 100 || data.charme < 0 || data.charme > 100 ||
+        //     data.chevaucher < 0 || data.chevaucher > 100 || data.commandement < 0 || data.commandement > 100 ||
+        //     data.conduiteAttelage < 0 || data.conduiteAttelage > 100 || data.cacBase < 0 || data.cacBase > 100 ||
+        //     data.cac < 0 || data.cac > 100 || data.discretion < 0 || data.discretion > 100 || 
+        //     data.divertissement < 0 || data.divertissement > 100 || data.empriseAnimaux < 0 || data.empriseAnimaux > 100 || 
+        //     data.escalade < 0 || data.escalade > 100 || data.esquive < 0 || data.esquive > 100 || 
+        //     data.intimidation < 0 || data.intimidation > 100 || data.intuition < 0 || data.intuition > 100 ||
+        //     data.marchandage < 0 || data.marchandage > 100 || data.navigation < 0 || data.navigation > 100 ||
+        //     data.pari < 0 || data.pari > 100 || data.perception < 0 || data.perception > 100 ||
+        //     data.ragot < 0 || data.ragot > 100 || data.ramer < 0 || data.ramer > 100 ||
+        //     data.resistance < 0 || data.resistance > 100 || data.resistanceAlcool < 0 || data.resistanceAlcool > 100 ||
+        //     data.subornation < 0 || data.subornation > 100 || data.survieExterieur < 0 || data.survieExterieur > 100 ||
+        //     data.art == "" || data.athletisme == "" || data.calme == "" || data.charme == "" || data.chevaucher == "" || 
+        //     data.commandement == "" || data.conduiteAttelage == "" || data.cacBase == "" || data.cac == "" || 
+        //     data.discretion == "" || data.divertissement == "" || data.empriseAnimaux == "" || data.escalade == "" || 
+        //     data.esquive == "" || data.intimidation == "" || data.intuition == "" || data.marchandage == "" || 
+        //     data.navigation == "" || data.pari == "" || data.perception == "" || data.ragot == "" || data.ramer == "" || 
+        //     data.resistance == "" || data.resistanceAlcool == "" || data.subornation == "" || data.survieExterieur == "" ) {
+        //         return {
+        //             error: true,
+        //             message: "Les compétences de base doivent être entre 0 et 100.",
+        //             data: data
+        //         }
+        //     }
 
 
         const baseCharacteristics = (init) => {
             return {"init": Number.parseInt(init), "aug": 0, "editable": false};
+        }
+        const baseSkills = (charac) => {
+            return {"charac": charac, "aug": 0, "editable": false};
         }
 
         data.capCombat = baseCharacteristics(data.capCombat);
@@ -199,6 +232,34 @@ export const actions = {
         data.intelligence = baseCharacteristics(data.intelligence);
         data.forceMentale = baseCharacteristics(data.forceMentale);
         data.sociabilite = baseCharacteristics(data.sociabilite);
+
+        // TODO add skills
+        data.art = baseSkills("dexterite");
+        data.athletisme = baseSkills("agilite");
+        data.calme = baseSkills("forceMentale");
+        data.charme = baseSkills("sociabilite");
+        data.chevaucher = baseSkills("agilite");
+        data.commandement = baseSkills("sociabilite");
+        data.conduiteAttelage = baseSkills("agilite");
+        data.cacBase = baseSkills("capCombat");
+        data.cac = baseSkills("capCombat");
+        data.discretion = baseSkills("agilite");
+        data.divertissement = baseSkills("sociabilite");
+        data.empriseAnimaux = baseSkills("forceMentale");
+        data.escalade = baseSkills("force");
+        data.esquive = baseSkills("agilite");
+        data.intimidation = baseSkills("force");
+        data.intuition = baseSkills("initiative");
+        data.marchandage = baseSkills("sociabilite");
+        data.navigation = baseSkills("initiative");
+        data.pari = baseSkills("intelligence");
+        data.perception = baseSkills("initiative");
+        data.ragot = baseSkills("sociabilite");
+        data.ramer = baseSkills("force");
+        data.resistance = baseSkills("endurance");
+        data.resistanceAlcool = baseSkills("endurance");
+        data.subornation = baseSkills("sociabilite");
+        data.survieExterieur = baseSkills("intelligence");
 
         try {
             // Creates the new character

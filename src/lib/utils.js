@@ -36,6 +36,15 @@ export async function updateRecord(collection, id, updates){
 }
 
 
+export async function updateAttribute(character, attribute, value){
+    await updateRecord("characters", character.id, {[attribute]: value});
+}
+
+export async function updateCharacteristic(character, characteristic, characElement, value){
+    character[characteristic][characElement] = value;
+    await updateRecord("characters", character.id, {[characteristic]: character[characteristic]});
+}
+
 
 const xpCostCharac = new Map([
     [5, 25],
@@ -55,27 +64,22 @@ const xpCostCharac = new Map([
 ]);
 
 export async function increaseCharacteristic(character, characteristic) {
-    if(character[characteristic].init + 1 <= 100) {
-
-        for (let [key, value] of  xpCostCharac.entries()) {
-            if(character[characteristic].aug <= key && character.xpEarned - character.xpSpent >= value){
-                character.xpSpent += value;
-                character[characteristic].aug += 1;
-                character[characteristic].init += 1;
-                await updateRecord("characters", character.id, {[characteristic]: character[characteristic], "xpSpent": character.xpSpent});
-                return;
-            }
+    for (let [key, value] of  xpCostCharac.entries()) {
+        if(character[characteristic].aug <= key && character.xpEarned - character.xpSpent >= value){
+            character.xpSpent += value;
+            character[characteristic].aug += 1;
+            await updateRecord("characters", character.id, {[characteristic]: character[characteristic], "xpSpent": character.xpSpent});
+            return;
         }
     }
 }
 
 export async function decreaseCharacteristic(character, characteristic) {
-    if(character[characteristic].init -1 >= 0 && character[characteristic].aug - 1 != -1) {
+    if(character[characteristic].aug - 1 >= 0) {
         for (let [key, value] of  xpCostCharac.entries()) {
-            if(character[characteristic].aug <= key || character[characteristic].aug == (key+1)) {
+            if((character[characteristic].aug <= key || character[characteristic].aug == (key+1)) && character.xpSpent >= value) {
                 character.xpSpent -= value;
                 character[characteristic].aug -= 1;
-                character[characteristic].init -= 1;
                 await updateRecord("characters", character.id, {[characteristic]: character[characteristic], "xpSpent": character.xpSpent});
                 return;
             }
@@ -83,11 +87,43 @@ export async function decreaseCharacteristic(character, characteristic) {
     }
 }
 
-export async function updateAttribute(character, attribute, value){
-    await updateRecord("characters", character.id, {[attribute]: value});
+const xpCostSkill = new Map([
+    [5, 10],
+    [10, 15],
+    [15, 20],
+    [20, 30],
+    [25, 40],
+    [30, 60],
+    [35, 80],
+    [40, 110],
+    [45, 140],
+    [50, 180],
+    [55, 220],
+    [60, 270],
+    [65, 320],
+    [70, 380]
+]);
+
+export async function increaseSkill(character, skill) {
+    for (let [key, value] of  xpCostSkill.entries()) {
+        if(character[skill].aug <= key && character.xpEarned - character.xpSpent >= value) {
+            character.xpSpent += value;
+            character[skill].aug += 1;
+            await updateRecord("characters", character.id, {[skill]: character[skill], "xpSpent": character.xpSpent});
+            return;
+        }
+    }
 }
 
-export async function updateCharacteristic(character, characteristic, characElement, value){
-    character[characteristic][characElement] = value;
-    await updateRecord("characters", character.id, {[characteristic]: character[characteristic]});
+export async function decreaseSkill(character, skill) {
+    if(character[skill].aug - 1 >= 0) {
+        for (let [key, value] of  xpCostSkill.entries()) {
+            if((character[skill].aug <= key || character[skill].aug == (key+1)) && character.xpSpent >= value ) {
+                character.xpSpent -= value;
+                character[skill].aug -= 1;
+                await updateRecord("characters", character.id, {[skill]: character[skill], "xpSpent": character.xpSpent});
+                return;
+            }
+        }
+    }
 }
