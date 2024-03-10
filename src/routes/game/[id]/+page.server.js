@@ -163,6 +163,15 @@ export const actions = {
                     message: "Un problème est survenu."
                 };
             }
+
+            const characResponse = await fetch('/api/findRecord', {
+                method: 'POST',
+                body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"'}),
+                headers: {
+                    'content-type': "application/json"
+                }
+            });
+            const charac = await characResponse.json();
         }
         catch(err) {
             console.log("Error: " + err);
@@ -172,6 +181,6 @@ export const actions = {
             }
         }
 
-        throw redirect(303, "/character/"+characId);
+        throw redirect(303, "/character/" + characId);
     }
 }

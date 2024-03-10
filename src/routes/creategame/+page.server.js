@@ -5,7 +5,6 @@ export const actions = {
 	creategame: async ({ locals, request, fetch }) => {
 		const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
-		console.log(data);
 
 		let game;
 
@@ -48,7 +47,10 @@ export const actions = {
 		}
 		catch(err) {
 			console.log("Error: " + err);
-            return;
+            return {
+				error: true,
+				message: "Une erreur s'est produite."
+			};
 		}
 
 		throw redirect(303, "/game/" + game.record.id);

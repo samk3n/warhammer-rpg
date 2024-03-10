@@ -1220,12 +1220,20 @@
                 {#if !data.character.group}
                 <p class="text-center text-lg italic" >Vous n'avez pas encore rejoint de groupe.</p>
                 <div class="flex justify-center gap-5 mt-5">
-                    <a href="/creategroup">
+                    <a href={"/creategroup/" + data.character.id}>
                         <button class="btn btn-neutral">Créer un groupe</button>
                     </a>
-                    <a href="/findgroup">
+                    <a href={"/findgroup/?gameId=" + data.character.game + "&characId=" + data.character.id}>
                         <button class="btn btn-neutral">Trouver un groupe</button>
                     </a>
+                </div>
+                {:else}
+                <div class="form-control">
+                    <label class="label" for="groupName">Nom</label>
+                    <input on:change={(event) => updateAttribute(data.character, "blessuresInfligees", event.target.value)} 
+                    class="text-center input input-bordered disabled:text-base-content disabled:cursor-default" 
+                    disabled={!data.isMaster}  
+                    type="text" name="groupName" value={""} />
                 </div>
                 {/if}
             </section>

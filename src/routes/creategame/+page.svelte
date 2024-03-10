@@ -31,9 +31,3 @@
 {#if form}
     <p class="mt-5 font-semibold text-warning">{form.message}</p>
 {/if}
-
-
-
-<style lang="scss">
-    
-</style>

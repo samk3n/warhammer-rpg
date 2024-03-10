@@ -122,11 +122,11 @@
                 <div class="divider"></div>
             </div>
             
-            <div class="card-actions justify-center">
+            <section class="card-actions justify-center">
                 <a href={"/character/" + data.characters[0].id}>
                     <button class="btn btn-neutral btn-wide">Jouer</button>
                 </a>
-            </div>
+            </section>
         </section>
 
         {/if}
