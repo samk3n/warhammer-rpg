@@ -1180,13 +1180,58 @@
                     <label class="label" for="blessuresRestantes">Restantes</label>
                     <input class="text-center text-2xl font-bold input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     class:disabled:text-success={calculateWoundsMax(data.character) - data.character.blessuresInfligees > calculateWoundsMax(data.character) / 2}
-                    class:disabled:text-warning={calculateWoundsMax(data.character) - data.character.blessuresInfligees <= calculateWoundsMax(data.character) / 2}
-                    class:disabled:text-error={calculateWoundsMax(data.character) - data.character.blessuresInfligees == 0}
+                    class:disabled:text-warning={calculateWoundsMax(data.character) - data.character.blessuresInfligees <= calculateWoundsMax(data.character) / 2 && calculateWoundsMax(data.character) - data.character.blessuresInfligees > calculateWoundsMax(data.character) * 0.2}
+                    class:disabled:text-error={calculateWoundsMax(data.character) - data.character.blessuresInfligees <= calculateWoundsMax(data.character) * 0.2}
                     disabled type="number" name="blessuresRestantes" value={calculateWoundsMax(data.character) - data.character.blessuresInfligees} />
                 </div>
             </section>
         </section>
     </section>
+
+    <!-- AMBITIONS -->
+    <section class="card bg-base-300 w-full">
+        <section class="card-body">
+            <h2 class="card-title self-center mb-5">Ambitions</h2>
+            <section class="">
+                <div class="form-control">
+                    <label class="label" for="ambitionCourt">Court terme</label>
+                    <textarea on:change={(event) => updateAttribute(data.character, "ambitionCourt", event.target.value)} 
+                    class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
+                    disabled={data.isMaster}  
+                     name="ambitionCourt" value={data.character.ambitionCourt} />
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="ambitionLong">Long terme</label>
+                    <textarea on:change={(event) => updateAttribute(data.character, "ambitionLong", event.target.value)} 
+                    class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
+                    disabled={data.isMaster}  
+                     name="ambitionLong" value={data.character.ambitionLong} />
+                </div>
+            </section>
+        </section>
+    </section>
+
+    <!-- GROUPE -->
+    <section class="card bg-base-300 w-full">
+        <section class="card-body">
+            <h2 class="card-title self-center mb-5">Groupe</h2>
+            <section class="">
+                {#if !data.character.group}
+                <p class="text-center text-lg italic" >Vous n'avez pas encore rejoint de groupe.</p>
+                <div class="flex justify-center gap-5 mt-5">
+                    <a href="/creategroup">
+                        <button class="btn btn-neutral">Créer un groupe</button>
+                    </a>
+                    <a href="/findgroup">
+                        <button class="btn btn-neutral">Trouver un groupe</button>
+                    </a>
+                </div>
+                {/if}
+            </section>
+        </section>
+    </section>
+
 
 
 
