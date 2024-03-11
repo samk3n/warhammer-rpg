@@ -10,7 +10,7 @@
     {/if}
 
     {#each data.groups as group}
-    <section class="card bg-base-200 mt-10 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6">
+    <section class="card bg-base-300 mt-10 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6">
         <section class="card-body items-center">
             <h2 class="text-base-content text-2xl font-semibold">{group.name}</h2>
             <div class="divider"></div>
@@ -19,11 +19,14 @@
                 <p>Groupe vide!</p>
             {/if}
 
+            <section class="grid xs:grid-cols-2">
             {#each group.characters as characId}
                 {#await getRecordFromId("characters", characId) then character}
-                    <input type="text" class="input input-bordered text-center disabled:text-base-content disabled:cursor-default" value={character.name} />
+                    <input type="text" class="input input-bordered text-center disabled:text-base-content disabled:cursor-default" value={character.name} disabled/>
                 {/await}
             {/each}
+            </section>
+            
         </section>
 
         <form class="card-actions justify-center" method="POST" action="?/joinGroup">

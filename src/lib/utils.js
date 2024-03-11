@@ -40,6 +40,10 @@ export async function updateAttribute(character, attribute, value){
     await updateRecord("characters", character.id, {[attribute]: value});
 }
 
+export async function updateGroup(group, attribute, value){
+    await updateRecord("groups", group.id, {[attribute]: value});
+}
+
 export async function updateCharacteristic(character, characteristic, characElement, value){
     character[characteristic][characElement] = value;
     await updateRecord("characters", character.id, {[characteristic]: character[characteristic]});

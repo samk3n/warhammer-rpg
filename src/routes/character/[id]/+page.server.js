@@ -1,13 +1,12 @@
 import { redirect } from '@sveltejs/kit';
 
 export async function load({fetch, params, locals}){
-    console.log("*** " + locals.character)
     const characId = params.id;
     let isMaster = false;
 
     const characResponse = await fetch("/api/findRecord", {
         method: "POST",
-        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"'}),
+        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"', expand: "user,group,game"}),
         headers: {
             'content-type': "application/json"
         }
@@ -15,22 +14,12 @@ export async function load({fetch, params, locals}){
 
     const character = await characResponse.json();
 
-    const gameResponse = await fetch("/api/findRecord", {
-        method: "POST",
-        body: JSON.stringify({collection: "games", filter: 'id="' + character.record.game + '"'}),
-        headers: {
-            'content-type': "application/json"
-        }
-    });
-
-    const game = await gameResponse.json();
-
-    // If the currently logged in user is not the character user or the master of the game, redirect to the game page.
-    if(locals.user.id != character.record.user && locals.user.id != game.record.owner) {
+    // If the currently logged in user is not the character user or is the master of the game, redirect to the game page.
+    if(locals.user.id != character.record.user && locals.user.id != character.record.expand.game.owner) {
         throw redirect(303, "/game/" + game.record.id);
     }
 
-    if(locals.user.id == game.record.owner){
+    if(locals.user.id == character.record.expand.game.owner){
         isMaster = true;
     }
 
@@ -150,33 +139,82 @@ export const actions = {
         throw redirect(303, "/game/" + gameId);
     },
 
-    updateCharac: async ({fetch, request}) => {
-        const data = await request.formData();
-        const id = data.get("id");
-        const carac = JSON.parse(data.get("carac"));
+    // updateCharac: async ({fetch, request}) => {
+    //     const data = await request.formData();
+    //     const id = data.get("id");
+    //     const carac = JSON.parse(data.get("carac"));
 
-        carac.init +=1;
+    //     carac.init +=1;
+
+    //     try {
+    //         const update = await fetch('/api/updateRecord', {
+    //             method: 'PUT',
+    //             body: JSON.stringify({collection: "characters", updates: {carac: carac}, id: id}),
+    //             headers: {
+    //                 'content-type': "application/json"
+    //             }
+    //         });
+    //         const updateJson = await update.json();
+
+    //         console.log(updateJson);
+    //     }
+    //     catch(err) {
+    //         console.log("Error: " + err);
+    //         return {
+    //             error: true,
+    //             message: "Un problème est survenu."
+    //         }
+    //     }
+        
+    //     throw redirect(303, "/character/" + id);
+    // },
+
+    leaveGroup: async ({fetch, request}) => {
+        const data = await request.formData();
+        const groupId = data.get("groupId");
+        const characId = data.get("characId");
 
         try {
-            const update = await fetch('/api/updateRecord', {
+            const updateCharac = await fetch('/api/updateRecord', {
                 method: 'PUT',
-                body: JSON.stringify({collection: "characters", updates: {carac: carac}, id: id}),
+                body: JSON.stringify({collection: "characters", updates: {group: ""}, id: characId}),
                 headers: {
                     'content-type': "application/json"
                 }
             });
-            const updateJson = await update.json();
+            const updateCharacJson = await updateCharac.json();
 
-            console.log(updateJson);
+            if(updateCharacJson.error){
+                return {
+                    error: true,
+                    message: "Problème lors du retrait du groupe au personnage."
+                }
+            }
+
+            const updateGroup = await fetch('/api/updateRecord', {
+                method: 'PUT',
+                body: JSON.stringify({collection: "groups", updates: {"characters-": characId}, id: groupId}),
+                headers: {
+                    'content-type': "application/json"
+                }
+            });
+            const updateGroupJson = await updateGroup.json();
+
+            if(updateGroupJson.error){
+                return {
+                    error: true,
+                    message: "Problème lors du retrait du personnage au groupe."
+                }
+            }
         }
-        catch(err) {
+        catch (err) {
             console.log("Error: " + err);
             return {
                 error: true,
                 message: "Un problème est survenu."
             }
         }
-        
-        throw redirect(303, "/character/" + id);
+
+        throw redirect(303, "/character/" + characId);
     }
 }
