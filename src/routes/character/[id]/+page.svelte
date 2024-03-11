@@ -14,6 +14,19 @@
     export let data;
     export let form;
 
+    const sections = new Map(
+        [["destin", "Destin"],
+        ["resilience", "Résilience"],
+        ["mouvement", "Mouvement"],
+        ["experience", "Expérience"],
+        ["carac", "Caractéristiques"],
+        ["competences", "Compétences"],
+        ["richesses", "Richesses"],
+        ["blessures", "Blessures"],
+        ["ambitions", "Ambitions"],
+        ["groupe", "Groupe"],]
+    );
+
     let character = data.character;
 
     let pb;
@@ -67,10 +80,18 @@
         {:else}
             <p class="italic text-xl">Non jouable</p>
         {/if}
-
     {/if}
 
-    <section class="card bg-base-300 w-full">
+    <!-- NAV -->
+    <nav class="flex flex-wrap  items-center gap-3 w-full">
+        {#each sections as [id, name]}
+        <a href={"#"+id} class="flex-grow">
+            <button class="btn btn-neutral">{name}</button>
+        </a>
+        {/each}
+    </nav>
+
+    <section id="main" class="card bg-base-300 w-full">
         <section class="card-body grid gap-5 grid-cols-1 xs:grid-cols-2">
             <div class="form-control">
                 <label class="label" for="race">Race</label>
@@ -156,7 +177,7 @@
     </section>
 
     <!-- DESTIN -->
-    <section class="card bg-base-300 w-full">
+    <section id="destin" class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Destin</h2>
             <section class="grid gap-5 grid-cols-1 xs:grid-cols-2">
@@ -180,7 +201,7 @@
     </section>
 
     <!-- RESILIENCE -->
-    <section class="card bg-base-300 w-full">
+    <section id="resilience" class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Résilience</h2>
             <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
@@ -212,7 +233,7 @@
     </section>
 
     <!-- MOUVEMENT -->
-    <section class="card bg-base-300 w-full">
+    <section id="mouvement" class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Mouvement</h2>
             <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
@@ -244,7 +265,7 @@
     </section>
 
     <!-- EXPERIENCE -->
-    <section class="card bg-base-300 w-full">
+    <section id="experience" class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Expérience</h2>
             <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
@@ -274,7 +295,7 @@
     </section>
 
     <!-- CARACTERISTIQUES -->
-    <section class="card bg-base-300 w-full">
+    <section id="carac" class="card bg-base-300 w-full">
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Caractéristiques</h2>
@@ -521,7 +542,7 @@
     </section>
 
     <!-- COMPETENCES DE BASE -->
-    <section class="card bg-base-300 w-full">
+    <section id="competences" class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Compétences de base</h2>
 
@@ -1132,7 +1153,7 @@
 
 
     <!-- RICHESSES -->
-    <section class="card bg-base-300 w-full">
+    <section id="richesses" class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Richesses</h2>
             <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
@@ -1164,7 +1185,7 @@
     </section>
 
     <!-- BLESSURES -->
-    <section class="card bg-base-300 w-full">
+    <section id="blessures" class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Blessures</h2>
             <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
@@ -1195,7 +1216,7 @@
     </section>
 
     <!-- AMBITIONS -->
-    <section class="card bg-base-300 w-full">
+    <section id="ambitions" class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Ambitions</h2>
             <section class="">
@@ -1219,14 +1240,14 @@
     </section>
 
     <!-- GROUPE -->
-    <section class="card bg-base-300 w-full">
+    <section id="groupe" class="card bg-base-300 w-full">
         <section class="card-body">
             <h2 class="card-title self-center mb-5">Groupe</h2>
             <section class="flex flex-col gap-5">
                 {#if !character.group}
                     <p class="text-center text-lg italic" >Vous n'avez pas encore rejoint de groupe.</p>
                     <div class="flex justify-center gap-5 mt-5">
-                        <a href={"/creategroup/" + character.id}>
+                        <a href={"/creategroup/?characId=" + character.id}>
                             <button class="btn btn-neutral">Créer un groupe</button>
                         </a>
                         <a href={"/findgroup/?gameId=" + character.game + "&characId=" + character.id}>

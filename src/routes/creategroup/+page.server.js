@@ -1,8 +1,8 @@
 import { redirect } from '@sveltejs/kit';
 
-export function load({params}){
+export function load({url}){
     return {
-        characId: params.characId
+        characId: url.searchParams.get("characId")
     }
 ;}
 
