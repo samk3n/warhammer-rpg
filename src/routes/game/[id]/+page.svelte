@@ -18,47 +18,128 @@
     <h1 class="text-3xl font-bold">{data.game.name}</h1>
 
     {#if data.isMaster}
+        <p class="italic text-xl"> Vous êtes le maître du jeu!</p>
+    {:else }
+        {#await getRecordFromId("users", data.game.owner)}
+        <p class="italic text-xl">Maître du jeu: </p>
+        {:then user}
+        <p class="italic text-xl">Maître du jeu: {user.username}</p>
+        {/await}
+    {/if}
 
-    <p class="italic text-xl"> Vous êtes le maître du jeu!</p>
-    <a href={"/createcharac/" + data.game.id}>
+
+    {#if data.isMaster}
+    <a href={"/createcharac/?gameId=" + data.game.id}>
         <button class="btn btn-primary btn-wide text-xl">Créer un personnage</button>
     </a>
+    {/if}
 
+    {#if !data.isUserInGame || data.isMaster}
     <p class="text-xl font-semibold">Personnages</p>
+    {:else}
+    <p class="text-xl font-semibold">Votre personnage</p>
+    {/if}
 
     <section class="w-full flex flex-col gap-5">
-        {#if data.characters.length == 0}
-        <p class="text-lg italic">Aucun personnage dans cette partie.</p>
+        {#if data.game.expand.characters.length == 0}
+        <p class="text-lg italic">Aucun personnage disponibles dans cette partie.</p>
         {/if}
 
-        {#each data.characters as character}
-        <div class="card bg-base-200 shadow-lg w-full">
+        {#each data.game.expand.characters as character}
+        <div class="card bg-base-300 shadow-lg w-full">
             <div class="card-body items-center">
                 <h2 class="text-2xl font-semibold">{character.name}</h2>
-                <div class="divider"></div>
 
                 {#if character.isPlayable && character.user}
                     {#await getRecordFromId("users", character.user)}
-                    <p class="mt-2 text-2xl text-center">Joueur: </p>
+                    <p class="mt-2 text-lg text-center italic">Joueur: </p>
                     {:then user}
-                    <p class="mt-2 text-2xl text-center">Joueur: {user.username}</p>
+                    <p class="mt-2 text-lg text-center italic">Joueur: {user.username}</p>
                     {/await}
                 {:else if character.isPlayable}
-                    <p class="mt-2 text-2xl text-center">Joueur: aucun</p>
+                    <p class="mt-2 text-lg text-center italic">Joueur: aucun</p>
                 {:else}
-                    <p class="mt-2 text-2xl text-center">Non jouable</p>
+                    <p class="mt-2 text-lg text-center italic">Non jouable</p>
                 {/if}
+                <div class="divider"></div>
+                <div class="flex flex-wrap gap-3 w-full">
+                    <p class="font-bold text-xl input flex-1 flex gap-2 items-center">Race: <span class="font-normal">{character.race}</span></p>
+                    <p class="font-bold text-xl input flex-1 flex gap-2 items-center">Classe: <span class="font-normal">{character.classe}</span></p>
+                </div>
+                <div class="grid grid-cols-5 gap-1">
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="cc">CC</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="cc" value={character.capCombat.init + character.capCombat.aug} />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="ct">CT</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="ct" value={character.capTir.init + character.capTir.aug} />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="f">F</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="f" value={character.force.init + character.force.aug} />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="e">E</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="e" value={character.endurance.init + character.endurance.aug} />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="i">I</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="i" value={character.initiative.init + character.initiative.aug} />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-5 gap-1">
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="ag">Ag</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="ag" value={character.agilite.init + character.agilite.aug} />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="dex">Dex</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="dex" value={character.dexterite.init + character.dexterite.aug} />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="int">Int</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="int" value={character.intelligence.init + character.intelligence.aug} />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="fm">FM</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="fm" value={character.forceMentale.init + character.forceMentale.aug} />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label font-semibold self-center" for="soc">Soc</label>
+                        <input class="input text-center disabled:text-base-content" type="number" disabled name="soc" value={character.sociabilite.init + character.sociabilite.aug} />
+                    </div>
+                </div>
             </div>
 
+            {#if data.isMaster || data.isUserInGame}
             <div class="card-actions justify-center">
                 <a href={"/character/" + character.id}>
-                    <button class="btn btn-neutral btn-wide">Voir</button>
+                    <button class="btn btn-neutral btn-wide">{data.isMaster ? "Voir" : "Jouer"}</button>
                 </a>
             </div>
+            {:else}
+            <form class="card-actions justify-center" method="POST" action="?/joinGame">
+                <input type="hidden" name="characId" value={character.id} />
+                <input type="hidden" name="gameId" value={data.game.id} />
+                <button class="btn btn-neutral btn-wide">Choisir</button>
+            </form>
+            {/if}
             
         </div>
         {/each}
         
+        <!-- Delete game button form -->
+        {#if data.isMaster}
         <button class="btn btn-error" onclick="deleteGameModal.showModal()">Supprimer la partie</button>
         <dialog id="deleteGameModal" class="modal modal-bottom sm:modal-middle" >
             <form class="modal-box form-control bg-base-200" method="POST" action="?/deleteGame">
@@ -71,66 +152,12 @@
                 </div>
             </form>
             <form method="dialog" class="modal-backdrop">
-                <button>close</button>
+                <button>Close</button>
             </form>
         </dialog>
+        {/if}
         
     </section>
-
-
-    {:else}
-
-        {#if !data.isUserInGame}
-
-        {#await getRecordFromId("users", data.game.owner)}
-        <p class="italic text-xl">Maître du jeu: </p>
-        {:then user}
-        <p class="italic text-xl">Maître du jeu: {user.username}</p>
-        {/await}
-        <p class="text-xl font-semibold">Personnages</p>
-        <section class="w-full flex flex-col gap-5">
-            {#if data.characters.length == 0}
-            <p class="text-lg italic">Aucun personnage disponible dans cette partie.</p>
-            {/if}
-            {#each data.characters as character}
-            <div class="card bg-base-200 shadow-lg w-full">
-                <div class="card-body items-center">
-                    <h2 class="text-2xl font-semibold">{character.name}</h2>
-                    <div class="divider"></div>
-                </div>
-                <form class="card-actions justify-center" method="POST" action="?/joinGame">
-                    <input type="hidden" name="characId" value={character.id} />
-                    <input type="hidden" name="gameId" value={data.game.id} />
-                    <button class="btn btn-neutral btn-wide">Choisir</button>
-                </form>
-                
-            </div>
-            {/each}
-        </section>
-
-        {:else}
-
-        {#await getRecordFromId("users", data.game.owner)}
-        <p class="italic text-xl">Maître du jeu: </p>
-        {:then user}
-        <p class="italic text-xl">Maître du jeu: {user.username}</p>
-        {/await}
-        <p class="text-xl font-semibold">Votre personnage</p>
-        <section class="card bg-base-200 shadow-lg w-full">
-            <div class="card-body items-center">
-                <h2 class="text-2xl font-semibold">{data.characters[0].name}</h2>
-                <div class="divider"></div>
-            </div>
-            
-            <section class="card-actions justify-center">
-                <a href={"/character/" + data.characters[0].id}>
-                    <button class="btn btn-neutral btn-wide">Jouer</button>
-                </a>
-            </section>
-        </section>
-
-        {/if}
-
     {/if}
 
     {#if form && form.message}
@@ -144,14 +171,12 @@
     </dialog>
     {/if}
 
-{/if}
-
 
 
 {#if data.error}
-<h1 class="">{data.message}</h1>
+<h1 class="text-2xl font-semibold text-center">{data.message}</h1>
 <a href="/">
-    <button class="">Accueil</button>
+    <button class="btn btn-neutral xs:btn-wide">Accueil</button>
 </a>
 {/if}
 

@@ -139,36 +139,6 @@ export const actions = {
         throw redirect(303, "/game/" + gameId);
     },
 
-    // updateCharac: async ({fetch, request}) => {
-    //     const data = await request.formData();
-    //     const id = data.get("id");
-    //     const carac = JSON.parse(data.get("carac"));
-
-    //     carac.init +=1;
-
-    //     try {
-    //         const update = await fetch('/api/updateRecord', {
-    //             method: 'PUT',
-    //             body: JSON.stringify({collection: "characters", updates: {carac: carac}, id: id}),
-    //             headers: {
-    //                 'content-type': "application/json"
-    //             }
-    //         });
-    //         const updateJson = await update.json();
-
-    //         console.log(updateJson);
-    //     }
-    //     catch(err) {
-    //         console.log("Error: " + err);
-    //         return {
-    //             error: true,
-    //             message: "Un problème est survenu."
-    //         }
-    //     }
-        
-    //     throw redirect(303, "/character/" + id);
-    // },
-
     leaveGroup: async ({fetch, request}) => {
         const data = await request.formData();
         const groupId = data.get("groupId");

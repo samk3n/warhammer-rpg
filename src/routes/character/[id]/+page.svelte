@@ -32,6 +32,7 @@
     let pb;
 
     let editCharac = false;
+    let editSkill = false;
 
     let characFormModal;
     $: if(form && form.message){
@@ -83,7 +84,7 @@
     {/if}
 
     <!-- NAV -->
-    <nav class="flex flex-wrap  items-center gap-3 w-full">
+    <nav class="flex flex-wrap  items-center gap-3 w-full mt-5">
         {#each sections as [id, name]}
         <a href={"#"+id} class="flex-grow">
             <button class="btn btn-neutral">{name}</button>
@@ -310,7 +311,7 @@
                     <label class="label flex justify-between w-3/4" for="capCombat">
                         CC
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.capCombat.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac}  bind:checked={character.capCombat.editable}
                         on:change={(event) => updateCharacteristic(character, "capCombat", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -333,7 +334,7 @@
                     <label class="label flex justify-between w-3/4" for="capTir">
                         CT
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.capTir.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.capTir.editable}
                         on:change={(event) => updateCharacteristic(character, "capTir", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -356,7 +357,7 @@
                     <label class="label flex justify-between w-3/4" for="force">
                         Force
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.force.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.force.editable}
                         on:change={(event) => updateCharacteristic(character, "force", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -379,7 +380,7 @@
                     <label class="label flex justify-between w-3/4" for="endurance">
                         Endurance
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.endurance.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.endurance.editable}
                         on:change={(event) => updateCharacteristic(character, "endurance", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -402,7 +403,7 @@
                     <label class="label flex justify-between w-3/4" for="initiative">
                         Initiative
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.initiative.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.initiative.editable}
                         on:change={(event) => updateCharacteristic(character, "initiative", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -425,7 +426,7 @@
                     <label class="label flex justify-between w-3/4" for="agilite">
                         Agilité
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.agilite.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.agilite.editable}
                         on:change={(event) => updateCharacteristic(character, "agilite", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -448,7 +449,7 @@
                     <label class="label flex justify-between w-3/4" for="dexterite">
                         Dextérité
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.dexterite.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.dexterite.editable}
                         on:change={(event) => updateCharacteristic(character, "dexterite", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -471,7 +472,7 @@
                     <label class="label flex justify-between w-3/4" for="intelligence">
                         Intelligence
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.intelligence.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.intelligence.editable}
                         on:change={(event) => updateCharacteristic(character, "intelligence", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -494,7 +495,7 @@
                     <label class="label flex justify-between w-3/4" for="forceMentale">
                         FM
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.forceMentale.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.forceMentale.editable}
                         on:change={(event) => updateCharacteristic(character, "forceMentale", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -517,7 +518,7 @@
                     <label class="label flex justify-between w-3/4" for="sociabilite">
                         Sociablité
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.sociabilite.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.sociabilite.editable}
                         on:change={(event) => updateCharacteristic(character, "sociabilite", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -544,7 +545,12 @@
     <!-- COMPETENCES DE BASE -->
     <section id="competences" class="card bg-base-300 w-full">
         <section class="card-body">
-            <h2 class="card-title self-center mb-5">Compétences de base</h2>
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Compétences de base</h2>
+                {#if data.isMaster}
+                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editSkill} />
+                {/if}
+            </div>
 
             <section class="grid gap-5 grid-cols-1 xs:grid-cols-2">
 
@@ -552,7 +558,7 @@
                     <label class="label flex justify-between w-3/4" for="art">
                         Art
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.art.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.art.editable}
                         on:change={(event) => updateCharacteristic(character, "art", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -575,7 +581,7 @@
                     <label class="label flex justify-between w-3/4" for="athletisme">
                         Athlétisme
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.athletisme.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.athletisme.editable}
                         on:change={(event) => updateCharacteristic(character, "athletisme", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -598,7 +604,7 @@
                     <label class="label flex justify-between w-3/4" for="calme">
                         Calme
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.calme.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.calme.editable}
                         on:change={(event) => updateCharacteristic(character, "calme", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -621,7 +627,7 @@
                     <label class="label flex justify-between w-3/4" for="charme">
                         Charme
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.charme.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.charme.editable}
                         on:change={(event) => updateCharacteristic(character, "charme", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -644,7 +650,7 @@
                     <label class="label flex justify-between w-3/4" for="chevaucher">
                         Chevaucher
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.chevaucher.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.chevaucher.editable}
                         on:change={(event) => updateCharacteristic(character, "chevaucher", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -667,7 +673,7 @@
                     <label class="label flex justify-between w-3/4" for="commandement">
                         Commandement
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.commandement.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.commandement.editable}
                         on:change={(event) => updateCharacteristic(character, "commandement", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -690,7 +696,7 @@
                     <label class="label flex justify-between w-3/4" for="conduiteAttelage">
                         Conduite d'attelage
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.conduiteAttelage.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.conduiteAttelage.editable}
                         on:change={(event) => updateCharacteristic(character, "conduiteAttelage", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -713,7 +719,7 @@
                     <label class="label flex justify-between w-3/4" for="cacBase">
                         C. à C. (base)
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.cacBase.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.cacBase.editable}
                         on:change={(event) => updateCharacteristic(character, "cacBase", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -736,7 +742,7 @@
                     <label class="label flex justify-between w-3/4" for="cac">
                         C.à C.
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.cac.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.cac.editable}
                         on:change={(event) => updateCharacteristic(character, "cac", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -759,7 +765,7 @@
                     <label class="label flex justify-between w-3/4" for="discretion">
                         Discrétion
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.discretion.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.discretion.editable}
                         on:change={(event) => updateCharacteristic(character, "discretion", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -782,7 +788,7 @@
                     <label class="label flex justify-between w-3/4" for="divertissement">
                         Divertissement
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.divertissement.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.divertissement.editable}
                         on:change={(event) => updateCharacteristic(character, "divertissement", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -805,7 +811,7 @@
                     <label class="label flex justify-between w-3/4" for="empriseAnimaux">
                         Emprise animaux
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.empriseAnimaux.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.empriseAnimaux.editable}
                         on:change={(event) => updateCharacteristic(character, "empriseAnimaux", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -828,7 +834,7 @@
                     <label class="label flex justify-between w-3/4" for="escalade">
                         Escalade
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.escalade.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.escalade.editable}
                         on:change={(event) => updateCharacteristic(character, "escalade", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -851,7 +857,7 @@
                     <label class="label flex justify-between w-3/4" for="esquive">
                         Esquive
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.esquive.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.esquive.editable}
                         on:change={(event) => updateCharacteristic(character, "esquive", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -874,7 +880,7 @@
                     <label class="label flex justify-between w-3/4" for="intimidation">
                         Intimidation
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.intimidation.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.intimidation.editable}
                         on:change={(event) => updateCharacteristic(character, "intimidation", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -897,7 +903,7 @@
                     <label class="label flex justify-between w-3/4" for="intuition">
                         Intuition
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.intuition.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.intuition.editable}
                         on:change={(event) => updateCharacteristic(character, "intuition", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -920,7 +926,7 @@
                     <label class="label flex justify-between w-3/4" for="marchandage">
                         Marchandage
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.marchandage.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.marchandage.editable}
                         on:change={(event) => updateCharacteristic(character, "marchandage", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -943,7 +949,7 @@
                     <label class="label flex justify-between w-3/4" for="navigation">
                         Navigation
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.navigation.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.navigation.editable}
                         on:change={(event) => updateCharacteristic(character, "navigation", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -966,7 +972,7 @@
                     <label class="label flex justify-between w-3/4" for="pari">
                         Pari
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.pari.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.pari.editable}
                         on:change={(event) => updateCharacteristic(character, "pari", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -989,7 +995,7 @@
                     <label class="label flex justify-between w-3/4" for="perception">
                         Perception
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.perception.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.perception.editable}
                         on:change={(event) => updateCharacteristic(character, "perception", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -1012,7 +1018,7 @@
                     <label class="label flex justify-between w-3/4" for="ragot">
                         Ragot
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.ragot.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.ragot.editable}
                         on:change={(event) => updateCharacteristic(character, "ragot", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -1035,7 +1041,7 @@
                     <label class="label flex justify-between w-3/4" for="ramer">
                         Ramer
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.ramer.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.ramer.editable}
                         on:change={(event) => updateCharacteristic(character, "ramer", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -1058,7 +1064,7 @@
                     <label class="label flex justify-between w-3/4" for="resistance">
                         Résistance
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.resistance.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.resistance.editable}
                         on:change={(event) => updateCharacteristic(character, "resistance", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -1081,7 +1087,7 @@
                     <label class="label flex justify-between w-3/4" for="resistanceAlcool">
                         Résistance à l'alcool
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.resistanceAlcool.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.resistanceAlcool.editable}
                         on:change={(event) => updateCharacteristic(character, "resistanceAlcool", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -1104,7 +1110,7 @@
                     <label class="label flex justify-between w-3/4" for="subornation">
                         Subornation
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.subornation.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.subornation.editable}
                         on:change={(event) => updateCharacteristic(character, "subornation", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -1127,7 +1133,7 @@
                     <label class="label flex justify-between w-3/4" for="survieExterieur">
                         Survie en extérieur
                         {#if data.isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" bind:checked={character.survieExterieur.editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.survieExterieur.editable}
                         on:change={(event) => updateCharacteristic(character, "survieExterieur", "editable", event.target.checked)} />
                         {/if}
                     </label>
@@ -1245,7 +1251,13 @@
             <h2 class="card-title self-center mb-5">Groupe</h2>
             <section class="flex flex-col gap-5">
                 {#if !character.group}
-                    <p class="text-center text-lg italic" >Vous n'avez pas encore rejoint de groupe.</p>
+                    {#if data.isMaster}
+                        <p class="text-center text-lg italic" >Le joueur n'a pas encore rejoint de groupe.</p>
+                    {:else}
+                        <p class="text-center text-lg italic" >Vous n'avez pas encore rejoint de groupe.</p>
+                    {/if}
+
+                    {#if !data.isMaster}
                     <div class="flex justify-center gap-5 mt-5">
                         <a href={"/creategroup/?characId=" + character.id}>
                             <button class="btn btn-neutral">Créer un groupe</button>
@@ -1254,6 +1266,7 @@
                             <button class="btn btn-neutral">Trouver un groupe</button>
                         </a>
                     </div>
+                    {/if}
                 {:else}
                     <div class="form-control">
                         <label class="label" for="groupName">Nom</label>
@@ -1290,13 +1303,11 @@
                             disabled={data.isMaster}  
                             name="ambitionLong" value={character.expand.group.ambitionLong} />
                     </div>
-
-                    
                     
                 {/if}
             </section>
         </section>
-        {#if !character.group}
+        {#if character.group && !data.isMaster}
         <form class="card-actions justify-center" method="POST" action="?/leaveGroup">
             <input type="hidden" name="characId" value={character.id} />
             <input type="hidden" name="groupId" value={character.group} />

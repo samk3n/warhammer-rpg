@@ -4,6 +4,10 @@ export async function load({fetch, url}) {
     const gameId = url.searchParams.get("gameId");
     const characId = url.searchParams.get("characId");
 
+    if(!gameId || !characId) {
+        throw redirect(303, "/");
+    }
+
     const response = await fetch('/api/getFullCollection', {
         method: 'POST',
         body: JSON.stringify({collection: "groups"}),

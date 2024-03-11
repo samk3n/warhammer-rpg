@@ -1,8 +1,10 @@
 import { redirect } from '@sveltejs/kit';
 
 export function load({url}){
+    const characId = url.searchParams.get("characId");
+
     return {
-        characId: url.searchParams.get("characId")
+        characId: characId
     }
 ;}
 
@@ -11,6 +13,7 @@ export const actions = {
     creategroup: async ({ locals, request, fetch }) => {
         const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
+
 
         if(data.name.length < 3) {
             return {

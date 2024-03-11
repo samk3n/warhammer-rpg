@@ -1,8 +1,12 @@
 import { redirect } from '@sveltejs/kit';
 
-export function load({params}) {
-    const gameId = params.gameId;
-
+export function load({url}) {
+    const gameId = url.searchParams.get("gameId");
+    
+    if(!gameId){
+        throw redirect(303, "/");
+    }
+    
     return {
         gameId: gameId
     }    
@@ -12,10 +16,8 @@ export function load({params}) {
 /** @type {import('./$types').Actions} */
 export const actions = {
     createCharac: async ({request, fetch}) => {
-        
         const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
-        console.log(data);
         
         if(data.isPlayable == 'on') {
             data.isPlayable = true;

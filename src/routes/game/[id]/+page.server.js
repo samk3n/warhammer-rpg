@@ -7,11 +7,11 @@ export async function load({params, fetch, locals}){
     let isMaster = false;
     let isUserInGame = false;
     const characters = [];
-    
+    //
     try {
         const response = await fetch("/api/findRecord", {
             method: "POST",
-            body: JSON.stringify({collection: "games", filter: 'id="' + gameId + '"'}),
+            body: JSON.stringify({collection: "games", filter: 'id="' + gameId + '"', expand: "characters"}),
             headers: {
                 'content-type': "application/json"
             }
@@ -19,65 +19,38 @@ export async function load({params, fetch, locals}){
 
         game = await response.json();
 
-        isMaster = game.record.owner == locals.user.id;
-        isUserInGame = locals.user.games.includes(game.record.id);
-
-        // If user is master, retrieve every character to display on the page
-        if(isMaster) {
-            for(let characId of game.record.characters){
-                const characResponse = await fetch('/api/findRecord', {
-                    method: "POST",
-                    body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"'}),
-                    headers: {
-                        'content-type': "application/json"
-                    }
-                });
-                const charac = await characResponse.json();
-                characters.push(charac.record);
-            }
-        }
-        else {
-            // If user is not the master and has not already joined the game.
-            if(!isUserInGame) {
-                for(let characId of game.record.characters){
-                    const characResponse = await fetch('/api/findRecord', {
-                        method: "POST",
-                        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"'}),
-                        headers: {
-                            'content-type': "application/json"
-                        }
-                    });
-                    const charac = await characResponse.json();
-                    
-                    if(charac.record.isPlayable && charac.record.user == ''){
-                        characters.push(charac.record);
-                    }
-                }
-            }
-            else {
-                const response = await fetch("/api/findRecord", {
-                    method: "POST",
-                    body: JSON.stringify({collection: "characters", filter: 'user="' + locals.user.id + '" && game="' + gameId + '"'}),
-                    headers: {
-                        'content-type': "application/json"
-                    }
-                });
-                const charac = await response.json();
-                characters.push(charac.record);
-            }
-        }
-       
         if(game.error) {
             return {
                 error: true,
                 message: "Partie non trouvée."
             }
         }
+
+        isMaster = game.record.owner == locals.user.id;
+        isUserInGame = locals.user.games.includes(game.record.id);
+
+        // If user is not master
+        if(!isMaster){
+            // If user is not the master and has not already joined the game.
+            if(!isUserInGame) {
+                if(game.record.expand.characters) {
+                    game.record.expand.characters = game.record.expand.characters.filter((charac) => charac.isPlayable && charac.user == '');
+                }
+            }
+            // If user is not master and has already joined the game.
+            else {
+                if(game.record.expand.characters) {
+                    game.record.expand.characters = game.record.expand.characters.filter((charac) => {
+                        return charac.user == locals.user.id;
+                    });
+                }
+            }
+        }
     }
     catch(err) {
         return {
             error: true,
-            message: "Something went wrong"
+            message: "Une erreur s'est produite."
         }
     }
     
