@@ -1,6 +1,7 @@
 <script>
     import {getRecordFromId} from "$lib/utils.js";
     export let data;
+    export let form;
 </script>
 
 {#if data && data.groups}
@@ -36,4 +37,8 @@
         </form>
     </section>
     {/each}
+
+    {#if form && form.message}
+    <p class="text-center text-warning text-lg">{form.message}</p>
+    {/if}
 {/if}

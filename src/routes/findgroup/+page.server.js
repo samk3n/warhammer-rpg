@@ -67,7 +67,7 @@ export const actions = {
             if(groupUpdateJson.error){
                 return {
                     error: true,
-                    message: "Problème lors de l'ajout du personnages au groupe."
+                    message: "Problème lors de l'ajout du personnage au groupe."
                 }
             }
 

@@ -3,6 +3,10 @@ import { redirect } from '@sveltejs/kit';
 export function load({url}){
     const characId = url.searchParams.get("characId");
 
+    if(!characId) {
+        throw redirect(303, "/");
+    }
+
     return {
         characId: characId
     }

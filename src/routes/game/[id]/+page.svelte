@@ -69,54 +69,54 @@
                 <div class="grid grid-cols-5 gap-1">
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="cc">CC</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="cc" value={character.capCombat.init + character.capCombat.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="cc" value={character.capCombat.init + character.capCombat.aug} />
                     </div>
 
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="ct">CT</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="ct" value={character.capTir.init + character.capTir.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="ct" value={character.capTir.init + character.capTir.aug} />
                     </div>
 
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="f">F</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="f" value={character.force.init + character.force.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="f" value={character.force.init + character.force.aug} />
                     </div>
 
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="e">E</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="e" value={character.endurance.init + character.endurance.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="e" value={character.endurance.init + character.endurance.aug} />
                     </div>
 
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="i">I</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="i" value={character.initiative.init + character.initiative.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="i" value={character.initiative.init + character.initiative.aug} />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-5 gap-1">
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="ag">Ag</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="ag" value={character.agilite.init + character.agilite.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="ag" value={character.agilite.init + character.agilite.aug} />
                     </div>
 
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="dex">Dex</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="dex" value={character.dexterite.init + character.dexterite.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="dex" value={character.dexterite.init + character.dexterite.aug} />
                     </div>
 
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="int">Int</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="int" value={character.intelligence.init + character.intelligence.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="int" value={character.intelligence.init + character.intelligence.aug} />
                     </div>
 
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="fm">FM</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="fm" value={character.forceMentale.init + character.forceMentale.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="fm" value={character.forceMentale.init + character.forceMentale.aug} />
                     </div>
 
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="soc">Soc</label>
-                        <input class="input text-center disabled:text-base-content" type="number" disabled name="soc" value={character.sociabilite.init + character.sociabilite.aug} />
+                        <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="soc" value={character.sociabilite.init + character.sociabilite.aug} />
                     </div>
                 </div>
             </div>
@@ -158,18 +158,18 @@
         {/if}
         
     </section>
-    {/if}
+{/if}
 
-    {#if form && form.message}
-    <dialog id="gameFormModal" class="modal modal-bottom sm:modal-middle" bind:this={gameFormModal}>
-        <section class="modal-box bg-base-200">
-            <p class="text-xl">{form.message}</p>
-            <div class="modal-action">
-                <button class="btn btn-neutral" onclick="gameFormModal.close()">Fermer</button>
-            </div>
-        </section>
-    </dialog>
-    {/if}
+{#if form && form.message}
+<dialog id="gameFormModal" class="modal modal-bottom sm:modal-middle" bind:this={gameFormModal}>
+    <section class="modal-box bg-base-200">
+        <p class="text-xl">{form.message}</p>
+        <div class="modal-action">
+            <button class="btn btn-neutral" onclick="gameFormModal.close()">Fermer</button>
+        </div>
+    </section>
+</dialog>
+{/if}
 
 
 

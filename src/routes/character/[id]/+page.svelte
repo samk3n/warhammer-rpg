@@ -28,11 +28,13 @@
     );
 
     let character = data.character;
+    let characterExpand = character.expand;
 
     let pb;
 
     let editCharac = false;
     let editSkill = false;
+    let editNotes = false;
 
     let characFormModal;
     $: if(form && form.message){
@@ -72,7 +74,6 @@
     <h1 class="text-3xl font-bold text-center">{character.name}</h1>
 
     {#if data.isMaster}
-
         <!-- Name of the player, no player, or unplayable -->
         {#if character.isPlayable && character.user}
             <p class="italic text-xl">Joueur: {character.expand.user.username}</p>
@@ -90,6 +91,11 @@
             <button class="btn btn-neutral">{name}</button>
         </a>
         {/each}
+        {#if !data.isMaster}
+        <a href="#notes" class="flex-grow">
+            <button class="btn btn-neutral">Notes</button>
+        </a>
+        {/if}
     </nav>
 
     <section id="main" class="card bg-base-300 w-full">
@@ -322,7 +328,7 @@
                     {#if data.isMaster || character.capCombat.editable}
                     <p class="italic font-semibold text-sm">{character.capCombat.aug} {character.capCombat.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.capCombat.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.capCombat.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capCombat")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capCombat")}>+</button>
@@ -345,7 +351,7 @@
                     {#if data.isMaster || character.capTir.editable}
                     <p class="italic font-semibold text-sm">{character.capTir.aug} {character.capTir.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.capTir.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.capTir.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capTir")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capTir")}>+</button>
@@ -368,7 +374,7 @@
                     {#if data.isMaster || character.force.editable}
                     <p class="italic font-semibold text-sm">{character.force.aug} {character.force.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.force.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.force.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "force")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "force")}>+</button>
@@ -391,7 +397,7 @@
                     {#if data.isMaster || character.endurance.editable}
                     <p class="italic font-semibold text-sm">{character.endurance.aug} {character.endurance.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.endurance.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.endurance.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "endurance")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "endurance")}>+</button>
@@ -414,7 +420,7 @@
                     {#if data.isMaster || character.initiative.editable}
                     <p class="italic font-semibold text-sm">{character.initiative.aug} {character.initiative.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.initiative.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.initiative.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "initiative")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "initiative")}>+</button>
@@ -437,7 +443,7 @@
                     {#if data.isMaster || character.agilite.editable}
                     <p class="italic font-semibold text-sm">{character.agilite.aug} {character.agilite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.agilite.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.agilite.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "agilite")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "agilite")}>+</button>
@@ -460,7 +466,7 @@
                     {#if data.isMaster || character.dexterite.editable}
                     <p class="italic font-semibold text-sm">{character.dexterite.aug} {character.dexterite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.dexterite.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.dexterite.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "dexterite")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "dexterite")}>+</button>
@@ -483,7 +489,7 @@
                     {#if data.isMaster || character.intelligence.editable}
                     <p class="italic font-semibold text-sm">{character.intelligence.aug} {character.intelligence.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.intelligence.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.intelligence.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "intelligence")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "intelligence")}>+</button>
@@ -506,7 +512,7 @@
                     {#if data.isMaster || character.forceMentale.editable}
                     <p class="italic font-semibold text-sm">{character.forceMentale.aug} {character.forceMentale.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.forceMentale.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.forceMentale.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "forceMentale")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "forceMentale")}>+</button>
@@ -529,7 +535,7 @@
                     {#if data.isMaster || character.sociabilite.editable}
                     <p class="italic font-semibold text-sm">{character.sociabilite.aug} {character.sociabilite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.sociabilite.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.sociabilite.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "sociabilite")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "sociabilite")}>+</button>
@@ -569,7 +575,7 @@
                     {#if data.isMaster || character.art.editable}
                     <p class="italic font-semibold text-sm">{character.art.aug} {character.art.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.art.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.art.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "art")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "art")}>+</button>
@@ -592,7 +598,7 @@
                     {#if data.isMaster || character.athletisme.editable}
                     <p class="italic font-semibold text-sm">{character.athletisme.aug} {character.athletisme.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.athletisme.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.athletisme.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "athletisme")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "athletisme")}>+</button>
@@ -615,7 +621,7 @@
                     {#if data.isMaster || character.calme.editable}
                     <p class="italic font-semibold text-sm">{character.calme.aug} {character.calme.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.calme.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.calme.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "calme")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "calme")}>+</button>
@@ -638,7 +644,7 @@
                     {#if data.isMaster || character.charme.editable}
                     <p class="italic font-semibold text-sm">{character.charme.aug} {character.charme.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.charme.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.charme.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "charme")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "charme")}>+</button>
@@ -661,7 +667,7 @@
                     {#if data.isMaster || character.chevaucher.editable}
                     <p class="italic font-semibold text-sm">{character.chevaucher.aug} {character.chevaucher.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.chevaucher.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.chevaucher.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "chevaucher")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "chevaucher")}>+</button>
@@ -684,7 +690,7 @@
                     {#if data.isMaster || character.commandement.editable}
                     <p class="italic font-semibold text-sm">{character.commandement.aug} {character.commandement.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.commandement.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.commandement.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "commandement")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "commandement")}>+</button>
@@ -707,7 +713,7 @@
                     {#if data.isMaster || character.conduiteAttelage.editable}
                     <p class="italic font-semibold text-sm">{character.conduiteAttelage.aug} {character.conduiteAttelage.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.conduiteAttelage.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.conduiteAttelage.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "conduiteAttelage")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "conduiteAttelage")}>+</button>
@@ -730,7 +736,7 @@
                     {#if data.isMaster || character.cacBase.editable}
                     <p class="italic font-semibold text-sm">{character.cacBase.aug} {character.cacBase.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.cacBase.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.cacBase.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "cacBase")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "cacBase")}>+</button>
@@ -753,7 +759,7 @@
                     {#if data.isMaster || character.cac.editable}
                     <p class="italic font-semibold text-sm">{character.cac.aug} {character.cac.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.cac.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.cac.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "cac")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "cac")}>+</button>
@@ -776,7 +782,7 @@
                     {#if data.isMaster || character.discretion.editable}
                     <p class="italic font-semibold text-sm">{character.discretion.aug} {character.discretion.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.discretion.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.discretion.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "discretion")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "discretion")}>+</button>
@@ -799,7 +805,7 @@
                     {#if data.isMaster || character.divertissement.editable}
                     <p class="italic font-semibold text-sm">{character.divertissement.aug} {character.divertissement.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.divertissement.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.divertissement.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "divertissement")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "divertissement")}>+</button>
@@ -822,7 +828,7 @@
                     {#if data.isMaster || character.empriseAnimaux.editable}
                     <p class="italic font-semibold text-sm">{character.empriseAnimaux.aug} {character.empriseAnimaux.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.empriseAnimaux.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.empriseAnimaux.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "empriseAnimaux")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "empriseAnimaux")}>+</button>
@@ -845,7 +851,7 @@
                     {#if data.isMaster || character.escalade.editable}
                     <p class="italic font-semibold text-sm">{character.escalade.aug} {character.escalade.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.escalade.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.escalade.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "escalade")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "escalade")}>+</button>
@@ -868,7 +874,7 @@
                     {#if data.isMaster || character.esquive.editable}
                     <p class="italic font-semibold text-sm">{character.esquive.aug} {character.esquive.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.esquive.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.esquive.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "esquive")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "esquive")}>+</button>
@@ -891,7 +897,7 @@
                     {#if data.isMaster || character.intimidation.editable}
                     <p class="italic font-semibold text-sm">{character.intimidation.aug} {character.intimidation.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.intimidation.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.intimidation.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "intimidation")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "intimidation")}>+</button>
@@ -914,7 +920,7 @@
                     {#if data.isMaster || character.intuition.editable}
                     <p class="italic font-semibold text-sm">{character.intuition.aug} {character.intuition.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.intuition.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.intuition.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "intuition")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "intuition")}>+</button>
@@ -937,7 +943,7 @@
                     {#if data.isMaster || character.marchandage.editable}
                     <p class="italic font-semibold text-sm">{character.marchandage.aug} {character.marchandage.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.marchandage.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.marchandage.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "marchandage")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "marchandage")}>+</button>
@@ -960,7 +966,7 @@
                     {#if data.isMaster || character.navigation.editable}
                     <p class="italic font-semibold text-sm">{character.navigation.aug} {character.navigation.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.navigation.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.navigation.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "navigation")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "navigation")}>+</button>
@@ -983,7 +989,7 @@
                     {#if data.isMaster || character.pari.editable}
                     <p class="italic font-semibold text-sm">{character.pari.aug} {character.pari.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.pari.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.pari.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "pari")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "pari")}>+</button>
@@ -1006,7 +1012,7 @@
                     {#if data.isMaster || character.perception.editable}
                     <p class="italic font-semibold text-sm">{character.perception.aug} {character.perception.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.perception.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.perception.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "perception")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "perception")}>+</button>
@@ -1029,7 +1035,7 @@
                     {#if data.isMaster || character.ragot.editable}
                     <p class="italic font-semibold text-sm">{character.ragot.aug} {character.ragot.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.ragot.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.ragot.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "ragot")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "ragot")}>+</button>
@@ -1052,7 +1058,7 @@
                     {#if data.isMaster || character.ramer.editable}
                     <p class="italic font-semibold text-sm">{character.ramer.aug} {character.ramer.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.ramer.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.ramer.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "ramer")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "ramer")}>+</button>
@@ -1075,7 +1081,7 @@
                     {#if data.isMaster || character.resistance.editable}
                     <p class="italic font-semibold text-sm">{character.resistance.aug} {character.resistance.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.resistance.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.resistance.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "resistance")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "resistance")}>+</button>
@@ -1098,7 +1104,7 @@
                     {#if data.isMaster || character.resistanceAlcool.editable}
                     <p class="italic font-semibold text-sm">{character.resistanceAlcool.aug} {character.resistanceAlcool.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.resistanceAlcool.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.resistanceAlcool.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "resistanceAlcool")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "resistanceAlcool")}>+</button>
@@ -1121,7 +1127,7 @@
                     {#if data.isMaster || character.subornation.editable}
                     <p class="italic font-semibold text-sm">{character.subornation.aug} {character.subornation.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.subornation.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.subornation.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "subornation")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "subornation")}>+</button>
@@ -1144,7 +1150,7 @@
                     {#if data.isMaster || character.survieExterieur.editable}
                     <p class="italic font-semibold text-sm">{character.survieExterieur.aug} {character.survieExterieur.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if !data.isMaster && character.survieExterieur.editable}
+                    {#if (!data.isMaster || !character.isPlayable) && character.survieExterieur.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "survieExterieur")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "survieExterieur")}>+</button>
@@ -1315,6 +1321,26 @@
         </form>
         {/if}
     </section>
+
+    <!-- Notes -->
+    {#if !data.isMaster}
+    <section id="notes" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Notes</h2>
+                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editNotes} />
+            </div>
+            <section class="" style:display={editNotes ? "block" : "none"}>
+                <div class="form-control">
+                    <textarea on:change={(event) => updateAttribute(character, "notes", event.target.value)} 
+                    class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
+                    disabled={data.isMaster}  
+                     name="notes" value={character.notes} />
+                </div>
+            </section>
+        </section>
+    </section>
+    {/if}
 
 
 
