@@ -6,9 +6,9 @@ export async function load({params, fetch, locals}){
     let game;
     let isMaster = false;
     let isUserInGame = false;
-    const characters = [];
-    //
+    
     try {
+        // Get the game record expanding its characters
         const response = await fetch("/api/findRecord", {
             method: "POST",
             body: JSON.stringify({collection: "games", filter: 'id="' + gameId + '"', expand: "characters"}),
@@ -50,13 +50,12 @@ export async function load({params, fetch, locals}){
     catch(err) {
         return {
             error: true,
-            message: "Une erreur s'est produite."
+            message: "Une erreur s'est produite lors du chargement de la partie."
         }
     }
     
     return {
         game: game.record,
-        characters: characters,
         isMaster: isMaster,
         isUserInGame: isUserInGame
     }
@@ -69,6 +68,7 @@ export const actions = {
         const id = data.get("id");
 
         try {
+            // Delete the game
             const response = await fetch("/api/deleteRecord", {
                 method: "DELETE",
                 body: JSON.stringify({collection: "games", id: id}),
@@ -82,7 +82,7 @@ export const actions = {
             if(respJson.error) {
                 return {
                     error: true,
-                    message: "Un problème est survenu."
+                    message: "Un problème est survenu lors de la suppression de la partie."
                 }
             }
         }
@@ -90,7 +90,7 @@ export const actions = {
             console.log("Error: " + err);
             return {
                 error: true,
-                message: "Un problème est survenu."
+                message: "Un problème est survenu lors de la suppression de la partie."
             }
         }
 
@@ -103,6 +103,7 @@ export const actions = {
         const gameId = data.get("gameId");
 
         try {
+            // Update the character with the id of the game joined
             const updateCharac = await fetch('/api/updateRecord', {
                 method: 'PUT',
                 body: JSON.stringify({collection: "characters", updates: {user: locals.user.id}, id: characId}),
@@ -116,10 +117,11 @@ export const actions = {
             if(updateCharacJson.error){
                 return{
                     error: true,
-                    message: "Un problème est survenu."
+                    message: "Un problème est survenu lors de la mise à jour du personnage."
                 };
             }
 
+            // Update the user with the game the character has joined
             const updateUser = await fetch('/api/updateRecord', {
                 method: 'PUT',
                 body: JSON.stringify({collection: "users", updates: {'games+': gameId}, id: locals.user.id}),
@@ -133,24 +135,15 @@ export const actions = {
             if(updateUserJson.error){
                 return{
                     error: true,
-                    message: "Un problème est survenu."
+                    message: "Un problème est survenu lors de la mise à jour du l'utilisateur."
                 };
             }
-
-            const characResponse = await fetch('/api/findRecord', {
-                method: 'POST',
-                body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"'}),
-                headers: {
-                    'content-type': "application/json"
-                }
-            });
-            const charac = await characResponse.json();
         }
         catch(err) {
             console.log("Error: " + err);
             return {
                 error: true,
-                message: "Un problème est survenu."
+                message: "Un problème est survenu lorsque vous avez tenté de rejoindre la partie."
             }
         }
 

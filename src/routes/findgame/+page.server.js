@@ -1,6 +1,8 @@
 
+
 export async function load({locals, fetch}) {
 
+    // Get all games in DB
     const response = await fetch('/api/getFullCollection', {
         method: 'POST',
         body: JSON.stringify({collection: "games"}),
@@ -12,6 +14,7 @@ export async function load({locals, fetch}) {
     // List of created games
     const json = await response.json();
     let games = json.records;
+    
     // List of games the currently logged in user has already joined
     const userGamesList = locals.user.games;
 

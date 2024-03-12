@@ -76,7 +76,7 @@ export const actions = {
             console.log("Error: " + err);
             return {
                 error: true,
-                message: "Un problème est survenu."
+                message: "Un problème est survenu lorsque vous avez essayé de quitter le personnage."
             }
         }
     },
@@ -123,7 +123,7 @@ export const actions = {
             if(respJson.error) {
                 return {
                     error: true,
-                    message: "Un problème est survenu."
+                    message: "Un problème est survenu lors de la suppression du personnage."
                 }
             }
         }
@@ -131,7 +131,7 @@ export const actions = {
             console.log("Error: " + err);
             return {
                 error: true,
-                message: "Un problème est survenu."
+                message: "Un problème est survenu lors de la suppression du personnage."
             }
         }
 
@@ -180,7 +180,7 @@ export const actions = {
             console.log("Error: " + err);
             return {
                 error: true,
-                message: "Un problème est survenu."
+                message: "Un problème est survenu lorsque vous avez essayé de quitter le groupe."
             }
         }
 

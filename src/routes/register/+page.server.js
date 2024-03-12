@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-	register: async ({ locals, request, fetch }) => {
+	register: async ({ request, fetch }) => {
 		const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
 
@@ -27,7 +27,6 @@ export const actions = {
 		data["passwordConfirm"] = data.password;
 
         try {
-			// const newUser = await locals.pb.collection('users').create(data);
 
             const response = await fetch('/api/createRecord', {
 				method: 'PUT',
@@ -36,11 +35,22 @@ export const actions = {
 					'content-type': "application/json"
 				}
 			});
+			const respJson = await response.json();
+
+			if(respJson.error){
+				return {
+					error: true,
+					message: "Un problème est survenu lors de la création du compte."
+				}
+			}
 
 		}
 		catch(err) {
 			console.log("Error: " + err);
-			// return err;
+			return {
+				error: true,
+				message: "Un problème est survenu lors de l'inscription."
+			}
 		}
 
         throw redirect(303, "/login");

@@ -49,7 +49,7 @@ export const actions = {
 			console.log("Error: " + err);
             return {
 				error: true,
-				message: "Une erreur s'est produite."
+				message: "Une erreur s'est produite lors de la création de la partie."
 			};
 		}
 

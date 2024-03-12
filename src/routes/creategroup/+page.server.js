@@ -31,6 +31,7 @@ export const actions = {
         }
 
         try {
+            // Request character record to get the game id
             const characResponse = await fetch('/api/findRecord', {
 				method: 'POST',
 				body: JSON.stringify({collection: "characters", filter: 'id="' + data.characId + '"'}),
@@ -40,8 +41,10 @@ export const actions = {
 			});
             const charac = await characResponse.json();
 
+            // Add the game id to data
             data.game = charac.record.game;
             
+            // Create the new group with data
             const groupResponse = await fetch('/api/createRecord', {
 				method: 'PUT',
 				body: JSON.stringify({collection: "groups", data: data}),
@@ -51,6 +54,7 @@ export const actions = {
 			});
             const group = await groupResponse.json();
 
+            // If join was checked, add group to the character record
             if(data.join && !locals.user.group) {
                 await fetch('/api/updateRecord', {
                     method: 'PUT',
@@ -66,7 +70,7 @@ export const actions = {
             console.log("Error: " + err);
             return {
 				error: true,
-				message: "Une erreur s'est produite."
+				message: "Une erreur s'est produite lors de la création du groupe."
 			};
         }
 

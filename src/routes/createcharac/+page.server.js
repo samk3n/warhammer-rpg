@@ -208,7 +208,6 @@ export const actions = {
         data.forceMentale = baseCharacteristics(data.forceMentale);
         data.sociabilite = baseCharacteristics(data.sociabilite);
 
-        // TODO add skills
         data.art = baseSkills("dexterite");
         data.athletisme = baseSkills("agilite");
         data.calme = baseSkills("forceMentale");
@@ -261,7 +260,7 @@ export const actions = {
             console.log("Error: " + err);
             return {
                 error: true,
-                message: "Un problème est survenu.",
+                message: "Un problème est survenu lors de la création du personnage.",
                 data: data
             }
         }
