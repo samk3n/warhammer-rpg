@@ -28,7 +28,7 @@
     );
 
     let character = data.character;
-    let characterExpand = character.expand;
+    const isMaster = data.isMaster;
 
     let pb;
 
@@ -49,7 +49,7 @@
             if("update" == e.action) {
                 character = e.record;
             }
-        });
+        }, {expand: "user,group,game"});
 
         if(character.group) {
             pb.collection("groups").subscribe(character.group, (e) => {
@@ -73,7 +73,7 @@
     <!-- Character name -->
     <h1 class="text-3xl font-bold text-center">{character.name}</h1>
 
-    {#if data.isMaster}
+    {#if isMaster}
         <!-- Name of the player, no player, or unplayable -->
         {#if character.isPlayable && character.user}
             <p class="italic text-xl">Joueur: {character.expand.user.username}</p>
@@ -91,7 +91,7 @@
             <button class="btn btn-neutral">{name}</button>
         </a>
         {/each}
-        {#if !data.isMaster}
+        {#if !isMaster}
         <a href="#notes" class="flex-grow">
             <button class="btn btn-neutral">Notes</button>
         </a>
@@ -104,7 +104,7 @@
                 <label class="label" for="race">Race</label>
                 <input on:change={(event) => updateAttribute(character, "race", event.target.value)} 
                     class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="text" name="race" value={character.race} />
             </div>
 
@@ -112,7 +112,7 @@
                 <label class="label" for="classe">Classe</label>
                 <input on:change={(event) => updateAttribute(character, "classe", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!data.isMaster} 
+                disabled={!isMaster} 
                 type="text" name="classe" value={character.classe} />
             </div>
 
@@ -120,7 +120,7 @@
                 <label class="label" for="carriere">Carrière</label>
                 <input on:change={(event) => updateAttribute(character, "carriere", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!data.isMaster} 
+                disabled={!isMaster} 
                 type="text" name="carriere" value={character.carriere} />
             </div>
 
@@ -128,7 +128,7 @@
                 <label class="label" for="echelon">Échelon</label>
                 <input on:change={(event) => updateAttribute(character, "echelon", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!data.isMaster} 
+                disabled={!isMaster} 
                 type="text" name="echelon" value={character.echelon} />
             </div>
 
@@ -136,7 +136,7 @@
                 <label class="label" for="schemaCarriere">Schéma de carrière</label>
                 <input on:change={(event) => updateAttribute(character, "schemaCarriere", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!data.isMaster} 
+                disabled={!isMaster} 
                 type="text" name="schemaCarriere" value={character.schemaCarriere} />
             </div>
 
@@ -144,7 +144,7 @@
                 <label class="label" for="statut">Statut</label>
                 <input on:change={(event) => updateAttribute(character, "statut", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!data.isMaster} 
+                disabled={!isMaster} 
                 type="text" name="statut" value={character.statut} />
             </div>
 
@@ -152,7 +152,7 @@
                 <label class="label" for="age">Âge</label>
                 <input on:change={(event) => updateAttribute(character, "age", parseInt(event.target.value))} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!data.isMaster} 
+                disabled={!isMaster} 
                 type="number" name="age" value={character.age} />
             </div>
 
@@ -160,7 +160,7 @@
                 <label class="label" for="taille">Taille</label>
                 <input on:change={(event) => updateAttribute(character, "taille", parseInt(event.target.value))} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!data.isMaster} 
+                disabled={!isMaster} 
                 type="number" name="taille" value={character.taille} />
             </div>
 
@@ -168,7 +168,7 @@
                 <label class="label" for="cheveux">Cheveux</label>
                 <input on:change={(event) => updateAttribute(character, "cheveux", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!data.isMaster} 
+                disabled={!isMaster} 
                 type="text" name="cheveux" value={character.cheveux} />
             </div>
 
@@ -176,7 +176,7 @@
                 <label class="label" for="yeux">Yeux</label>
                 <input on:change={(event) => updateAttribute(character, "yeux", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!data.isMaster} 
+                disabled={!isMaster} 
                 type="text" name="yeux" value={character.yeux} />
             </div>
 
@@ -192,7 +192,7 @@
                     <label class="label" for="destin">Destin</label>
                     <input on:change={(event) => updateAttribute(character, "destin", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="destin" value={character.destin} />
                 </div>
 
@@ -200,7 +200,7 @@
                     <label class="label" for="taille">Chance</label>
                     <input on:change={(event) => updateAttribute(character, "chance", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="chance" value={character.chance} />
                 </div>
             </section>
@@ -216,7 +216,7 @@
                     <label class="label" for="destin">Résilience</label>
                     <input on:change={(event) => updateAttribute(character, "resilience", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="resilience" value={character.resilience} />
                 </div>
 
@@ -224,7 +224,7 @@
                     <label class="label" for="determination">Détermination</label>
                     <input on:change={(event) => updateAttribute(character, "determination", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="determination" value={character.determination} />
                 </div>
 
@@ -232,7 +232,7 @@
                     <label class="label" for="motivation">Motivation</label>
                     <input on:change={(event) => updateAttribute(character, "motivation", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="motivation" value={character.motivation} />
                 </div>
             </section>
@@ -248,7 +248,7 @@
                     <label class="label" for="mouvement">Mouvement</label>
                     <input on:change={(event) => updateAttribute(character, "mouvement", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="mouvement" value={character.mouvement} />
                 </div>
 
@@ -256,7 +256,7 @@
                     <label class="label" for="marche">Marche</label>
                     <input on:change={(event) => updateAttribute(character, "marche", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="marche" value={character.marche} />
                 </div>
 
@@ -264,7 +264,7 @@
                     <label class="label" for="course">Course</label>
                     <input on:change={(event) => updateAttribute(character, "course", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="course" value={character.course} />
                 </div>
             </section>
@@ -280,7 +280,7 @@
                     <label class="label" for="xpEarned">Gagnée</label>
                     <input on:change={(event) => updateAttribute(character, "xpEarned", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="xpEarned" value={character.xpEarned} />
                 </div>
 
@@ -306,7 +306,7 @@
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Caractéristiques</h2>
-                {#if data.isMaster}
+                {#if isMaster}
                 <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editCharac} />
                 {/if}
             </div>
@@ -316,19 +316,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="capCombat">
                         CC
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac}  bind:checked={character.capCombat.editable}
                         on:change={(event) => updateCharacteristic(character, "capCombat", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "capCombat", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="capCombat" value={data.isMaster ? character.capCombat.init : character.capCombat.init + character.capCombat.aug} />
-                    {#if data.isMaster || character.capCombat.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="capCombat" value={isMaster ? character.capCombat.init : character.capCombat.init + character.capCombat.aug} />
+                    {#if isMaster || character.capCombat.editable}
                     <p class="italic font-semibold text-sm">{character.capCombat.aug} {character.capCombat.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.capCombat.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.capCombat.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capCombat")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capCombat")}>+</button>
@@ -339,19 +339,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="capTir">
                         CT
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.capTir.editable}
                         on:change={(event) => updateCharacteristic(character, "capTir", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "capTir", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="capCombat" value={data.isMaster ? character.capTir.init : character.capTir.init + character.capTir.aug} />
-                    {#if data.isMaster || character.capTir.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="capCombat" value={isMaster ? character.capTir.init : character.capTir.init + character.capTir.aug} />
+                    {#if isMaster || character.capTir.editable}
                     <p class="italic font-semibold text-sm">{character.capTir.aug} {character.capTir.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.capTir.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.capTir.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capTir")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capTir")}>+</button>
@@ -362,19 +362,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="force">
                         Force
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.force.editable}
                         on:change={(event) => updateCharacteristic(character, "force", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "force", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="force" value={data.isMaster ? character.force.init : character.force.init + character.force.aug} />
-                    {#if data.isMaster || character.force.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="force" value={isMaster ? character.force.init : character.force.init + character.force.aug} />
+                    {#if isMaster || character.force.editable}
                     <p class="italic font-semibold text-sm">{character.force.aug} {character.force.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.force.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.force.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "force")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "force")}>+</button>
@@ -385,19 +385,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="endurance">
                         Endurance
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.endurance.editable}
                         on:change={(event) => updateCharacteristic(character, "endurance", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "endurance", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="endurance" value={data.isMaster ? character.endurance.init : character.endurance.init + character.endurance.aug} />
-                    {#if data.isMaster || character.endurance.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="endurance" value={isMaster ? character.endurance.init : character.endurance.init + character.endurance.aug} />
+                    {#if isMaster || character.endurance.editable}
                     <p class="italic font-semibold text-sm">{character.endurance.aug} {character.endurance.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.endurance.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.endurance.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "endurance")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "endurance")}>+</button>
@@ -408,19 +408,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="initiative">
                         Initiative
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.initiative.editable}
                         on:change={(event) => updateCharacteristic(character, "initiative", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "initiative", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="initiative" value={data.isMaster ? character.initiative.init : character.initiative.init + character.initiative.aug} />
-                    {#if data.isMaster || character.initiative.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="initiative" value={isMaster ? character.initiative.init : character.initiative.init + character.initiative.aug} />
+                    {#if isMaster || character.initiative.editable}
                     <p class="italic font-semibold text-sm">{character.initiative.aug} {character.initiative.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.initiative.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.initiative.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "initiative")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "initiative")}>+</button>
@@ -431,19 +431,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="agilite">
                         Agilité
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.agilite.editable}
                         on:change={(event) => updateCharacteristic(character, "agilite", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "agilite", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="agilite" value={data.isMaster ? character.agilite.init : character.agilite.init + character.agilite.aug} />
-                    {#if data.isMaster || character.agilite.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="agilite" value={isMaster ? character.agilite.init : character.agilite.init + character.agilite.aug} />
+                    {#if isMaster || character.agilite.editable}
                     <p class="italic font-semibold text-sm">{character.agilite.aug} {character.agilite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.agilite.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.agilite.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "agilite")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "agilite")}>+</button>
@@ -454,19 +454,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="dexterite">
                         Dextérité
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.dexterite.editable}
                         on:change={(event) => updateCharacteristic(character, "dexterite", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "dexterite", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="dexterite" value={data.isMaster ? character.dexterite.init : character.dexterite.init + character.dexterite.aug} />
-                    {#if data.isMaster || character.dexterite.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="dexterite" value={isMaster ? character.dexterite.init : character.dexterite.init + character.dexterite.aug} />
+                    {#if isMaster || character.dexterite.editable}
                     <p class="italic font-semibold text-sm">{character.dexterite.aug} {character.dexterite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.dexterite.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.dexterite.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "dexterite")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "dexterite")}>+</button>
@@ -477,19 +477,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="intelligence">
                         Intelligence
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.intelligence.editable}
                         on:change={(event) => updateCharacteristic(character, "intelligence", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "intelligence", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="intelligence" value={data.isMaster ? character.intelligence.init : character.intelligence.init + character.intelligence.aug} />
-                    {#if data.isMaster || character.intelligence.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="intelligence" value={isMaster ? character.intelligence.init : character.intelligence.init + character.intelligence.aug} />
+                    {#if isMaster || character.intelligence.editable}
                     <p class="italic font-semibold text-sm">{character.intelligence.aug} {character.intelligence.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.intelligence.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.intelligence.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "intelligence")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "intelligence")}>+</button>
@@ -500,19 +500,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="forceMentale">
                         FM
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.forceMentale.editable}
                         on:change={(event) => updateCharacteristic(character, "forceMentale", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "forceMentale", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="forceMentale" value={data.isMaster ? character.forceMentale.init : character.forceMentale.init + character.forceMentale.aug} />
-                    {#if data.isMaster || character.forceMentale.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="forceMentale" value={isMaster ? character.forceMentale.init : character.forceMentale.init + character.forceMentale.aug} />
+                    {#if isMaster || character.forceMentale.editable}
                     <p class="italic font-semibold text-sm">{character.forceMentale.aug} {character.forceMentale.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.forceMentale.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.forceMentale.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "forceMentale")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "forceMentale")}>+</button>
@@ -523,19 +523,19 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="sociabilite">
                         Sociablité
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.sociabilite.editable}
                         on:change={(event) => updateCharacteristic(character, "sociabilite", "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, "sociabilite", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster || !editCharac} 
-                    type="number" name="sociabilite" value={data.isMaster ? character.sociabilite.init : character.sociabilite.init + character.sociabilite.aug} />
-                    {#if data.isMaster || character.sociabilite.editable}
+                    disabled={!isMaster || !editCharac} 
+                    type="number" name="sociabilite" value={isMaster ? character.sociabilite.init : character.sociabilite.init + character.sociabilite.aug} />
+                    {#if isMaster || character.sociabilite.editable}
                     <p class="italic font-semibold text-sm">{character.sociabilite.aug} {character.sociabilite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.sociabilite.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.sociabilite.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "sociabilite")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "sociabilite")}>+</button>
@@ -553,7 +553,7 @@
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Compétences de base</h2>
-                {#if data.isMaster}
+                {#if isMaster}
                 <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editSkill} />
                 {/if}
             </div>
@@ -563,7 +563,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="art">
                         Art
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.art.editable}
                         on:change={(event) => updateCharacteristic(character, "art", "editable", event.target.checked)} />
                         {/if}
@@ -571,11 +571,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="art" 
-                    value={data.isMaster ? character[character.art.charac].init + character[character.art.charac].aug : character[character.art.charac].init + character[character.art.charac].aug + character.art.aug} />
-                    {#if data.isMaster || character.art.editable}
+                    value={isMaster ? character[character.art.charac].init + character[character.art.charac].aug : character[character.art.charac].init + character[character.art.charac].aug + character.art.aug} />
+                    {#if isMaster || character.art.editable}
                     <p class="italic font-semibold text-sm">{character.art.aug} {character.art.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.art.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.art.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "art")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "art")}>+</button>
@@ -586,7 +586,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="athletisme">
                         Athlétisme
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.athletisme.editable}
                         on:change={(event) => updateCharacteristic(character, "athletisme", "editable", event.target.checked)} />
                         {/if}
@@ -594,11 +594,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="athletisme" 
-                    value={data.isMaster ? character[character.athletisme.charac].init + character[character.athletisme.charac].aug : character[character.athletisme.charac].init + character[character.athletisme.charac].aug + character.athletisme.aug} />
-                    {#if data.isMaster || character.athletisme.editable}
+                    value={isMaster ? character[character.athletisme.charac].init + character[character.athletisme.charac].aug : character[character.athletisme.charac].init + character[character.athletisme.charac].aug + character.athletisme.aug} />
+                    {#if isMaster || character.athletisme.editable}
                     <p class="italic font-semibold text-sm">{character.athletisme.aug} {character.athletisme.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.athletisme.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.athletisme.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "athletisme")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "athletisme")}>+</button>
@@ -609,7 +609,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="calme">
                         Calme
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.calme.editable}
                         on:change={(event) => updateCharacteristic(character, "calme", "editable", event.target.checked)} />
                         {/if}
@@ -617,11 +617,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="calme" 
-                    value={data.isMaster ? character[character.calme.charac].init + character[character.calme.charac].aug : character[character.calme.charac].init + character[character.calme.charac].aug + character.calme.aug} />
-                    {#if data.isMaster || character.calme.editable}
+                    value={isMaster ? character[character.calme.charac].init + character[character.calme.charac].aug : character[character.calme.charac].init + character[character.calme.charac].aug + character.calme.aug} />
+                    {#if isMaster || character.calme.editable}
                     <p class="italic font-semibold text-sm">{character.calme.aug} {character.calme.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.calme.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.calme.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "calme")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "calme")}>+</button>
@@ -632,7 +632,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="charme">
                         Charme
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.charme.editable}
                         on:change={(event) => updateCharacteristic(character, "charme", "editable", event.target.checked)} />
                         {/if}
@@ -640,11 +640,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="charme" 
-                    value={data.isMaster ? character[character.charme.charac].init + character[character.charme.charac].aug : character[character.charme.charac].init + character[character.charme.charac].aug + character.charme.aug} />
-                    {#if data.isMaster || character.charme.editable}
+                    value={isMaster ? character[character.charme.charac].init + character[character.charme.charac].aug : character[character.charme.charac].init + character[character.charme.charac].aug + character.charme.aug} />
+                    {#if isMaster || character.charme.editable}
                     <p class="italic font-semibold text-sm">{character.charme.aug} {character.charme.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.charme.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.charme.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "charme")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "charme")}>+</button>
@@ -655,7 +655,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="chevaucher">
                         Chevaucher
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.chevaucher.editable}
                         on:change={(event) => updateCharacteristic(character, "chevaucher", "editable", event.target.checked)} />
                         {/if}
@@ -663,11 +663,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="chevaucher" 
-                    value={data.isMaster ? character[character.chevaucher.charac].init + character[character.chevaucher.charac].aug : character[character.chevaucher.charac].init + character[character.chevaucher.charac].aug + character.chevaucher.aug} />
-                    {#if data.isMaster || character.chevaucher.editable}
+                    value={isMaster ? character[character.chevaucher.charac].init + character[character.chevaucher.charac].aug : character[character.chevaucher.charac].init + character[character.chevaucher.charac].aug + character.chevaucher.aug} />
+                    {#if isMaster || character.chevaucher.editable}
                     <p class="italic font-semibold text-sm">{character.chevaucher.aug} {character.chevaucher.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.chevaucher.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.chevaucher.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "chevaucher")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "chevaucher")}>+</button>
@@ -678,7 +678,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="commandement">
                         Commandement
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.commandement.editable}
                         on:change={(event) => updateCharacteristic(character, "commandement", "editable", event.target.checked)} />
                         {/if}
@@ -686,11 +686,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="commandement" 
-                    value={data.isMaster ? character[character.commandement.charac].init + character[character.commandement.charac].aug : character[character.commandement.charac].init + character[character.commandement.charac].aug + character.commandement.aug} />
-                    {#if data.isMaster || character.commandement.editable}
+                    value={isMaster ? character[character.commandement.charac].init + character[character.commandement.charac].aug : character[character.commandement.charac].init + character[character.commandement.charac].aug + character.commandement.aug} />
+                    {#if isMaster || character.commandement.editable}
                     <p class="italic font-semibold text-sm">{character.commandement.aug} {character.commandement.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.commandement.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.commandement.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "commandement")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "commandement")}>+</button>
@@ -701,7 +701,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="conduiteAttelage">
                         Conduite d'attelage
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.conduiteAttelage.editable}
                         on:change={(event) => updateCharacteristic(character, "conduiteAttelage", "editable", event.target.checked)} />
                         {/if}
@@ -709,11 +709,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="conduiteAttelage" 
-                    value={data.isMaster ? character[character.conduiteAttelage.charac].init + character[character.conduiteAttelage.charac].aug : character[character.conduiteAttelage.charac].init + character[character.conduiteAttelage.charac].aug + character.conduiteAttelage.aug} />
-                    {#if data.isMaster || character.conduiteAttelage.editable}
+                    value={isMaster ? character[character.conduiteAttelage.charac].init + character[character.conduiteAttelage.charac].aug : character[character.conduiteAttelage.charac].init + character[character.conduiteAttelage.charac].aug + character.conduiteAttelage.aug} />
+                    {#if isMaster || character.conduiteAttelage.editable}
                     <p class="italic font-semibold text-sm">{character.conduiteAttelage.aug} {character.conduiteAttelage.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.conduiteAttelage.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.conduiteAttelage.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "conduiteAttelage")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "conduiteAttelage")}>+</button>
@@ -724,7 +724,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="cacBase">
                         C. à C. (base)
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.cacBase.editable}
                         on:change={(event) => updateCharacteristic(character, "cacBase", "editable", event.target.checked)} />
                         {/if}
@@ -732,11 +732,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="cacBase" 
-                    value={data.isMaster ? character[character.cacBase.charac].init + character[character.cacBase.charac].aug : character[character.cacBase.charac].init + character[character.cacBase.charac].aug + character.cacBase.aug} />
-                    {#if data.isMaster || character.cacBase.editable}
+                    value={isMaster ? character[character.cacBase.charac].init + character[character.cacBase.charac].aug : character[character.cacBase.charac].init + character[character.cacBase.charac].aug + character.cacBase.aug} />
+                    {#if isMaster || character.cacBase.editable}
                     <p class="italic font-semibold text-sm">{character.cacBase.aug} {character.cacBase.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.cacBase.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.cacBase.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "cacBase")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "cacBase")}>+</button>
@@ -747,7 +747,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="cac">
                         C.à C.
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.cac.editable}
                         on:change={(event) => updateCharacteristic(character, "cac", "editable", event.target.checked)} />
                         {/if}
@@ -755,11 +755,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="cac" 
-                    value={data.isMaster ? character[character.cac.charac].init + character[character.cac.charac].aug : character[character.cac.charac].init + character[character.cac.charac].aug + character.cac.aug} />
-                    {#if data.isMaster || character.cac.editable}
+                    value={isMaster ? character[character.cac.charac].init + character[character.cac.charac].aug : character[character.cac.charac].init + character[character.cac.charac].aug + character.cac.aug} />
+                    {#if isMaster || character.cac.editable}
                     <p class="italic font-semibold text-sm">{character.cac.aug} {character.cac.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.cac.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.cac.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "cac")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "cac")}>+</button>
@@ -770,7 +770,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="discretion">
                         Discrétion
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.discretion.editable}
                         on:change={(event) => updateCharacteristic(character, "discretion", "editable", event.target.checked)} />
                         {/if}
@@ -778,11 +778,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="discretion" 
-                    value={data.isMaster ? character[character.discretion.charac].init + character[character.discretion.charac].aug : character[character.discretion.charac].init + character[character.discretion.charac].aug + character.discretion.aug} />
-                    {#if data.isMaster || character.discretion.editable}
+                    value={isMaster ? character[character.discretion.charac].init + character[character.discretion.charac].aug : character[character.discretion.charac].init + character[character.discretion.charac].aug + character.discretion.aug} />
+                    {#if isMaster || character.discretion.editable}
                     <p class="italic font-semibold text-sm">{character.discretion.aug} {character.discretion.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.discretion.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.discretion.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "discretion")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "discretion")}>+</button>
@@ -793,7 +793,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="divertissement">
                         Divertissement
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.divertissement.editable}
                         on:change={(event) => updateCharacteristic(character, "divertissement", "editable", event.target.checked)} />
                         {/if}
@@ -801,11 +801,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="divertissement" 
-                    value={data.isMaster ? character[character.divertissement.charac].init + character[character.divertissement.charac].aug : character[character.divertissement.charac].init + character[character.divertissement.charac].aug + character.divertissement.aug} />
-                    {#if data.isMaster || character.divertissement.editable}
+                    value={isMaster ? character[character.divertissement.charac].init + character[character.divertissement.charac].aug : character[character.divertissement.charac].init + character[character.divertissement.charac].aug + character.divertissement.aug} />
+                    {#if isMaster || character.divertissement.editable}
                     <p class="italic font-semibold text-sm">{character.divertissement.aug} {character.divertissement.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.divertissement.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.divertissement.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "divertissement")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "divertissement")}>+</button>
@@ -816,7 +816,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="empriseAnimaux">
                         Emprise animaux
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.empriseAnimaux.editable}
                         on:change={(event) => updateCharacteristic(character, "empriseAnimaux", "editable", event.target.checked)} />
                         {/if}
@@ -824,11 +824,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="empriseAnimaux" 
-                    value={data.isMaster ? character[character.empriseAnimaux.charac].init + character[character.empriseAnimaux.charac].aug : character[character.empriseAnimaux.charac].init + character[character.empriseAnimaux.charac].aug + character.empriseAnimaux.aug} />
-                    {#if data.isMaster || character.empriseAnimaux.editable}
+                    value={isMaster ? character[character.empriseAnimaux.charac].init + character[character.empriseAnimaux.charac].aug : character[character.empriseAnimaux.charac].init + character[character.empriseAnimaux.charac].aug + character.empriseAnimaux.aug} />
+                    {#if isMaster || character.empriseAnimaux.editable}
                     <p class="italic font-semibold text-sm">{character.empriseAnimaux.aug} {character.empriseAnimaux.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.empriseAnimaux.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.empriseAnimaux.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "empriseAnimaux")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "empriseAnimaux")}>+</button>
@@ -839,7 +839,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="escalade">
                         Escalade
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.escalade.editable}
                         on:change={(event) => updateCharacteristic(character, "escalade", "editable", event.target.checked)} />
                         {/if}
@@ -847,11 +847,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="escalade" 
-                    value={data.isMaster ? character[character.escalade.charac].init + character[character.escalade.charac].aug : character[character.escalade.charac].init + character[character.escalade.charac].aug + character.escalade.aug} />
-                    {#if data.isMaster || character.escalade.editable}
+                    value={isMaster ? character[character.escalade.charac].init + character[character.escalade.charac].aug : character[character.escalade.charac].init + character[character.escalade.charac].aug + character.escalade.aug} />
+                    {#if isMaster || character.escalade.editable}
                     <p class="italic font-semibold text-sm">{character.escalade.aug} {character.escalade.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.escalade.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.escalade.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "escalade")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "escalade")}>+</button>
@@ -862,7 +862,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="esquive">
                         Esquive
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.esquive.editable}
                         on:change={(event) => updateCharacteristic(character, "esquive", "editable", event.target.checked)} />
                         {/if}
@@ -870,11 +870,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="esquive" 
-                    value={data.isMaster ? character[character.esquive.charac].init + character[character.esquive.charac].aug : character[character.esquive.charac].init + character[character.esquive.charac].aug + character.esquive.aug} />
-                    {#if data.isMaster || character.esquive.editable}
+                    value={isMaster ? character[character.esquive.charac].init + character[character.esquive.charac].aug : character[character.esquive.charac].init + character[character.esquive.charac].aug + character.esquive.aug} />
+                    {#if isMaster || character.esquive.editable}
                     <p class="italic font-semibold text-sm">{character.esquive.aug} {character.esquive.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.esquive.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.esquive.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "esquive")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "esquive")}>+</button>
@@ -885,7 +885,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="intimidation">
                         Intimidation
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.intimidation.editable}
                         on:change={(event) => updateCharacteristic(character, "intimidation", "editable", event.target.checked)} />
                         {/if}
@@ -893,11 +893,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="intimidation" 
-                    value={data.isMaster ? character[character.intimidation.charac].init + character[character.intimidation.charac].aug : character[character.intimidation.charac].init + character[character.intimidation.charac].aug + character.intimidation.aug} />
-                    {#if data.isMaster || character.intimidation.editable}
+                    value={isMaster ? character[character.intimidation.charac].init + character[character.intimidation.charac].aug : character[character.intimidation.charac].init + character[character.intimidation.charac].aug + character.intimidation.aug} />
+                    {#if isMaster || character.intimidation.editable}
                     <p class="italic font-semibold text-sm">{character.intimidation.aug} {character.intimidation.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.intimidation.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.intimidation.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "intimidation")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "intimidation")}>+</button>
@@ -908,7 +908,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="intuition">
                         Intuition
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.intuition.editable}
                         on:change={(event) => updateCharacteristic(character, "intuition", "editable", event.target.checked)} />
                         {/if}
@@ -916,11 +916,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="intuition" 
-                    value={data.isMaster ? character[character.intuition.charac].init + character[character.intuition.charac].aug : character[character.intuition.charac].init + character[character.intuition.charac].aug + character.intuition.aug} />
-                    {#if data.isMaster || character.intuition.editable}
+                    value={isMaster ? character[character.intuition.charac].init + character[character.intuition.charac].aug : character[character.intuition.charac].init + character[character.intuition.charac].aug + character.intuition.aug} />
+                    {#if isMaster || character.intuition.editable}
                     <p class="italic font-semibold text-sm">{character.intuition.aug} {character.intuition.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.intuition.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.intuition.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "intuition")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "intuition")}>+</button>
@@ -931,7 +931,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="marchandage">
                         Marchandage
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.marchandage.editable}
                         on:change={(event) => updateCharacteristic(character, "marchandage", "editable", event.target.checked)} />
                         {/if}
@@ -939,11 +939,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="marchandage" 
-                    value={data.isMaster ? character[character.marchandage.charac].init + character[character.marchandage.charac].aug : character[character.marchandage.charac].init + character[character.marchandage.charac].aug + character.marchandage.aug} />
-                    {#if data.isMaster || character.marchandage.editable}
+                    value={isMaster ? character[character.marchandage.charac].init + character[character.marchandage.charac].aug : character[character.marchandage.charac].init + character[character.marchandage.charac].aug + character.marchandage.aug} />
+                    {#if isMaster || character.marchandage.editable}
                     <p class="italic font-semibold text-sm">{character.marchandage.aug} {character.marchandage.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.marchandage.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.marchandage.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "marchandage")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "marchandage")}>+</button>
@@ -954,7 +954,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="navigation">
                         Navigation
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.navigation.editable}
                         on:change={(event) => updateCharacteristic(character, "navigation", "editable", event.target.checked)} />
                         {/if}
@@ -962,11 +962,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="navigation" 
-                    value={data.isMaster ? character[character.navigation.charac].init + character[character.navigation.charac].aug : character[character.navigation.charac].init + character[character.navigation.charac].aug + character.navigation.aug} />
-                    {#if data.isMaster || character.navigation.editable}
+                    value={isMaster ? character[character.navigation.charac].init + character[character.navigation.charac].aug : character[character.navigation.charac].init + character[character.navigation.charac].aug + character.navigation.aug} />
+                    {#if isMaster || character.navigation.editable}
                     <p class="italic font-semibold text-sm">{character.navigation.aug} {character.navigation.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.navigation.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.navigation.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "navigation")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "navigation")}>+</button>
@@ -977,7 +977,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="pari">
                         Pari
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.pari.editable}
                         on:change={(event) => updateCharacteristic(character, "pari", "editable", event.target.checked)} />
                         {/if}
@@ -985,11 +985,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="pari" 
-                    value={data.isMaster ? character[character.pari.charac].init + character[character.pari.charac].aug : character[character.pari.charac].init + character[character.pari.charac].aug + character.pari.aug} />
-                    {#if data.isMaster || character.pari.editable}
+                    value={isMaster ? character[character.pari.charac].init + character[character.pari.charac].aug : character[character.pari.charac].init + character[character.pari.charac].aug + character.pari.aug} />
+                    {#if isMaster || character.pari.editable}
                     <p class="italic font-semibold text-sm">{character.pari.aug} {character.pari.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.pari.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.pari.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "pari")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "pari")}>+</button>
@@ -1000,7 +1000,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="perception">
                         Perception
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.perception.editable}
                         on:change={(event) => updateCharacteristic(character, "perception", "editable", event.target.checked)} />
                         {/if}
@@ -1008,11 +1008,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="perception" 
-                    value={data.isMaster ? character[character.perception.charac].init + character[character.perception.charac].aug : character[character.perception.charac].init + character[character.perception.charac].aug + character.perception.aug} />
-                    {#if data.isMaster || character.perception.editable}
+                    value={isMaster ? character[character.perception.charac].init + character[character.perception.charac].aug : character[character.perception.charac].init + character[character.perception.charac].aug + character.perception.aug} />
+                    {#if isMaster || character.perception.editable}
                     <p class="italic font-semibold text-sm">{character.perception.aug} {character.perception.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.perception.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.perception.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "perception")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "perception")}>+</button>
@@ -1023,7 +1023,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="ragot">
                         Ragot
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.ragot.editable}
                         on:change={(event) => updateCharacteristic(character, "ragot", "editable", event.target.checked)} />
                         {/if}
@@ -1031,11 +1031,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="ragot" 
-                    value={data.isMaster ? character[character.ragot.charac].init + character[character.ragot.charac].aug : character[character.ragot.charac].init + character[character.ragot.charac].aug + character.ragot.aug} />
-                    {#if data.isMaster || character.ragot.editable}
+                    value={isMaster ? character[character.ragot.charac].init + character[character.ragot.charac].aug : character[character.ragot.charac].init + character[character.ragot.charac].aug + character.ragot.aug} />
+                    {#if isMaster || character.ragot.editable}
                     <p class="italic font-semibold text-sm">{character.ragot.aug} {character.ragot.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.ragot.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.ragot.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "ragot")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "ragot")}>+</button>
@@ -1046,7 +1046,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="ramer">
                         Ramer
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.ramer.editable}
                         on:change={(event) => updateCharacteristic(character, "ramer", "editable", event.target.checked)} />
                         {/if}
@@ -1054,11 +1054,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="ramer" 
-                    value={data.isMaster ? character[character.ramer.charac].init + character[character.ramer.charac].aug : character[character.ramer.charac].init + character[character.ramer.charac].aug + character.ramer.aug} />
-                    {#if data.isMaster || character.ramer.editable}
+                    value={isMaster ? character[character.ramer.charac].init + character[character.ramer.charac].aug : character[character.ramer.charac].init + character[character.ramer.charac].aug + character.ramer.aug} />
+                    {#if isMaster || character.ramer.editable}
                     <p class="italic font-semibold text-sm">{character.ramer.aug} {character.ramer.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.ramer.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.ramer.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "ramer")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "ramer")}>+</button>
@@ -1069,7 +1069,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="resistance">
                         Résistance
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.resistance.editable}
                         on:change={(event) => updateCharacteristic(character, "resistance", "editable", event.target.checked)} />
                         {/if}
@@ -1077,11 +1077,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="resistance" 
-                    value={data.isMaster ? character[character.resistance.charac].init + character[character.resistance.charac].aug : character[character.resistance.charac].init + character[character.resistance.charac].aug + character.resistance.aug} />
-                    {#if data.isMaster || character.resistance.editable}
+                    value={isMaster ? character[character.resistance.charac].init + character[character.resistance.charac].aug : character[character.resistance.charac].init + character[character.resistance.charac].aug + character.resistance.aug} />
+                    {#if isMaster || character.resistance.editable}
                     <p class="italic font-semibold text-sm">{character.resistance.aug} {character.resistance.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.resistance.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.resistance.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "resistance")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "resistance")}>+</button>
@@ -1092,7 +1092,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="resistanceAlcool">
                         Résistance à l'alcool
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.resistanceAlcool.editable}
                         on:change={(event) => updateCharacteristic(character, "resistanceAlcool", "editable", event.target.checked)} />
                         {/if}
@@ -1100,11 +1100,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="resistanceAlcool" 
-                    value={data.isMaster ? character[character.resistanceAlcool.charac].init + character[character.resistanceAlcool.charac].aug : character[character.resistanceAlcool.charac].init + character[character.resistanceAlcool.charac].aug + character.resistanceAlcool.aug} />
-                    {#if data.isMaster || character.resistanceAlcool.editable}
+                    value={isMaster ? character[character.resistanceAlcool.charac].init + character[character.resistanceAlcool.charac].aug : character[character.resistanceAlcool.charac].init + character[character.resistanceAlcool.charac].aug + character.resistanceAlcool.aug} />
+                    {#if isMaster || character.resistanceAlcool.editable}
                     <p class="italic font-semibold text-sm">{character.resistanceAlcool.aug} {character.resistanceAlcool.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.resistanceAlcool.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.resistanceAlcool.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "resistanceAlcool")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "resistanceAlcool")}>+</button>
@@ -1115,7 +1115,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="subornation">
                         Subornation
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.subornation.editable}
                         on:change={(event) => updateCharacteristic(character, "subornation", "editable", event.target.checked)} />
                         {/if}
@@ -1123,11 +1123,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="subornation" 
-                    value={data.isMaster ? character[character.subornation.charac].init + character[character.subornation.charac].aug : character[character.subornation.charac].init + character[character.subornation.charac].aug + character.subornation.aug} />
-                    {#if data.isMaster || character.subornation.editable}
+                    value={isMaster ? character[character.subornation.charac].init + character[character.subornation.charac].aug : character[character.subornation.charac].init + character[character.subornation.charac].aug + character.subornation.aug} />
+                    {#if isMaster || character.subornation.editable}
                     <p class="italic font-semibold text-sm">{character.subornation.aug} {character.subornation.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.subornation.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.subornation.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "subornation")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "subornation")}>+</button>
@@ -1138,7 +1138,7 @@
                 <div class="form-control items-center">
                     <label class="label flex justify-between w-3/4" for="survieExterieur">
                         Survie en extérieur
-                        {#if data.isMaster}
+                        {#if isMaster}
                         <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.survieExterieur.editable}
                         on:change={(event) => updateCharacteristic(character, "survieExterieur", "editable", event.target.checked)} />
                         {/if}
@@ -1146,11 +1146,11 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="survieExterieur" 
-                    value={data.isMaster ? character[character.survieExterieur.charac].init + character[character.survieExterieur.charac].aug : character[character.survieExterieur.charac].init + character[character.survieExterieur.charac].aug + character.survieExterieur.aug} />
-                    {#if data.isMaster || character.survieExterieur.editable}
+                    value={isMaster ? character[character.survieExterieur.charac].init + character[character.survieExterieur.charac].aug : character[character.survieExterieur.charac].init + character[character.survieExterieur.charac].aug + character.survieExterieur.aug} />
+                    {#if isMaster || character.survieExterieur.editable}
                     <p class="italic font-semibold text-sm">{character.survieExterieur.aug} {character.survieExterieur.aug > 1 ? "augmentations" : "augmentation"}</p>
                     {/if}
-                    {#if (!data.isMaster || !character.isPlayable) && character.survieExterieur.editable}
+                    {#if (!isMaster || !character.isPlayable) && character.survieExterieur.editable}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "survieExterieur")}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "survieExterieur")}>+</button>
@@ -1173,7 +1173,7 @@
                     <label class="label" for="gold">Couronnes d'Or</label>
                     <input on:change={(event) => updateAttribute(character, "gold", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster} 
+                    disabled={!isMaster} 
                     type="number" name="gold" value={character.gold} />
                 </div>
 
@@ -1181,7 +1181,7 @@
                     <label class="label" for="silver">Pièces d'Argent</label>
                     <input on:change={(event) => updateAttribute(character, "silver", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster}  
+                    disabled={!isMaster}  
                     type="number" name="silver" value={character.silver} />
                 </div>
 
@@ -1189,7 +1189,7 @@
                     <label class="label" for="copper">Sous de Cuivre</label>
                     <input  on:change={(event) => updateAttribute(character, "copper", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster}  
+                    disabled={!isMaster}  
                     type="number" name="copper" value={character.copper} />
                 </div>
             </section>
@@ -1211,7 +1211,7 @@
                     <label class="label" for="blessuresInfligees">Infligées</label>
                     <input on:change={(event) => updateAttribute(character, "blessuresInfligees", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!data.isMaster}  
+                    disabled={!isMaster}  
                     type="number" name="blessuresInfligees" value={character.blessuresInfligees} />
                 </div>
 
@@ -1236,7 +1236,7 @@
                     <label class="label" for="ambitionCourt">Court terme</label>
                     <textarea on:change={(event) => updateAttribute(character, "ambitionCourt", event.target.value)} 
                     class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
-                    disabled={data.isMaster}  
+                    disabled={isMaster}  
                      name="ambitionCourt" value={character.ambitionCourt} />
                 </div>
 
@@ -1244,7 +1244,7 @@
                     <label class="label" for="ambitionLong">Long terme</label>
                     <textarea on:change={(event) => updateAttribute(character, "ambitionLong", event.target.value)} 
                     class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
-                    disabled={data.isMaster}  
+                    disabled={isMaster}  
                      name="ambitionLong" value={character.ambitionLong} />
                 </div>
             </section>
@@ -1257,13 +1257,13 @@
             <h2 class="card-title self-center mb-5">Groupe</h2>
             <section class="flex flex-col gap-5">
                 {#if !character.group}
-                    {#if data.isMaster}
+                    {#if isMaster}
                         <p class="text-center text-lg italic" >Le joueur n'a pas encore rejoint de groupe.</p>
                     {:else}
                         <p class="text-center text-lg italic" >Vous n'avez pas encore rejoint de groupe.</p>
                     {/if}
 
-                    {#if !data.isMaster}
+                    {#if !isMaster}
                     <div class="flex justify-center gap-5 mt-5">
                         <a href={"/creategroup/?characId=" + character.id}>
                             <button class="btn btn-neutral">Créer un groupe</button>
@@ -1278,7 +1278,7 @@
                         <label class="label" for="groupName">Nom</label>
                         <input on:change={(event) => updateGroup(character.expand.group, "name", event.target.value)} 
                         class="text-center input input-bordered disabled:text-base-content disabled:cursor-default" 
-                        disabled={data.isMaster}  
+                        disabled={isMaster}  
                         type="text" name="groupName" value={character.expand.group.name} />
                     </div>
 
@@ -1298,7 +1298,7 @@
                         <label class="label" for="ambitionCourt">Ambition court terme</label>
                         <textarea on:change={(event) => updateGroup(character.expand.group, "ambitionCourt", event.target.value)} 
                             class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
-                            disabled={data.isMaster} 
+                            disabled={isMaster} 
                             name="ambitionCourt" value={character.expand.group.ambitionCourt} />
                     </div>
 
@@ -1306,14 +1306,14 @@
                         <label class="label" for="ambitionLong">Ambition long terme</label>
                         <textarea on:change={(event) => updateGroup(character.expand.group, "ambitionLong", event.target.value)} 
                             class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
-                            disabled={data.isMaster}  
+                            disabled={isMaster}  
                             name="ambitionLong" value={character.expand.group.ambitionLong} />
                     </div>
                     
                 {/if}
             </section>
         </section>
-        {#if character.group && !data.isMaster}
+        {#if character.group && !isMaster}
         <form class="card-actions justify-center" method="POST" action="?/leaveGroup">
             <input type="hidden" name="characId" value={character.id} />
             <input type="hidden" name="groupId" value={character.group} />
@@ -1323,7 +1323,7 @@
     </section>
 
     <!-- Notes -->
-    {#if !data.isMaster}
+    {#if !isMaster}
     <section id="notes" class="card bg-base-300 w-full">
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
@@ -1334,7 +1334,7 @@
                 <div class="form-control">
                     <textarea on:change={(event) => updateAttribute(character, "notes", event.target.value)} 
                     class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
-                    disabled={data.isMaster}  
+                    disabled={isMaster}  
                      name="notes" value={character.notes} />
                 </div>
             </section>
@@ -1355,7 +1355,7 @@
 
 
     <!-- If master, expel player and delete character buttons + modal for deleting confirmation -->
-    {#if data.isMaster}
+    {#if isMaster}
 
         <!-- Master delete character or expel player -->
         <section class="flex gap-3 mt-10">

@@ -11,10 +11,9 @@ export async function load({fetch, params, locals}){
             'content-type': "application/json"
         }
     });
-
     const character = await characResponse.json();
 
-    // If the currently logged in user is not the character user or is the master of the game, redirect to the game page.
+    // If the currently logged in user is not the character user or is not the master of the game, redirect to the game page.
     if(locals.user.id != character.record.user && locals.user.id != character.record.expand.game.owner) {
         throw redirect(303, "/game/" + game.record.id);
     }
