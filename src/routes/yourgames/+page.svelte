@@ -4,6 +4,7 @@
     export let data;
 </script>
 
+{#if data && data.games}
 {#if data.games.length == 0}
 <h1 class="text-3xl font-semibold">Vous n'avez rejoint aucune partie pour le moment.</h1>
 <a href={"/findgame"}>
@@ -37,3 +38,4 @@
     
 </section>
 {/each}
+{/if}

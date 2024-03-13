@@ -44,6 +44,10 @@ export async function updateGroup(group, attribute, value){
     await updateRecord("groups", group.id, {[attribute]: value});
 }
 
+export async function updateObject(object, attribute, value){
+    await updateRecord("objects", object.id, {[attribute]: value});
+}
+
 export async function updateCharacteristic(character, characteristic, characElement, value){
     character[characteristic][characElement] = value;
     await updateRecord("characters", character.id, {[characteristic]: character[characteristic]});
@@ -138,4 +142,60 @@ export function calculateWoundsMax(character){
     const bfm = Math.floor( (character.forceMentale.init + character.forceMentale.aug) / 10 );
 
     return bf + 2*be + bfm;
+}
+
+export async function deleteRecord(collection, record){
+    const response = await fetch('/api/deleteRecord', {
+        method: "DELETE",
+        body: JSON.stringify({collection: collection, id: record.id}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const respJson = await response.json();
+    if(respJson.error){
+        return {
+            error: true,
+            message: "Erreur lors de la suppression de l'objet."
+        }
+    }
+
+    return {
+        success: true
+    }
+
+}
+
+export async function getFullCollection(collection){
+    const response = await fetch('/api/getFullCollection', {
+        method: "POST",
+        body: JSON.stringify({collection: collection}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const respJson = await response.json();
+    if(respJson.error){
+        return {
+            error: true,
+            message: "Erreur lors de la récupération des " + collection
+        }
+    }
+    
+    return respJson.records;
+}
+
+export async function addObjectToCharac(charac, objId){
+    charac.nbPossessions[objId] = {count: 1};
+    await updateRecord("characters", charac.id, {"possessions+": objId, "nbPossessions": charac.nbPossessions});
+}
+
+export async function updateCharacObjectCount(charac, objId, value){
+    charac.nbPossessions[objId].count = value;
+    await updateRecord("characters", charac.id, {"nbPossessions": charac.nbPossessions});
+}
+
+export async function deleteObjectFromCharac(charac, objId){
+    charac.nbPossessions[objId].count = 0;
+    await updateRecord("characters", charac.id, {"possessions-": objId, "nbPossessions": charac.nbPossessions});
 }

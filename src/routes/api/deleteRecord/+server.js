@@ -8,7 +8,7 @@ export async function DELETE({ request, locals }) {
         await locals.pb.collection(collection).delete(id);
     }
     catch(err) {
-        console.log("Error: " + err);
+        console.log("deleteRecord Error: " + err);
         return json({
             error: true
         });

@@ -10,9 +10,10 @@ export async function POST({ request, locals }) {
         records = await locals.pb.collection(collection).getFullList();
     }
     catch(err) {
-        console.log("Error: " + err);
+        console.log("getFullCollection Error: " + err);
         return {
-            erro: true
+            error: true,
+            message: "Erreur lors de la récupération des " + collection
         }
     }
     

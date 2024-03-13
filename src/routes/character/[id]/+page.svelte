@@ -7,7 +7,11 @@
         increaseSkill, 
         decreaseSkill, 
         calculateWoundsMax,
-        updateGroup} from "$lib/utils.js"
+        updateGroup,
+        getFullCollection,
+        addObjectToCharac,
+        updateCharacObjectCount,
+        deleteObjectFromCharac} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
 
@@ -24,10 +28,12 @@
         ["richesses", "Richesses"],
         ["blessures", "Blessures"],
         ["ambitions", "Ambitions"],
-        ["groupe", "Groupe"],]
+        ["groupe", "Groupe"],
+        ["possessions", "Possessions"],]
     );
 
     let character = data.character;
+    let objects = data.objects
     const isMaster = data.isMaster;
 
     let pb;
@@ -35,6 +41,8 @@
     let editCharac = false;
     let editSkill = false;
     let editNotes = false;
+
+    let addObjectModal;
 
     let characFormModal;
     $: if(form && form.message){
@@ -49,7 +57,7 @@
             if("update" == e.action) {
                 character = e.record;
             }
-        }, {expand: "user,group,game"});
+        }, {expand: "user,group,game,possessions"});
 
         if(character.group) {
             pb.collection("groups").subscribe(character.group, (e) => {
@@ -58,10 +66,32 @@
                 }
             });
         }
+
+        pb.collection("objects").subscribe("*", (e) => {
+            if("create" == e.action){
+                objects = [...objects, e.record];
+            }
+            else if("update" == e.action) {
+                if(character.expand.possession){
+                    character.expand.possessions = character.expand.possessions.map((obj) => obj.id == e.record.id ? e.record : obj);
+                }
+                objects = objects.map((obj) => obj.id == e.record.id ? e.record : obj);
+            }
+            else if("delete" == e.action){
+                if(character.expand.possession){
+                    character.expand.possessions = character.expand.possessions.filter((obj) => obj.id != e.record.id);
+                }
+                objects = objects.filter((obj) => obj.id != e.record.id);
+            }
+        });
+        
     });
 
     onDestroy(() => {
-        if(pb) pb.collection("characters").unsubscribe();
+        if(pb) {
+            pb.collection("characters").unsubscribe();
+            pb.collection("objects").unsubscribe();
+        }
     });
 
 </script>
@@ -85,9 +115,9 @@
     {/if}
 
     <!-- NAV -->
-    <nav class="flex flex-wrap  items-center gap-3 w-full mt-5">
+    <nav class="flex flex-wrap items-center gap-3 w-full mt-5">
         {#each sections as [id, name]}
-        <a href={"#"+id} class="flex-grow">
+        <a href={"#"+id} class="">
             <button class="btn btn-neutral">{name}</button>
         </a>
         {/each}
@@ -1178,7 +1208,7 @@
                 </div>
 
                 <div class="form-control items-center">
-                    <label class="label" for="silver">Pièces d'Argent</label>
+                    <label class="label" for="silver">Pistoles d'Argent</label>
                     <input on:change={(event) => updateAttribute(character, "silver", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster}  
@@ -1341,6 +1371,95 @@
         </section>
     </section>
     {/if}
+
+    <!-- POSSESSIONS -->
+    <section id="possessions" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Possessions</h2>
+            </div>
+            <div class="card-actions justify-center mb-5">
+                <button class="btn btn-neutral" on:click={() => addObjectModal.show()} >Ajouter des possessions</button>
+            </div>
+            {#if character.possessions.length == 0}
+                <p class="text-lg italic text-center">Aucune possession</p>
+            {:else}
+                <table class="table table-zebra">
+                    <thead>
+                        <tr>
+                            <th class="w-2/3">Nom</th>
+                            <th>Enc.</th>
+                            <th>Nbre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each character.expand.possessions as possession}
+                        <tr>
+                            <th>{possession.name}</th>
+                            <th>{possession.encombrement}</th>
+                            <th>
+                                <input on:change={(event) => updateCharacObjectCount(character, possession.id, event.target.value)}
+                                class="input input-bordered w-16 text-center" 
+                                type="number" value={character.nbPossessions[possession.id].count} min="1"/>
+                            </th>
+                            <th>
+                                <button class="btn btn-error btn-xs xs:btn-md"
+                                on:click={() => {
+                                    // Deleting object from character's objects list
+                                    deleteObjectFromCharac(character, possession.id);
+                                    // Adding the deleted objects to the list of available objects
+                                    // in the add object modal.
+                                    objects = [...objects, possession];
+                                }}>Supprimer</button>
+                            </th>
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            {/if}
+        </section>
+
+        <dialog id="addObjectModal" class="modal modal-bottom sm:modal-middle" bind:this={addObjectModal} >
+            <section class="modal-box form-control bg-base-300">
+                {#if objects.length == 0}
+                <p class="text-lg text-center mb-5">Aucun objet disponible</p>
+                <section class="card-actions justify-center">
+                    <button class="btn btn-neutral"
+                    on:click={() => addObjectModal.close()}>Fermer</button>
+                </section>
+                {:else}
+                <table class="card-body table table-zebra">
+                    <thead>
+                        <tr>
+                            <th class="w-2/3">Nom</th>
+                            <th>Enc.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each objects as object}
+                            <tr>
+                                <th class="text-[0.7rem] xs:text-sm lg:text-lg">{object.name}</th>
+                                <th>{object.encombrement}</th>
+                                <th><button class="btn btn-success btn-xs xs:btn-md" 
+                                on:click={() => {
+                                    // Adding the object to the character objects list
+                                    addObjectToCharac(character, object.id);
+                                    // Removing the object that was just added to character
+                                    // So it doesn't appear in the modal
+                                    // Because you can only add an object once.
+                                    objects = objects.filter((obj) => obj.id !== object.id);
+                                } }>+</button></th>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                {/if}
+            </section>
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
+                <button>Close</button>
+            </form>
+        </dialog>
+    </section>
 
 
 

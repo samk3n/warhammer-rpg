@@ -10,7 +10,7 @@ export async function PUT({ request, locals }) {
         record = await locals.pb.collection(collection).create(data);
     }
     catch(err) {
-        console.log("Error: " + err);
+        console.log("createRecord Error: " + err);
         return json({
             error: true
         });

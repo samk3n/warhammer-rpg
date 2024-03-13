@@ -6,7 +6,7 @@ export function POST({locals}){
         locals.user = undefined;
     }
     catch(err) {
-        console.log("Error: " + err);
+        console.log("logout Error: " + err);
         return {
             error: true,
             message: "Un problème est apparu lors de la déconnexion."

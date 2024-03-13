@@ -10,10 +10,18 @@
         gameFormModal.showModal();
     }
 
+    const objects = new Map(
+        [["/objects", "Objets"],
+        ["/talents", "Talents"],
+        ["/weapons", "Armes"],
+        ["/armor", "Armures"],
+        ["/spells", "Sorts"],]
+    );
+
 </script>
 
 <section class="flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
-{#if data && data.game && data.characters}
+{#if data && data.game}
 
     <h1 class="text-3xl font-bold">{data.game.name}</h1>
 
@@ -30,8 +38,15 @@
 
     {#if data.isMaster}
     <a href={"/createcharac/?gameId=" + data.game.id}>
-        <button class="btn btn-primary btn-wide text-xl">Créer un personnage</button>
+        <button class="btn btn-primary xs:btn-wide text-xl">Créer un personnage</button>
     </a>
+    <section class="flex flex-wrap gap-2">
+        {#each objects as [key, value]}
+        <a href={key}>
+            <button class="btn btn-secondary">{value}</button>
+        </a>
+        {/each}
+    </section>
     {/if}
 
     {#if !data.isUserInGame || data.isMaster}
@@ -66,7 +81,7 @@
                     <p class="font-bold text-xl input flex-1 flex gap-2 items-center">Race: <span class="font-normal">{character.race}</span></p>
                     <p class="font-bold text-xl input flex-1 flex gap-2 items-center">Classe: <span class="font-normal">{character.classe}</span></p>
                 </div>
-                <div class="grid grid-cols-5 gap-1">
+                <div class="grid grid-cols-2 2xs:grid-cols-5 gap-1">
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="cc">CC</label>
                         <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="cc" value={character.capCombat.init + character.capCombat.aug} />
@@ -91,9 +106,7 @@
                         <label class="label font-semibold self-center" for="i">I</label>
                         <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="i" value={character.initiative.init + character.initiative.aug} />
                     </div>
-                </div>
 
-                <div class="grid grid-cols-5 gap-1">
                     <div class="form-control">
                         <label class="label font-semibold self-center" for="ag">Ag</label>
                         <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="ag" value={character.agilite.init + character.agilite.aug} />
@@ -124,7 +137,7 @@
             {#if data.isMaster || data.isUserInGame}
             <div class="card-actions justify-center">
                 <a href={"/character/" + character.id}>
-                    <button class="btn btn-neutral btn-wide">{data.isMaster ? "Voir" : "Jouer"}</button>
+                    <button class="btn btn-neutral xs:btn-wide">{data.isMaster ? "Voir" : "Jouer"}</button>
                 </a>
             </div>
             {:else}

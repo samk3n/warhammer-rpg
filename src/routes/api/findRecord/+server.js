@@ -10,7 +10,7 @@ export async function POST({ request, locals }) {
         record = await locals.pb.collection(collection).getFirstListItem(filter, {expand: expand});
     }
     catch(err) {
-        console.log("Error: " + err);
+        console.log("findRecord Error: " + err);
         return json({
             error: true
         });

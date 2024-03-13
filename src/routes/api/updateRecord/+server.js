@@ -8,7 +8,7 @@ export async function PUT({ request, locals }) {
         await locals.pb.collection(collection).update(id, updates);
     }
     catch(err) {
-        console.log("Error: " + err);
+        console.log("updateRecord Error: " + err);
         return json({
             error: true
         });

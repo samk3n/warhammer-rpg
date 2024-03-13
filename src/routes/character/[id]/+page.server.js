@@ -6,7 +6,7 @@ export async function load({fetch, params, locals}){
 
     const characResponse = await fetch("/api/findRecord", {
         method: "POST",
-        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"', expand: "user,group,game"}),
+        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"', expand: "user,group,game,possessions"}),
         headers: {
             'content-type': "application/json"
         }
@@ -22,8 +22,27 @@ export async function load({fetch, params, locals}){
         isMaster = true;
     }
 
+    const objectsResponse = await fetch("/api/getFullCollection", {
+        method: "POST",
+        body: JSON.stringify({collection: "objects"}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const objectsResponseJson = await objectsResponse.json();
+    let objects = objectsResponseJson.records;
+
+
+    if(character.record.expand.possessions){
+        let temp = character.record.expand.possessions.map((e) => JSON.stringify(e));
+        objects = objects.filter((obj) => {
+            return !temp.includes(JSON.stringify(obj));
+        });
+    }    
+
     return {
         character: character.record,
+        objects: objects,
         isMaster: isMaster
     }
 }
