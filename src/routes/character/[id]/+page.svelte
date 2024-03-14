@@ -13,7 +13,9 @@
         deleteObjectFromCharac,
         updateCharacTalentCount,
         deleteTalentFromCharac,
-        addTalentToCharac} from "$lib/utils.js"
+        addTalentToCharac,
+        addSpellToCharac,
+        deleteSpellFromCharac} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
 
@@ -32,12 +34,14 @@
         ["ambitions", "Ambitions"],
         ["groupe", "Groupe"],
         ["possessions", "Possessions"],
-        ["talents", "Talents"],]
+        ["talents", "Talents"],
+        ["sorts", "Sorts"],]
     );
 
     let character = data.character;
     let objects = data.objects;
     let talents = data.talents;
+    let spells = data.spells;
     const isMaster = data.isMaster;
 
     let pb;
@@ -48,6 +52,7 @@
 
     let addObjectModal;
     let addTalentModal;
+    let addSpellModal;
 
     let characFormModal;
     $: if(form && form.message){
@@ -62,7 +67,7 @@
             if("update" == e.action) {
                 character = e.record;
             }
-        }, {expand: "user,group,game,possessions,talents"});
+        }, {expand: "user,group,game,possessions,talents,spells"});
 
         if(character.group) {
             pb.collection("groups").subscribe(character.group, (e) => {
@@ -89,6 +94,42 @@
                 objects = objects.filter((obj) => obj.id != e.record.id);
             }
         });
+
+        pb.collection("talents").subscribe("*", (e) => {
+            if("create" == e.action){
+                talents = [...talents, e.record];
+            }
+            else if("update" == e.action) {
+                if(character.expand.talents){
+                    character.expand.talents = character.expand.talents.map((tal) => tal.id == e.record.id ? e.record : tal);
+                }
+                talents = talents.map((tal) => tal.id == e.record.id ? e.record : tal);
+            }
+            else if("delete" == e.action){
+                if(character.expand.talents){
+                    character.expand.talents = character.expand.talents.filter((tal) => tal.id != e.record.id);
+                }
+                talents = talents.filter((tal) => tal.id != e.record.id);
+            }
+        });
+
+        pb.collection("spells").subscribe("*", (e) => {
+            if("create" == e.action){
+                spells = [...spells, e.record];
+            }
+            else if("update" == e.action) {
+                if(character.expand.spells){
+                    character.expand.spells = character.expand.spells.map((spell) => spell.id == e.record.id ? e.record : spell);
+                }
+                spells = spells.map((spell) => spell.id == e.record.id ? e.record : spell);
+            }
+            else if("delete" == e.action){
+                if(character.expand.spells){
+                    character.expand.spells = character.expand.spells.filter((spell) => spell.id != e.record.id);
+                }
+                spells = spells.filter((spell) => spell.id != e.record.id);
+            }
+        });
         
     });
 
@@ -96,12 +137,14 @@
         if(pb) {
             pb.collection("characters").unsubscribe();
             pb.collection("objects").unsubscribe();
+            pb.collection("talents").unsubscribe();
+            pb.collection("spells").unsubscribe();
         }
     });
 
 </script>
 
-<section class="flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
+<section class="flex flex-col gap-7 items-center w-11/12 sm:w-4/5 lg:w-3/6">
 
 {#if data && character}
 
@@ -1496,27 +1539,26 @@
                     <tbody>
                         {#each character.expand.talents as talent}
                         <tr>
-                            <th class="text-[0.75rem] xs:text-sm lg:text-lg">{talent.name}</th>
-                            <th>
-                                <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
-                                class="input input-bordered w-16 text-center disabled:text-base-content disabled:cursor-default" 
-                                disabled={!isMaster}
-                                type="number" value={character.nbTalents[talent.id].count} min="1"/>
-                            </th>
-                            <th class="text-[0.7rem] lg:text-sm">{talent.description}</th>
-                            
-                            {#if isMaster}
-                            <th>
-                                <button class="btn btn-error btn-xs xs:btn-md"
+                            <th class="text-[0.75rem] xs:text-sm lg:text-lg">
+                                {#if isMaster}
+                                <button class="btn btn-ghost btn-circle text-error btn-sm"
                                 on:click={() => {
                                     // Deleting talent from character's talents list
                                     deleteTalentFromCharac(character, talent.id);
                                     // Adding the deleted talent to the list of available talents
                                     // in the add talent modal.
                                     talents = [...talents, talent];
-                                }}>Supprimer</button>
+                                }}>X</button>
+                                {/if}
+                                {talent.name}</th>
+                            <th>
+                                <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
+                                class="text-[0.75rem] xs:text-sm lg:text-lg input input-bordered w-12 text-center disabled:text-base-content disabled:cursor-default" 
+                                disabled={!isMaster}
+                                type="number" value={character.nbTalents[talent.id].count} min="1"/>
                             </th>
-                            {/if}
+                            <th class="text-[0.7rem] lg:text-sm">{talent.description}</th>
+                            
                         </tr>
                         {/each}
                     </tbody>
@@ -1538,8 +1580,8 @@
                     <tbody>
                         {#each talents as talent}
                             <tr>
-                                <th class="text-[0.7rem] xs:text-sm lg:text-lg">{talent.name}</th>
-                                <th><button class="btn btn-success btn-xs xs:btn-md" 
+                                <td class="text-[0.7rem] xs:text-sm lg:text-lg">{talent.name}</td>
+                                <td><button class="btn btn-success btn-xs xs:btn-md" 
                                 on:click={() => {
                                     // Adding the talent to the character talents list
                                     addTalentToCharac(character, talent.id);
@@ -1547,7 +1589,7 @@
                                     // So it doesn't appear in the modal
                                     // Because you can only add an talent once.
                                     talents = talents.filter((tal) => tal.id !== talent.id);
-                                } }>+</button></th>
+                                } }>+</button></td>
                             </tr>
                         {/each}
                     </tbody>
@@ -1556,6 +1598,100 @@
                 <section class="card-actions justify-center mt-5">
                     <button class="btn btn-neutral"
                     on:click={() => addTalentModal.close()}>Fermer</button>
+                </section>
+            </section>
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
+                <button>Close</button>
+            </form>
+        </dialog>
+    </section>
+
+    <!-- SORTS -->
+    <section id="sorts" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Sorts</h2>
+            </div>
+            {#if isMaster}
+            <div class="card-actions justify-center mb-5">
+                <button class="btn btn-neutral" on:click={() => addSpellModal.show()} >Ajouter des sorts</button>
+            </div>
+            {/if}
+            {#if character.spells.length == 0}
+                <p class="text-lg italic text-center">Aucun sort</p>
+            {:else}
+                <table class="table table-zebra">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>NI</th>
+                            <th>Portée</th>
+                            <th>Cible</th>
+                            <th>Durée</th>
+                            <th>Effets</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each character.expand.spells as spell}
+                        <tr>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.name}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.ni}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.portee}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.cible}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.duree}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.effets}</td>
+                            
+                            {#if isMaster}
+                            <td>
+                                <button class="btn btn-error btn-xs xs:btn-md"
+                                on:click={() => {
+                                    // Deleting spell from character's spells list
+                                    deleteSpellFromCharac(character, spell.id);
+                                    // Adding the deleted spell to the list of available spells
+                                    // in the add spell modal.
+                                    spells = [...spells, spell];
+                                }}>Supprimer</button>
+                            </td>
+                            {/if}
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            {/if}
+        </section>
+
+        <dialog id="addSpellModal" class="modal modal-bottom sm:modal-middle" bind:this={addSpellModal} >
+            <section class="modal-box form-control bg-base-300">
+                {#if spells.length == 0}
+                <p class="text-lg text-center mb-5">Aucun sort disponible</p>
+                {:else}
+                <table class="card-body table table-zebra">
+                    <thead>
+                        <tr>
+                            <th class="w-full">Nom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each spells as spell}
+                            <tr>
+                                <th class="text-[0.7rem] xs:text-sm lg:text-lg">{spell.name}</th>
+                                <th><button class="btn btn-success btn-xs xs:btn-md" 
+                                on:click={() => {
+                                    // Adding the spell to the character spells list
+                                    addSpellToCharac(character, spell.id);
+                                    // Removing the spell that was just added to character
+                                    // So it doesn't appear in the modal
+                                    // Because you can only add an spell once.
+                                    spells = spells.filter((spe) => spe.id !== spell.id);
+                                } }>+</button></th>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                {/if}
+                <section class="card-actions justify-center mt-5">
+                    <button class="btn btn-neutral"
+                    on:click={() => addSpellModal.close()}>Fermer</button>
                 </section>
             </section>
             <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">

@@ -196,7 +196,7 @@ export async function updateCharacObjectCount(charac, objId, value){
 }
 
 export async function deleteObjectFromCharac(charac, objId){
-    charac.nbPossessions[objId].count = 0;
+    charac.nbPossessions[objId] = {};
     await updateRecord("characters", charac.id, {"possessions-": objId, "nbPossessions": charac.nbPossessions});
 }
 
@@ -211,6 +211,18 @@ export async function updateCharacTalentCount(charac, talentId, value){
 }
 
 export async function deleteTalentFromCharac(charac, talentId){
-    charac.nbTalents[talentId].count = 0;
+    charac.nbTalents[talentId] = {};
     await updateRecord("characters", charac.id, {"talents-": talentId, "nbTalents": charac.nbTalents});
+}
+
+export async function updateSpell(spell, data){
+    await updateRecord("spells", spell.id, data);
+}
+
+export async function addSpellToCharac(charac, spellId){
+    await updateRecord("characters", charac.id, {"spells+": spellId});
+}
+
+export async function deleteSpellFromCharac(charac, spellId){
+    await updateRecord("characters", charac.id, {"spells-": spellId});
 }

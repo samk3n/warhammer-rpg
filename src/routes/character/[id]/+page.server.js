@@ -6,7 +6,7 @@ export async function load({fetch, params, locals}){
 
     const characResponse = await fetch("/api/findRecord", {
         method: "POST",
-        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"', expand: "user,group,game,possessions,talents"}),
+        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"', expand: "user,group,game,possessions,talents,spells"}),
         headers: {
             'content-type': "application/json"
         }
@@ -58,12 +58,32 @@ export async function load({fetch, params, locals}){
         talents = talents.filter((tal) => {
             return !temp.includes(JSON.stringify(tal));
         });
-    }  
+    }
+
+    // Get all spells (to be shown in the add spell modal)
+    const spellResponse = await fetch("/api/getFullCollection", {
+        method: "POST",
+        body: JSON.stringify({collection: "spells"}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const spellResponseJson = await spellResponse.json();
+    let spells = spellResponseJson.records;
+
+    // Remove spells that the character already has
+    if(character.record.expand.spells){
+        let temp = character.record.expand.spells.map((e) => JSON.stringify(e));
+        spells = spells.filter((spell) => {
+            return !temp.includes(JSON.stringify(spell));
+        });
+    }
 
     return {
         character: character.record,
         objects: objects,
         talents: talents,
+        spells: spells,
         isMaster: isMaster
     }
 }
