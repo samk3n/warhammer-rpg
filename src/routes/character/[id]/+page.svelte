@@ -136,6 +136,7 @@
     onDestroy(() => {
         if(pb) {
             pb.collection("characters").unsubscribe();
+            pb.collection("groups").unsubscribe();
             pb.collection("objects").unsubscribe();
             pb.collection("talents").unsubscribe();
             pb.collection("spells").unsubscribe();
@@ -1445,17 +1446,17 @@
                     <tbody>
                         {#each character.expand.possessions as possession}
                         <tr>
-                            <th>{possession.name}</th>
-                            <th>{possession.encombrement}</th>
-                            <th>
+                            <td>{possession.name}</td>
+                            <td>{possession.encombrement}</td>
+                            <td>
                                 <input on:change={(event) => updateCharacObjectCount(character, possession.id, event.target.value)}
                                 class="input input-bordered w-16 text-center disabled:text-base-content disabled:cursor-default" 
                                 disabled={!isMaster}
                                 type="number" value={character.nbPossessions[possession.id].count} min="1"/>
-                            </th>
+                            </td>
                             {#if isMaster}
-                            <th>
-                                <button class="btn btn-error btn-xs xs:btn-md"
+                            <td>
+                                <button class="btn btn-error btn-xs xs:btn-sm"
                                 on:click={() => {
                                     // Deleting object from character's objects list
                                     deleteObjectFromCharac(character, possession.id);
@@ -1463,7 +1464,7 @@
                                     // in the add object modal.
                                     objects = [...objects, possession];
                                 }}>Supprimer</button>
-                            </th>
+                            </td>
                             {/if}
                         </tr>
                         {/each}
@@ -1491,9 +1492,9 @@
                     <tbody>
                         {#each objects as object}
                             <tr>
-                                <th class="text-[0.7rem] xs:text-sm lg:text-lg">{object.name}</th>
-                                <th>{object.encombrement}</th>
-                                <th><button class="btn btn-success btn-xs xs:btn-md" 
+                                <td class="">{object.name}</td>
+                                <td>{object.encombrement}</td>
+                                <td><button class="btn btn-success btn-sm xs:btn-md" 
                                 on:click={() => {
                                     // Adding the object to the character objects list
                                     addObjectToCharac(character, object.id);
@@ -1501,7 +1502,7 @@
                                     // So it doesn't appear in the modal
                                     // Because you can only add an object once.
                                     objects = objects.filter((obj) => obj.id !== object.id);
-                                } }>+</button></th>
+                                } }>+</button></td>
                             </tr>
                         {/each}
                     </tbody>
@@ -1533,13 +1534,13 @@
                         <tr>
                             <th>Nom</th>
                             <th>Nbre</th>
-                            <th>Desc.</th>
+                            <th class="hidden xs:table-cell">Desc.</th>
                         </tr>
                     </thead>
                     <tbody>
                         {#each character.expand.talents as talent}
                         <tr>
-                            <th class="text-[0.75rem] xs:text-sm lg:text-lg">
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">
                                 {#if isMaster}
                                 <button class="btn btn-ghost btn-circle text-error btn-sm"
                                 on:click={() => {
@@ -1550,14 +1551,14 @@
                                     talents = [...talents, talent];
                                 }}>X</button>
                                 {/if}
-                                {talent.name}</th>
-                            <th>
+                                {talent.name}</td>
+                            <td>
                                 <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
                                 class="text-[0.75rem] xs:text-sm lg:text-lg input input-bordered w-12 text-center disabled:text-base-content disabled:cursor-default" 
                                 disabled={!isMaster}
                                 type="number" value={character.nbTalents[talent.id].count} min="1"/>
-                            </th>
-                            <th class="text-[0.7rem] lg:text-sm">{talent.description}</th>
+                            </td>
+                            <td class="text-[0.7rem] lg:text-sm hidden xs:table-cell">{talent.description}</td>
                             
                         </tr>
                         {/each}
@@ -1580,8 +1581,8 @@
                     <tbody>
                         {#each talents as talent}
                             <tr>
-                                <td class="text-[0.7rem] xs:text-sm lg:text-lg">{talent.name}</td>
-                                <td><button class="btn btn-success btn-xs xs:btn-md" 
+                                <td class="text-sm lg:text-lg">{talent.name}</td>
+                                <td><button class="btn btn-success btn-sm xs:btn-md" 
                                 on:click={() => {
                                     // Adding the talent to the character talents list
                                     addTalentToCharac(character, talent.id);
@@ -1634,25 +1635,24 @@
                     <tbody>
                         {#each character.expand.spells as spell}
                         <tr>
-                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.name}</td>
-                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.ni}</td>
-                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.portee}</td>
-                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.cible}</td>
-                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.duree}</td>
-                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.effets}</td>
-                            
-                            {#if isMaster}
-                            <td>
-                                <button class="btn btn-error btn-xs xs:btn-md"
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">
+                                {#if isMaster}
+                                <button class="btn btn-ghost btn-circle text-error btn-sm"
                                 on:click={() => {
                                     // Deleting spell from character's spells list
                                     deleteSpellFromCharac(character, spell.id);
                                     // Adding the deleted spell to the list of available spells
                                     // in the add spell modal.
                                     spells = [...spells, spell];
-                                }}>Supprimer</button>
-                            </td>
-                            {/if}
+                                }}>X</button>
+                                {/if}
+                                {spell.name}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.ni}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.portee}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.cible}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.duree}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{spell.effets}</td>
+                            
                         </tr>
                         {/each}
                     </tbody>
@@ -1674,8 +1674,8 @@
                     <tbody>
                         {#each spells as spell}
                             <tr>
-                                <th class="text-[0.7rem] xs:text-sm lg:text-lg">{spell.name}</th>
-                                <th><button class="btn btn-success btn-xs xs:btn-md" 
+                                <td class="text-sm lg:text-lg">{spell.name}</td>
+                                <td><button class="btn btn-success btn-sm xs:btn-md" 
                                 on:click={() => {
                                     // Adding the spell to the character spells list
                                     addSpellToCharac(character, spell.id);
@@ -1683,7 +1683,7 @@
                                     // So it doesn't appear in the modal
                                     // Because you can only add an spell once.
                                     spells = spells.filter((spe) => spe.id !== spell.id);
-                                } }>+</button></th>
+                                } }>+</button></td>
                             </tr>
                         {/each}
                     </tbody>
