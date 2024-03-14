@@ -64,7 +64,9 @@
                         <th>{object.encombrement}</th>
                         <th><button class="btn btn-neutral btn-xs xs:btn-md" 
                         on:click={() => {
-                            objectToEdit = object;
+                            objectToEdit.id = object.id;
+                            objectToEdit.name = object.name;
+                            objectToEdit.encombrement = object.encombrement;
                             editObjectModal.show();
                         }}>Modifier</button></th>
                         <th><button class="btn btn-error btn-xs xs:btn-md"
@@ -93,7 +95,12 @@
                 </div>
 
                 <div class="modal-action">
-                    <button class="btn btn-neutral" type="button" onclick="editObjectModal.close()">Fermer</button>
+                    <button class="btn btn-neutral" type="button" onclick="editObjectModal.close()"
+                    on:click={() => {
+                        objectToEdit.name = "";
+                        objectToEdit.id="";
+                        objectToEdit.encombrement = 0;
+                    }}>Fermer</button>
                     <button class="btn btn-success" type="submit" onclick="editObjectModal.close()" 
                     on:click={() => {
                         updateObject(objectToEdit, "name", objectToEdit.name);
