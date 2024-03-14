@@ -109,7 +109,11 @@
                 </div>
             </section>
             <form method="dialog" class="modal-backdrop">
-                <button>Close</button>
+                <button on:click={() => {
+                    objectToEdit.name = "";
+                    objectToEdit.id="";
+                    objectToEdit.encombrement = 0;
+                }}>Close</button>
             </form>
         </dialog>
 

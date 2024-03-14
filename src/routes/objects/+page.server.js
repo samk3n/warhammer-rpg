@@ -11,7 +11,7 @@ export async function load({fetch}){
     if(getObjectsJson.error) {
         return {
             error: true,
-            message: "Erreur lors du chargements de objects."
+            message: "Erreur lors du chargements des objets."
         }
     }
 

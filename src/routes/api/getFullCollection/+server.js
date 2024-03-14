@@ -11,10 +11,10 @@ export async function POST({ request, locals }) {
     }
     catch(err) {
         console.log("getFullCollection Error: " + err);
-        return {
+        return json({
             error: true,
             message: "Erreur lors de la récupération des " + collection
-        }
+        })
     }
     
 	return json({

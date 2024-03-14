@@ -6,7 +6,7 @@ export async function load({fetch, params, locals}){
 
     const characResponse = await fetch("/api/findRecord", {
         method: "POST",
-        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"', expand: "user,group,game,possessions"}),
+        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"', expand: "user,group,game,possessions,talents"}),
         headers: {
             'content-type': "application/json"
         }
@@ -22,6 +22,7 @@ export async function load({fetch, params, locals}){
         isMaster = true;
     }
 
+    // Get all objects (to be shown in the add object modal)
     const objectsResponse = await fetch("/api/getFullCollection", {
         method: "POST",
         body: JSON.stringify({collection: "objects"}),
@@ -32,17 +33,37 @@ export async function load({fetch, params, locals}){
     const objectsResponseJson = await objectsResponse.json();
     let objects = objectsResponseJson.records;
 
-
+    // Remove objects that the character already has
     if(character.record.expand.possessions){
         let temp = character.record.expand.possessions.map((e) => JSON.stringify(e));
         objects = objects.filter((obj) => {
             return !temp.includes(JSON.stringify(obj));
         });
-    }    
+    }
+    
+    // Get all talents (to be shown in the add talent modal)
+    const talentResponse = await fetch("/api/getFullCollection", {
+        method: "POST",
+        body: JSON.stringify({collection: "talents"}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const talentResponseJson = await talentResponse.json();
+    let talents = talentResponseJson.records;
+
+    // Remove talents that the character already has
+    if(character.record.expand.talents){
+        let temp = character.record.expand.talents.map((e) => JSON.stringify(e));
+        talents = talents.filter((tal) => {
+            return !temp.includes(JSON.stringify(tal));
+        });
+    }  
 
     return {
         character: character.record,
         objects: objects,
+        talents: talents,
         isMaster: isMaster
     }
 }

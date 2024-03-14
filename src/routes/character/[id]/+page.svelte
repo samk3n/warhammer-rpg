@@ -8,10 +8,12 @@
         decreaseSkill, 
         calculateWoundsMax,
         updateGroup,
-        getFullCollection,
         addObjectToCharac,
         updateCharacObjectCount,
-        deleteObjectFromCharac} from "$lib/utils.js"
+        deleteObjectFromCharac,
+        updateCharacTalentCount,
+        deleteTalentFromCharac,
+        addTalentToCharac} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
 
@@ -29,11 +31,13 @@
         ["blessures", "Blessures"],
         ["ambitions", "Ambitions"],
         ["groupe", "Groupe"],
-        ["possessions", "Possessions"],]
+        ["possessions", "Possessions"],
+        ["talents", "Talents"],]
     );
 
     let character = data.character;
-    let objects = data.objects
+    let objects = data.objects;
+    let talents = data.talents;
     const isMaster = data.isMaster;
 
     let pb;
@@ -43,6 +47,7 @@
     let editNotes = false;
 
     let addObjectModal;
+    let addTalentModal;
 
     let characFormModal;
     $: if(form && form.message){
@@ -57,7 +62,7 @@
             if("update" == e.action) {
                 character = e.record;
             }
-        }, {expand: "user,group,game,possessions"});
+        }, {expand: "user,group,game,possessions,talents"});
 
         if(character.group) {
             pb.collection("groups").subscribe(character.group, (e) => {
@@ -1378,9 +1383,11 @@
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Possessions</h2>
             </div>
+            {#if isMaster}
             <div class="card-actions justify-center mb-5">
                 <button class="btn btn-neutral" on:click={() => addObjectModal.show()} >Ajouter des possessions</button>
             </div>
+            {/if}
             {#if character.possessions.length == 0}
                 <p class="text-lg italic text-center">Aucune possession</p>
             {:else}
@@ -1399,9 +1406,11 @@
                             <th>{possession.encombrement}</th>
                             <th>
                                 <input on:change={(event) => updateCharacObjectCount(character, possession.id, event.target.value)}
-                                class="input input-bordered w-16 text-center" 
+                                class="input input-bordered w-16 text-center disabled:text-base-content disabled:cursor-default" 
+                                disabled={!isMaster}
                                 type="number" value={character.nbPossessions[possession.id].count} min="1"/>
                             </th>
+                            {#if isMaster}
                             <th>
                                 <button class="btn btn-error btn-xs xs:btn-md"
                                 on:click={() => {
@@ -1412,6 +1421,7 @@
                                     objects = [...objects, possession];
                                 }}>Supprimer</button>
                             </th>
+                            {/if}
                         </tr>
                         {/each}
                     </tbody>
@@ -1454,6 +1464,99 @@
                     </tbody>
                 </table>
                 {/if}
+            </section>
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
+                <button>Close</button>
+            </form>
+        </dialog>
+    </section>
+
+    <!-- TALENTS -->
+    <section id="talents" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Talents</h2>
+            </div>
+            {#if isMaster}
+            <div class="card-actions justify-center mb-5">
+                <button class="btn btn-neutral" on:click={() => addTalentModal.show()} >Ajouter des talents</button>
+            </div>
+            {/if}
+            {#if character.talents.length == 0}
+                <p class="text-lg italic text-center">Aucun talent</p>
+            {:else}
+                <table class="table table-zebra">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Nbre</th>
+                            <th>Desc.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each character.expand.talents as talent}
+                        <tr>
+                            <th class="text-[0.75rem] xs:text-sm lg:text-lg">{talent.name}</th>
+                            <th>
+                                <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
+                                class="input input-bordered w-16 text-center disabled:text-base-content disabled:cursor-default" 
+                                disabled={!isMaster}
+                                type="number" value={character.nbTalents[talent.id].count} min="1"/>
+                            </th>
+                            <th class="text-[0.7rem] lg:text-sm">{talent.description}</th>
+                            
+                            {#if isMaster}
+                            <th>
+                                <button class="btn btn-error btn-xs xs:btn-md"
+                                on:click={() => {
+                                    // Deleting talent from character's talents list
+                                    deleteTalentFromCharac(character, talent.id);
+                                    // Adding the deleted talent to the list of available talents
+                                    // in the add talent modal.
+                                    talents = [...talents, talent];
+                                }}>Supprimer</button>
+                            </th>
+                            {/if}
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            {/if}
+        </section>
+
+        <dialog id="addTalentModal" class="modal modal-bottom sm:modal-middle" bind:this={addTalentModal} >
+            <section class="modal-box form-control bg-base-300">
+                {#if talents.length == 0}
+                <p class="text-lg text-center mb-5">Aucun talent disponible</p>
+                {:else}
+                <table class="card-body table table-zebra">
+                    <thead>
+                        <tr>
+                            <th class="w-full">Nom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each talents as talent}
+                            <tr>
+                                <th class="text-[0.7rem] xs:text-sm lg:text-lg">{talent.name}</th>
+                                <th><button class="btn btn-success btn-xs xs:btn-md" 
+                                on:click={() => {
+                                    // Adding the talent to the character talents list
+                                    addTalentToCharac(character, talent.id);
+                                    // Removing the talent that was just added to character
+                                    // So it doesn't appear in the modal
+                                    // Because you can only add an talent once.
+                                    talents = talents.filter((tal) => tal.id !== talent.id);
+                                } }>+</button></th>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                {/if}
+                <section class="card-actions justify-center mt-5">
+                    <button class="btn btn-neutral"
+                    on:click={() => addTalentModal.close()}>Fermer</button>
+                </section>
             </section>
             <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
                 <button>Close</button>
