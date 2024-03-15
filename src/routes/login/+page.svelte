@@ -2,11 +2,11 @@
     export let form;
 </script>
 
-<section class="w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
+<section class="w-11/12 sm:w-4/5 md:w-3/5 lg:w-2/6">
     {#if form}
         <p class="text-warning font-semibold text-center">{form.message}</p>
     {/if}
-    <form class="card bg-base-200 shadow-lg mt-10 w-full" method="POST" action="?/login">
+    <form class="card bg-base-300 shadow-lg mt-10 w-full" method="POST" action="?/login">
         <section class="card-body">
             <div class="form-control">
                 <label class="label" for="user">Nom d'utilisateur ou email</label>

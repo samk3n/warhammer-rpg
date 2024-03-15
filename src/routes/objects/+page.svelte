@@ -60,20 +60,20 @@
             <tbody>
                 {#each objects as object}
                     <tr>
-                        <th class="text-[0.7rem] xs:text-sm lg:text-lg">{object.name}</th>
-                        <th>{object.encombrement}</th>
-                        <th><button class="btn btn-neutral btn-xs xs:btn-md" 
+                        <td class="text-[0.7rem] xs:text-sm lg:text-lg">{object.name}</td>
+                        <td class="text-[0.7rem] xs:text-sm lg:text-lg">{object.encombrement}</td>
+                        <td><button class="btn btn-neutral btn-xs xs:btn-md" 
                         on:click={() => {
                             objectToEdit.id = object.id;
                             objectToEdit.name = object.name;
                             objectToEdit.encombrement = object.encombrement;
                             editObjectModal.show();
-                        }}>Modifier</button></th>
-                        <th><button class="btn btn-error btn-xs xs:btn-md"
+                        }}>Modifier</button></td>
+                        <td><button class="btn btn-error btn-xs xs:btn-md"
                             on:click={() => {
                                 objectToDelete = object;
                                 deletObjectModal.show();
-                            }}>Supprimer</button></th>
+                            }}>Supprimer</button></td>
                     </tr>
                 {/each}
             </tbody>

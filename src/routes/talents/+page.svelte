@@ -38,7 +38,7 @@
 </script>
 
 
-<section class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
+<section class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-10/12 lg:w-3/6">
 {#if data && data.talents}
 
     {#if talents.length == 0}
@@ -51,14 +51,14 @@
             <thead>
                 <tr>
                     <th class="w-1/3">Nom</th>
-                    <th>description</th>
+                    <th>Description</th>
                 </tr>
             </thead>
             <tbody>
                 {#each talents as talent}
                     <tr>
-                        <th class="text-[0.75rem] xs:text-sm lg:text-lg">{talent.name}</th>
-                        <th class="text-[0.7rem] lg:text-sm">{talent.description}</th>
+                        <td class="text-[0.75rem] xs:text-sm lg:text-lg font-medium">{talent.name}</td>
+                        <td class="text-[0.7rem] lg:text-lg">{talent.description}</td>
                     </tr>
                 {/each}
             </tbody>

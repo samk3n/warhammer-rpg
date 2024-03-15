@@ -14,25 +14,85 @@ export async function getRecordFromId(collection, id){
 }
 
 export async function updateRecord(collection, id, updates){
-    const response = await fetch('/api/updateRecord', {
+    try {
+        const response = await fetch('/api/updateRecord', {
             method: "PUT",
             body: JSON.stringify({collection: collection, updates: updates, id: id}),
             headers: {
                 'content-type': "application/json"
             }
+        });
+        const respJson = await response.json();
+        if(respJson.error){
+            return {
+                error: true,
+                message: "Erreur lors de la mise à jour de l'élément dans " + collection
+            }
         }
-    );
-    const respJson = await response.json();
-    if(respJson.error){
+    }
+    catch (err) {
         return {
             error: true,
-            message: "Erreur lors de la mise à jour du personnage."
+            message: "Erreur lors de la mise à jour de l'élément dans " + collection
         }
     }
 
     return {
         success: true
     }
+}
+
+export async function createRecord(collection, data){
+    try {
+        const response = await fetch('/api/createRecord', {
+            method: "PUT",
+            body: JSON.stringify({collection: collection, data: data}),
+            headers: {
+                'content-type': "application/json"
+            }
+        });
+        const respJson = await response.json();
+        if(respJson.error){
+            return {
+                error: true,
+                message: "Erreur lors de la création de l'élément dans " + collection
+            }
+        }
+    }
+    catch (err){
+        return {
+            error: true,
+            message: "Erreur lors de la création de l'élément dans " + collection
+        }
+    }
+
+    return {
+        success: true
+    }
+}
+
+export async function createMeleeWeapon(data){
+    console.log(data);
+    if(data.name.length < 3){
+        return {
+            error: true,
+            message: "Le nom de l'arme doit contenir au moins 3 caractères."
+        }
+    }
+    if(data.encombrement < 0 || !data.encombrement) {
+        return {
+            error: true,
+            message: "L'encombrement doit être positif."
+        }
+    }
+    if(data.degats < 0 || !data.degats) {
+        return {
+            error: true,
+            message: "Les dégâts doivent être positifs."
+        }
+    }
+    await createRecord("meleeWeapon", data);
+    
 }
 
 
@@ -225,4 +285,8 @@ export async function addSpellToCharac(charac, spellId){
 
 export async function deleteSpellFromCharac(charac, spellId){
     await updateRecord("characters", charac.id, {"spells-": spellId});
+}
+
+export async function updateMeleeWeapon(mw, data){
+    await updateRecord("meleeWeapons", mw.id, data);
 }

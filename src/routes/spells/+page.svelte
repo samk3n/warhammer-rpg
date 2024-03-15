@@ -30,15 +30,13 @@
             }
             else if("delete" == e.action){
                 spells = spells.filter((spell) => spell.id != e.record.id);
-
             }
         });
     });
 
 </script>
 
-
-<section class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 lg:w-3/6">
+<section class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-10/12 lg:w-3/6">
 {#if data && data.spells}
 
     {#if spells.length == 0}
@@ -61,7 +59,7 @@
             <tbody>
                 {#each spells as spell}
                     <tr>
-                        <td class="text-[0.7rem] sm:text-sm">{spell.name}</td>
+                        <td class="text-[0.7rem] sm:text-sm font-medium">{spell.name}</td>
                         <td class="text-[0.7rem] sm:text-sm">{spell.ni}</td>
                         <td class="text-[0.7rem] sm:text-sm">{spell.portee}</td>
                         <td class="text-[0.7rem] sm:text-sm">{spell.cible}</td>

@@ -145,7 +145,7 @@
 
 </script>
 
-<section class="flex flex-col gap-7 items-center w-11/12 sm:w-4/5 lg:w-3/6">
+<section class="flex flex-col gap-7 items-center w-11/12 sm:w-4/5 lg:w-4/6">
 
 {#if data && character}
 

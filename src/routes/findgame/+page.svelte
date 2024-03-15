@@ -3,9 +3,6 @@
     import { goto } from '$app/navigation';
 
     export let data;
-    if (data.games.length == 0) {
-        console.log("dbfhkbhb")
-    }
 
     // Error message in the modal
     let passwordModalMessage = "";
