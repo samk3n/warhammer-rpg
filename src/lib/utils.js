@@ -332,3 +332,81 @@ export async function updateMeleeWeapon(mw, data){
 export async function updateRangeWeapon(rw, data){
     await updateRecord("rangeWeapons", rw.id, data);
 }
+
+
+export function transformWordIntoColor(word){
+    const length = word.length;
+    let r1 = length > 15 ? 150 : length > 10 ? 200 : 150;
+    let g1 = length > 15 ? 150 : length > 10 ? 170 : 200;
+    let b1 = length > 15 ? 200 : length > 10 ? 120 : 170;
+    let r2 = 0;
+    let g2 = 0;
+    let b2 = 0;
+    
+    const letters1 = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    const letters2 = ['i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'];
+    const letters3 = ['q', 'r', 's', 't', 'u', 'v', 'w'];
+    const xyz = ['x', 'y', 'z'];
+
+    for(let letter of letters1){
+        if(word.match(new RegExp(letter, "g"))){
+            const match = word.match(new RegExp(letter, "g"));
+            r2 += match.length*6;
+            g2 += match.length*3;
+        }
+    }
+
+    for(let letter of letters2){
+        if(word.match(new RegExp(letter, "g"))){
+            const match = word.match(new RegExp(letter, "g"));
+            g2 += match.length*6;
+            b2 += match.length*3;
+        }
+    }
+
+    for(let letter of letters3){
+        if(word.match(new RegExp(letter, "g"))){
+            const match = word.match(new RegExp(letter, "g"));
+            b2 += match.length*6;
+            r2 += match.length*3;
+        }
+    }
+
+    for(let letter of xyz){
+        if(word.match(new RegExp(letter, "g"))){
+            const match = word.match(new RegExp(letter, "g"));
+            r2 += match.length*10;
+            g2 += match.length*10;
+            b2 += match.length*10;
+        }
+    }
+
+    let r = (r1 + r2);
+    let g =  (g1 + g2);
+    let b = (b1 + b2);
+
+    r = r > 255 ? 255 : r;
+    g = g > 255 ? 255 : g;
+    b = b > 255 ? 255 : b;
+
+    return "#" + r.toString(16) + g.toString(16) + b.toString(16);
+}
+
+export function getHoverColor(hexcolor) {
+    var r = parseInt(hexcolor.substring(1,3),16);
+    var g = parseInt(hexcolor.substring(3,5),16);
+    var b = parseInt(hexcolor.substring(5,7),16);
+
+    r = r - Math.floor(r * 0.1) > 255 ? 255 : r - Math.floor(r * 0.1);
+    g = g - Math.floor(g * 0.1) > 255 ? 255 : g - Math.floor(g * 0.1);
+    b = b - Math.floor(b * 0.1) > 255 ? 255 : b - Math.floor(b * 0.1);
+    return "#" + r.toString(16) + g.toString(16) + b.toString(16);
+}
+
+export function textColorBasedOnBG(hexcolor){
+    var r = parseInt(hexcolor.substring(1,3),16);
+    var g = parseInt(hexcolor.substring(3,5),16);
+    var b = parseInt(hexcolor.substring(5,7),16);
+    var yiq = ((r*299)+(g*587)+(b*114))/1000;
+    return (yiq >= 128) ? 'black' : 'white';
+}

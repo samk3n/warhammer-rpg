@@ -12,8 +12,8 @@
 </a>
 {/if}
 
-{#each data?.games as game}
-<section class="card bg-base-200 shadow-lg mt-10 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6">
+{#each data.games as game}
+<section class="card bg-base-300 shadow-lg mt-10 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6">
     <div class="card-body items-center">
         <h2 class="text-2xl font-semibold">{game.name}{game.password ? " *" : ""}</h2>
         <div class="divider"></div>

@@ -112,7 +112,7 @@
                     }}>Valider</button>
                 </div>
             </section>
-            <form method="dialog" class="modal-backdrop">
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
                 <button on:click={() => {
                     objectToEdit.name = "";
                     objectToEdit.id="";
@@ -132,7 +132,7 @@
                     on:click={() => deleteRecord("objects", objectToDelete)}>Supprimer l'objet</button>
                 </section>
             </section>
-            <form method="dialog" class="modal-backdrop">
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
                 <button>close</button>
             </form>
         </dialog>

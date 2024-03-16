@@ -1,18 +1,13 @@
 <script>
-    import {updateObject, deleteRecord, updateSpell} from "$lib/utils.js";
+    import {textColorBasedOnBG, transformWordIntoColor, getHoverColor} from "$lib/utils.js";
     import PocketBase from 'pocketbase';
     import { onDestroy, onMount } from "svelte";
     export let data;
 
-    // Object used in the edit modal
-    let spellToEdit = {id: ""};
+    // Object used in the show modal
+    let spellToShow = {id: ""};
     // Ref to the edit modal
-    let editSpellModal;
-
-    // Object used in the delete modal
-    let spellToDelete = {name: ""};
-    // Ref to the delete modal
-    let deletSpellModal;
+    let showSpellModal;
 
     let pb;
     let spells = data.spells;
@@ -44,126 +39,89 @@
 {#if data && data.spells}
 
     {#if spells.length == 0}
-    <h2 class="text-2xl font-semibold text-center">Aucun objet trouvé!</h2>
+    <h2 class="text-2xl font-semibold text-center">Aucun sort trouvé!</h2>
     {/if}
-    <h1 class="text-3xl font-bold text-center">Sorts</h1>
+    <h1 class="text-3xl font-bold text-center mb-5">Sorts</h1>
 
-    <section class="card bg-base-300 w-full">
-        <table class="card-body table table-zebra">
-            <thead>
-                <tr>
-                    <th class="">Nom</th>
-                    <th class="">NI</th>
-                    <th class="">Portée</th>
-                    <th class="">Cible</th>
-                    <th class="">Durée</th>
-                    <th>Effets</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each spells as spell}
-                    <tr>
-                        <td class="text-[0.7rem] sm:text-sm font-medium">{spell.name}</td>
-                        <td class="text-[0.7rem] sm:text-sm">{spell.ni}</td>
-                        <td class="text-[0.7rem] sm:text-sm">{spell.portee}</td>
-                        <td class="text-[0.7rem] sm:text-sm">{spell.cible}</td>
-                        <td class="text-[0.7rem] sm:text-sm">{spell.duree}</td>
-                        <td class="text-[0.7rem] sm:text-sm">{spell.effets}</td>
-                        <!-- <td class="hidden xs:flex"><button class="btn btn-neutral btn-xs xs:btn-md" 
-                        on:click={() => {
-                            spellToEdit.id = spell.id;
-                            spellToEdit.name = spell.name;
-                            spellToEdit.ni = spell.ni;
-                            spellToEdit.portee = spell.portee;
-                            spellToEdit.cible = spell.cible;
-                            spellToEdit.duree = spell.duree;
-                            spellToEdit.effets = spell.effets;
-                            editSpellModal.show();
-                        }}>Modifier</button></td> -->
-                {/each}
-            </tbody>
-        </table>
+    <section class="card w-full">
+        <section class="grid grid-cols-3 gap-2">
+            {#each spells as spell}
+            <button class="btn" 
+            style="--bgColor: {transformWordIntoColor(spell.name)}; --color: {textColorBasedOnBG(transformWordIntoColor(spell.name))}; --hoverColor: {getHoverColor(transformWordIntoColor(spell.name))}" 
+            on:click={() => {
+                spellToShow.id= spell.id;
+                spellToShow.name = spell.name;
+                spellToShow.ni = spell.ni;
+                spellToShow.portee = spell.portee;
+                spellToShow.cible = spell.cible;
+                spellToShow.duree = spell.duree;
+                spellToShow.effets = spell.effets;
+                showSpellModal.show();
+            }}>{spell.name}</button>
+            {/each}
+        </section>
 
-        <dialog id="editSpellModal" class="modal modal-bottom sm:modal-middle" bind:this={editSpellModal} >
-            <section class="modal-box form-control bg-base-200">
-                <input type="hidden" name="id" value={spellToEdit.id} />
+        <dialog id="showSpellModal" class="modal modal-bottom sm:modal-middle" bind:this={showSpellModal} >
+            <section class="modal-box form-control bg-base-300">
+                <input type="hidden" name="id" value={spellToShow.id} />
 
                 <div class="form-control">
                     <label class="label" for="name">Nom</label>
-                    <input on:change={(event) => spellToEdit.name = event.target.value}
-                     class="input input-bordered" type="text" name="name" value={spellToEdit.name}/>
+                    <input on:change={(event) => spellToShow.name = event.target.value}
+                     disabled class="input input-bordered disabled:text-base-content disabled:cursor-default" type="text" name="name" value={spellToShow.name}/>
                 </div>
                 <div class="form-control">
                     <label class="label" for="ni">NI</label>
-                    <input on:change={(event) => spellToEdit.ni = event.target.value}
-                     class="input input-bordered" type="number" name="ni" value={spellToEdit.ni}/>
+                    <input on:change={(event) => spellToShow.ni = event.target.value}
+                     disabled class="input input-bordered disabled:text-base-content disabled:cursor-default" type="number" name="ni" value={spellToShow.ni}/>
                 </div>
                 <div class="form-control">
                     <label class="label" for="portee">Portée</label>
-                    <input on:change={(event) => spellToEdit.portee = event.target.value}
-                     class="input input-bordered" type="text" name="portee" value={spellToEdit.portee}/>
+                    <input on:change={(event) => spellToShow.portee = event.target.value}
+                    disabled class="input input-bordered disabled:text-base-content disabled:cursor-default" type="text" name="portee" value={spellToShow.portee}/>
                 </div>
                 <div class="form-control">
                     <label class="label" for="cible">Cible</label>
-                    <input on:change={(event) => spellToEdit.cible = event.target.value}
-                     class="input input-bordered" type="text" name="cible" value={spellToEdit.cible}/>
+                    <input on:change={(event) => spellToShow.cible = event.target.value}
+                    disabled class="input input-bordered disabled:text-base-content disabled:cursor-default" type="text" name="cible" value={spellToShow.cible}/>
                 </div>
                 <div class="form-control">
                     <label class="label" for="duree">Durée</label>
-                    <input on:change={(event) => spellToEdit.duree = event.target.value}
-                     class="input input-bordered" type="text" name="duree" value={spellToEdit.duree}/>
+                    <input on:change={(event) => spellToShow.duree = event.target.value}
+                    disabled class="input input-bordered disabled:text-base-content disabled:cursor-default" type="text" name="duree" value={spellToShow.duree}/>
                 </div>
                 <div class="form-control">
                     <label class="label" for="effets">Effets</label>
-                    <input on:change={(event) => spellToEdit.effets = event.target.value}
-                     class="input input-bordered" type="text" name="effets" value={spellToEdit.effets}/>
+                    <input on:change={(event) => spellToShow.effets = event.target.value}
+                    disabled class="input input-bordered disabled:text-base-content disabled:cursor-default" type="text" name="effets" value={spellToShow.effets}/>
                 </div>
 
                 <div class="modal-action">
-                    <button class="btn btn-neutral" type="button" onclick="editSpellModal.close()"
+                    <button class="btn btn-neutral" type="button" onclick="showSpellModal.close()"
                     on:click={() => {
-                        spellToEdit.id="";
-                        spellToEdit.name = "";
-                        spellToEdit.ni = 0;
-                        spellToEdit.portee = "";
-                        spellToEdit.cible = "";
-                        spellToEdit.duree = "";
-                        spellToEdit.effets = "";
+                        spellToShow.id="";
+                        spellToShow.name = "";
+                        spellToShow.ni = "";
+                        spellToShow.portee = "";
+                        spellToShow.cible = "";
+                        spellToShow.duree = "";
+                        spellToShow.effets = "";
                     }}>Fermer</button>
-                    <button class="btn btn-success" type="submit" onclick="editSpellModal.close()" 
-                    on:click={() => {
-                        updateSpell(spellToEdit, spellToEdit);
-                    }}>Valider</button>
                 </div>
             </section>
-            <form method="dialog" class="modal-backdrop">
+            <form method="dialog" class="modal-backdrop  bg-neutral bg-opacity-40">
                 <button on:click={() => {
-                    spellToEdit.id="";
-                    spellToEdit.name = "";
-                    spellToEdit.ni = 0;
-                    spellToEdit.portee = "";
-                    spellToEdit.cible = "";
-                    spellToEdit.duree = "";
-                    spellToEdit.effets = "";
+                    spellToShow.id="";
+                    spellToShow.name = "";
+                    spellToShow.ni = "";
+                    spellToShow.portee = "";
+                    spellToShow.cible = "";
+                    spellToShow.duree = "";
+                    spellToShow.effets = "";
                 }}>Close</button>
             </form>
         </dialog>
 
-        <dialog id="deleteSpellModal" class="modal modal-bottom sm:modal-middle" bind:this={deletSpellModal}>
-            <section class="modal-box form-control bg-base-200">
-
-                <p class="text-xl">Voulez-vous vraiment supprimer ce sort? ({spellToDelete.name})</p>
-
-                <section class="modal-action">
-                    <button class="btn btn-neutral" type="button" onclick="deletObjectModal.close()">Fermer</button>
-                    <button class="btn btn-error" type="submit" onclick="deletObjectModal.close()"
-                    on:click={() => deleteRecord("spells", spellToDelete)}>Supprimer le sort</button>
-                </section>
-            </section>
-            <form method="dialog" class="modal-backdrop">
-                <button>close</button>
-            </form>
-        </dialog>
     </section>
 
 
@@ -174,3 +132,14 @@
     </a>
 {/if}
 </section>
+
+<style lang="scss">
+    button {
+        background-color: var(--bgColor);
+        color: var(--color);
+
+        &:hover {
+            background-color: var(--hoverColor);
+        }
+    }
+</style>
