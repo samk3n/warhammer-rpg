@@ -72,7 +72,6 @@ export async function createRecord(collection, data){
 }
 
 export async function createMeleeWeapon(data){
-    console.log(data);
     if(data.name.length < 3){
         return {
             error: true,
@@ -85,14 +84,53 @@ export async function createMeleeWeapon(data){
             message: "L'encombrement doit être positif."
         }
     }
+    if(data.groupe.length < 3){
+        return {
+            error: true,
+            message: "Le groupe de l'arme doit contenir au moins 3 caractères."
+        }
+    }
     if(data.degats < 0 || !data.degats) {
         return {
             error: true,
             message: "Les dégâts doivent être positifs."
         }
     }
-    await createRecord("meleeWeapons", data);
-    
+    await createRecord("meleeWeapons", data);  
+}
+
+export async function createRangeWeapon(data){
+    if(data.name.length < 3){
+        return {
+            error: true,
+            message: "Le nom de l'arme doit contenir au moins 3 caractères."
+        }
+    }
+    if(data.encombrement < 0 || !data.encombrement) {
+        return {
+            error: true,
+            message: "L'encombrement doit être positif."
+        }
+    }
+    if(data.groupe.length < 3){
+        return {
+            error: true,
+            message: "Le groupe de l'arme doit contenir au moins 3 caractères."
+        }
+    }
+    if(data.degats < 0 || !data.degats) {
+        return {
+            error: true,
+            message: "Les dégâts doivent être positifs."
+        }
+    }
+    if(data.portee.length < 1){
+        return {
+            error: true,
+            message: "La portée de l'arme ne doit pas être vide."
+        }
+    }
+    await createRecord("rangeWeapons", data);  
 }
 
 
@@ -289,4 +327,8 @@ export async function deleteSpellFromCharac(charac, spellId){
 
 export async function updateMeleeWeapon(mw, data){
     await updateRecord("meleeWeapons", mw.id, data);
+}
+
+export async function updateRangeWeapon(rw, data){
+    await updateRecord("rangeWeapons", rw.id, data);
 }
