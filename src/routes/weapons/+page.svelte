@@ -1,7 +1,7 @@
 <script>
     import {updateMeleeWeapon, deleteRecord, createMeleeWeapon} from "$lib/utils.js";
     import PocketBase from 'pocketbase';
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
 
     export let data;
 
@@ -39,11 +39,14 @@
                 meleeWeapons = meleeWeapons.filter((mw) => mw.id != e.record.id);
 
             }
-        });
+        }, {sort: "name"});
+    });
+
+    onDestroy(() => {
+        if(pb) pb.collection("meleeWeapons").unsubscribe();
     });
 
 </script>
-
 
 <section class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
 {#if data && data.meleeWeapons}

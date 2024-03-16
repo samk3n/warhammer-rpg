@@ -1,7 +1,7 @@
 export async function load({fetch}){
     const getMeleeWeapons = await fetch("/api/getFullCollection", {
         method: 'POST',
-        body: JSON.stringify({collection: "meleeWeapons"}),
+        body: JSON.stringify({collection: "meleeWeapons", sort: "name"}),
         headers: {
             'content-type': "application/json"
         }

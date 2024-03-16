@@ -1,7 +1,7 @@
 <script>
     import {updateObject, deleteRecord} from "$lib/utils.js";
     import PocketBase from 'pocketbase';
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     export let data;
 
     // Object used in the edit modal
@@ -33,6 +33,10 @@
 
             }
         });
+    });
+
+    onDestroy(() => {
+        if(pb) pb.collection("talents").unsubscribe();
     });
 
 </script>

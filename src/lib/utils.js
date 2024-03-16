@@ -91,7 +91,7 @@ export async function createMeleeWeapon(data){
             message: "Les dégâts doivent être positifs."
         }
     }
-    await createRecord("meleeWeapon", data);
+    await createRecord("meleeWeapons", data);
     
 }
 

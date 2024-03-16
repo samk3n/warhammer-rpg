@@ -1,7 +1,7 @@
 <script>
     import {updateObject, deleteRecord, updateSpell} from "$lib/utils.js";
     import PocketBase from 'pocketbase';
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     export let data;
 
     // Object used in the edit modal
@@ -32,6 +32,10 @@
                 spells = spells.filter((spell) => spell.id != e.record.id);
             }
         });
+    });
+
+    onDestroy(() => {
+        if(pb) pb.collection("spells").unsubscribe();
     });
 
 </script>
