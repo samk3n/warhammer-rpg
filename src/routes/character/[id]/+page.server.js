@@ -6,7 +6,7 @@ export async function load({fetch, params, locals}){
 
     const characResponse = await fetch("/api/findRecord", {
         method: "POST",
-        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"', expand: "user,group,game,possessions,talents,spells"}),
+        body: JSON.stringify({collection: "characters", filter: 'id="' + characId + '"', expand: "user,group,game,possessions,talents,spells,meleeWeapons,rangeWeapons"}),
         headers: {
             'content-type': "application/json"
         }
@@ -79,11 +79,51 @@ export async function load({fetch, params, locals}){
         });
     }
 
+    // Get all melee weapons (to be shown in the add melee weapons modal)
+    const meleeWeaponsResponse = await fetch("/api/getFullCollection", {
+        method: "POST",
+        body: JSON.stringify({collection: "meleeWeapons"}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const meleeWeaponsResponseJson = await meleeWeaponsResponse.json();
+    let meleeWeapons = meleeWeaponsResponseJson.records;
+
+    // Remove melee weapons that the character already has
+    if(character.record.expand.meleeWeapons){
+        let temp = character.record.expand.meleeWeapons.map((e) => JSON.stringify(e));
+        meleeWeapons = meleeWeapons.filter((mw) => {
+            return !temp.includes(JSON.stringify(mw));
+        });
+    }
+
+    // Get all range weapons (to be shown in the add range weapons modal)
+    const rangeWeaponsResponse = await fetch("/api/getFullCollection", {
+        method: "POST",
+        body: JSON.stringify({collection: "rangeWeapons"}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const rangeWeaponsResponseJson = await rangeWeaponsResponse.json();
+    let rangeWeapons = rangeWeaponsResponseJson.records;
+
+    // Remove range weapons that the character already has
+    if(character.record.expand.rangeWeapons){
+        let temp = character.record.expand.rangeWeapons.map((e) => JSON.stringify(e));
+        rangeWeapons = rangeWeapons.filter((rw) => {
+            return !temp.includes(JSON.stringify(rw));
+        });
+    }
+
     return {
         character: character.record,
         objects: objects,
         talents: talents,
         spells: spells,
+        meleeWeapons: meleeWeapons,
+        rangeWeapons: rangeWeapons,
         isMaster: isMaster
     }
 }

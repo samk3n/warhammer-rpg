@@ -15,7 +15,11 @@
         deleteTalentFromCharac,
         addTalentToCharac,
         addSpellToCharac,
-        deleteSpellFromCharac} from "$lib/utils.js"
+        deleteSpellFromCharac,
+        addMeleeWeaponToCharac,
+        deleteMeleeWeaponFromCharac,
+        addRangeWeaponToCharac,
+        deleteRangeWeaponFromCharac} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
 
@@ -42,6 +46,8 @@
     let objects = data.objects;
     let talents = data.talents;
     let spells = data.spells;
+    let meleeWeapons = data.meleeWeapons;
+    let rangeWeapons = data.rangeWeapons;
     const isMaster = data.isMaster;
 
     let pb;
@@ -53,6 +59,8 @@
     let addObjectModal;
     let addTalentModal;
     let addSpellModal;
+    let addMeleeWeaponModal;
+    let addRangeWeaponModal;
 
     let characFormModal;
     $: if(form && form.message){
@@ -67,7 +75,7 @@
             if("update" == e.action) {
                 character = e.record;
             }
-        }, {expand: "user,group,game,possessions,talents,spells"});
+        }, {expand: "user,group,game,possessions,talents,spells,meleeWeapons,rangeWeapons"});
 
         if(character.group) {
             pb.collection("groups").subscribe(character.group, (e) => {
@@ -130,6 +138,42 @@
                 spells = spells.filter((spell) => spell.id != e.record.id);
             }
         });
+
+        pb.collection("meleeWeapons").subscribe("*", (e) => {
+            if("create" == e.action){
+                meleeWeapons = [...meleeWeapons, e.record];
+            }
+            else if("update" == e.action) {
+                if(character.expand.meleeWeapons){
+                    character.expand.meleeWeapons = character.expand.meleeWeapons.map((mw) => mw.id == e.record.id ? e.record : mw);
+                }
+                meleeWeapons = meleeWeapons.map((mw) => mw.id == e.record.id ? e.record : mw);
+            }
+            else if("delete" == e.action){
+                if(character.expand.meleeWeapons){
+                    character.expand.meleeWeapons = character.expand.meleeWeapons.filter((mw) => mw.id != e.record.id);
+                }
+                meleeWeapons = meleeWeapons.filter((mw) => mw.id != e.record.id);
+            }
+        });
+
+        pb.collection("rangeWeapons").subscribe("*", (e) => {
+            if("create" == e.action){
+                rangeWeapons = [...rangeWeapons, e.record];
+            }
+            else if("update" == e.action) {
+                if(character.expand.rangeWeapons){
+                    character.expand.rangeWeapons = character.expand.rangeWeapons.map((rw) => rw.id == e.record.id ? e.record : rw);
+                }
+                rangeWeapons = rangeWeapons.map((rw) => rw.id == e.record.id ? e.record : rw);
+            }
+            else if("delete" == e.action){
+                if(character.expand.rangeWeapons){
+                    character.expand.rangeWeapons = character.expand.rangeWeapons.filter((rw) => rw.id != e.record.id);
+                }
+                rangeWeapons = rangeWeapons.filter((rw) => rw.id != e.record.id);
+            }
+        });
         
     });
 
@@ -140,6 +184,8 @@
             pb.collection("objects").unsubscribe();
             pb.collection("talents").unsubscribe();
             pb.collection("spells").unsubscribe();
+            pb.collection("meleeWeapons").unsubscribe();
+            pb.collection("rangeWeapons").unsubscribe();
         }
     });
 
@@ -1456,14 +1502,14 @@
                             </td>
                             {#if isMaster}
                             <td>
-                                <button class="btn btn-error btn-xs xs:btn-sm"
+                                <button class="btn btn-ghost btn-circle text-error btn-sm"
                                 on:click={() => {
                                     // Deleting object from character's objects list
                                     deleteObjectFromCharac(character, possession.id);
                                     // Adding the deleted objects to the list of available objects
                                     // in the add object modal.
                                     objects = [...objects, possession];
-                                }}>Supprimer</button>
+                                }}>X</button>
                             </td>
                             {/if}
                         </tr>
@@ -1692,6 +1738,190 @@
                 <section class="card-actions justify-center mt-5">
                     <button class="btn btn-neutral"
                     on:click={() => addSpellModal.close()}>Fermer</button>
+                </section>
+            </section>
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
+                <button>Close</button>
+            </form>
+        </dialog>
+    </section>
+
+    <!-- MELEE WEAPONS -->
+    <section id="sorts" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Armes de mêlée</h2>
+            </div>
+            {#if isMaster}
+            <div class="card-actions justify-center mb-5">
+                <button class="btn btn-neutral" on:click={() => addMeleeWeaponModal.show()} >Ajouter des armes de mêlée</button>
+            </div>
+            {/if}
+            {#if character.meleeWeapons.length == 0}
+                <p class="text-lg italic text-center">Aucune arme de mêlée</p>
+            {:else}
+                <table class="table table-zebra">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Groupe</th>
+                            <th>Enc.</th>
+                            <th>Dégâts</th>
+                            <th>Propriétés</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each character.expand.meleeWeapons as mw}
+                        <tr>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">
+                                {#if isMaster}
+                                <button class="btn btn-ghost btn-circle text-error btn-sm"
+                                on:click={() => {
+                                    // Deleting melee weapon from character's melee weapons list
+                                    deleteMeleeWeaponFromCharac(character, mw.id);
+                                    // Adding the deleted melee weapon to the list of available melee weapons
+                                    // in the add melee weapon modal.
+                                    meleeWeapons = [...meleeWeapons, mw];
+                                }}>X</button>
+                                {/if}
+                                {mw.name}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{mw.groupe}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{mw.encombrement}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{mw.degats}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{mw.proprietes}</td>
+                            
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            {/if}
+        </section>
+
+        <dialog id="addMeleeWeaponModal" class="modal modal-bottom sm:modal-middle" bind:this={addMeleeWeaponModal} >
+            <section class="modal-box form-control bg-base-300">
+                {#if meleeWeapons.length == 0}
+                <p class="text-lg text-center mb-5">Aucune arme de mêlée disponible</p>
+                {:else}
+                <table class="card-body table table-zebra">
+                    <thead>
+                        <tr>
+                            <th class="w-full">Nom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each meleeWeapons as mw}
+                            <tr>
+                                <td class="text-sm lg:text-lg">{mw.name}</td>
+                                <td><button class="btn btn-success btn-sm xs:btn-md" 
+                                on:click={() => {
+                                    // Adding the melee weapon to the character melee weapons list
+                                    addMeleeWeaponToCharac(character, mw.id);
+                                    // Removing the melee weapon that was just added to character
+                                    // So it doesn't appear in the modal
+                                    // Because you can only add a melee weapon once.
+                                    meleeWeapons = meleeWeapons.filter((meleeWeapon) => meleeWeapon.id !== mw.id);
+                                } }>+</button></td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                {/if}
+                <section class="card-actions justify-center mt-5">
+                    <button class="btn btn-neutral"
+                    on:click={() => addMeleeWeaponModal.close()}>Fermer</button>
+                </section>
+            </section>
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
+                <button>Close</button>
+            </form>
+        </dialog>
+    </section>
+
+    <!-- RANGE WEAPONS -->
+    <section id="sorts" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Armes à distance</h2>
+            </div>
+            {#if isMaster}
+            <div class="card-actions justify-center mb-5">
+                <button class="btn btn-neutral" on:click={() => addRangeWeaponModal.show()} >Ajouter des armes à distance</button>
+            </div>
+            {/if}
+            {#if character.rangeWeapons.length == 0}
+                <p class="text-lg italic text-center">Aucune arme à distance</p>
+            {:else}
+                <table class="table table-zebra">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Groupe</th>
+                            <th>Enc.</th>
+                            <th>Portée</th>
+                            <th>Dégâts</th>
+                            <th>Propriétés</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each character.expand.rangeWeapons as rw}
+                        <tr>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">
+                                {#if isMaster}
+                                <button class="btn btn-ghost btn-circle text-error btn-sm"
+                                on:click={() => {
+                                    // Deleting range weapon from character's range weapons list
+                                    deleteRangeWeaponFromCharac(character, rw.id);
+                                    // Adding the deleted range weapon to the list of available range weapons
+                                    // in the add range weapon modal.
+                                    rangeWeapons = [...rangeWeapons, rw];
+                                }}>X</button>
+                                {/if}
+                                {rw.name}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{rw.groupe}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{rw.encombrement}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{rw.portee}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{rw.degats}</td>
+                            <td class="text-[0.75rem] xs:text-sm lg:text-lg">{rw.proprietes}</td>
+                            
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            {/if}
+        </section>
+
+        <dialog id="addRangeWeaponModal" class="modal modal-bottom sm:modal-middle" bind:this={addRangeWeaponModal} >
+            <section class="modal-box form-control bg-base-300">
+                {#if rangeWeapons.length == 0}
+                <p class="text-lg text-center mb-5">Aucune arme à distance disponible</p>
+                {:else}
+                <table class="card-body table table-zebra">
+                    <thead>
+                        <tr>
+                            <th class="w-full">Nom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each rangeWeapons as rw}
+                            <tr>
+                                <td class="text-sm lg:text-lg">{rw.name}</td>
+                                <td><button class="btn btn-success btn-sm xs:btn-md" 
+                                on:click={() => {
+                                    // Adding the range weapon to the character range weapons list
+                                    addRangeWeaponToCharac(character, rw.id);
+                                    // Removing the range weapon that was just added to character
+                                    // So it doesn't appear in the modal
+                                    // Because you can only add a range weapon once.
+                                    rangeWeapons = rangeWeapons.filter((rangeWeapon) => rangeWeapon.id !== rw.id);
+                                } }>+</button></td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                {/if}
+                <section class="card-actions justify-center mt-5">
+                    <button class="btn btn-neutral"
+                    on:click={() => addRangeWeaponModal.close()}>Fermer</button>
                 </section>
             </section>
             <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">

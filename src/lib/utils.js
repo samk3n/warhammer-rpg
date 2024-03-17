@@ -333,12 +333,27 @@ export async function updateRangeWeapon(rw, data){
     await updateRecord("rangeWeapons", rw.id, data);
 }
 
+export async function addMeleeWeaponToCharac(charac, mwId){
+    await updateRecord("characters", charac.id, {"meleeWeapons+": mwId});
+}
+
+export async function deleteMeleeWeaponFromCharac(charac, mwId){
+    await updateRecord("characters", charac.id, {"meleeWeapons-": mwId});
+}
+
+export async function addRangeWeaponToCharac(charac, rwId){
+    await updateRecord("characters", charac.id, {"rangeWeapons+": rwId});
+}
+
+export async function deleteRangeWeaponFromCharac(charac, rwId){
+    await updateRecord("characters", charac.id, {"rangeWeapons-": rwId});
+}
 
 export function transformWordIntoColor(word){
     const length = word.length;
-    let r1 = length > 15 ? 150 : length > 10 ? 200 : 150;
-    let g1 = length > 15 ? 150 : length > 10 ? 170 : 200;
-    let b1 = length > 15 ? 200 : length > 10 ? 120 : 170;
+    let r1 = length > 15 ? 150 : length > 10 ? 170 : 190;
+    let g1 = length > 15 ? 150 : length > 10 ? 170 : 190;
+    let b1 = length > 15 ? 150 : length > 10 ? 170 : 190;
     let r2 = 0;
     let g2 = 0;
     let b2 = 0;
@@ -351,24 +366,24 @@ export function transformWordIntoColor(word){
     for(let letter of letters1){
         if(word.match(new RegExp(letter, "g"))){
             const match = word.match(new RegExp(letter, "g"));
-            r2 += match.length*6;
-            g2 += match.length*3;
+            r2 += match.length*8;
+            g2 += match.length*4;
         }
     }
 
     for(let letter of letters2){
         if(word.match(new RegExp(letter, "g"))){
             const match = word.match(new RegExp(letter, "g"));
-            g2 += match.length*6;
-            b2 += match.length*3;
+            g2 += match.length*8;
+            b2 += match.length*4;
         }
     }
 
     for(let letter of letters3){
         if(word.match(new RegExp(letter, "g"))){
             const match = word.match(new RegExp(letter, "g"));
-            b2 += match.length*6;
-            r2 += match.length*3;
+            b2 += match.length*8;
+            r2 += match.length*4;
         }
     }
 
