@@ -90,8 +90,8 @@
     </div>
 
     <div role="tablist" class="tabs tabs-lg tabs-lifted w-full">
-        <a href="" role="tab" class="tab" tabindex="0" class:tab-active={meleeWeaponsTabActive} on:click={() => meleeWeaponsTabActive = true}>Armes de mêlée</a>
-        <a href="" role="tab" class="tab" tabindex="0" class:tab-active={!meleeWeaponsTabActive} on:click={() => meleeWeaponsTabActive = false}>Armes à distance</a>
+        <a href="" role="tab" class="tab" tabindex="0" class:tab-active={meleeWeaponsTabActive} on:click={() => meleeWeaponsTabActive = true}><iconify-icon class="text-3xl" icon="memory:sword"></iconify-icon></a>
+        <a href="" role="tab" class="tab" tabindex="0" class:tab-active={!meleeWeaponsTabActive} on:click={() => meleeWeaponsTabActive = false}><iconify-icon class="text-3xl" icon="memory:bow-arrow"></iconify-icon></a>
     </div>
 
     <!-- MELEE WEAPONS -->

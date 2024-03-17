@@ -22,6 +22,9 @@
         deleteRangeWeaponFromCharac} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
+    import gold from '$lib/assets/images/gold.webp';
+    import silver from '$lib/assets/images/silver.webp';
+    import copper from '$lib/assets/images/copper.webp';
 
     export let data;
     export let form;
@@ -39,7 +42,9 @@
         ["groupe", "Groupe"],
         ["possessions", "Possessions"],
         ["talents", "Talents"],
-        ["sorts", "Sorts"],]
+        ["sorts", "Sorts"],
+        ["meleeWeapons", "Armes de mêlée"],
+        ["rangeWeapons", "Armes à distance"],]
     );
 
     let character = data.character;
@@ -1295,7 +1300,7 @@
             <h2 class="card-title self-center mb-5">Richesses</h2>
             <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
                 <div class="form-control items-center">
-                    <label class="label" for="gold">Couronnes d'Or</label>
+                    <label class="label" for="gold"><img src={gold} alt="Courrone d'or" class="w-14 h-14" /></label>
                     <input on:change={(event) => updateAttribute(character, "gold", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster} 
@@ -1303,7 +1308,7 @@
                 </div>
 
                 <div class="form-control items-center">
-                    <label class="label" for="silver">Pistoles d'Argent</label>
+                    <label class="label" for="silver"><img src={silver} alt="Pistole d'argent" class="w-14 h-14" /></label>
                     <input on:change={(event) => updateAttribute(character, "silver", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster}  
@@ -1311,7 +1316,7 @@
                 </div>
 
                 <div class="form-control items-center">
-                    <label class="label" for="copper">Sous de Cuivre</label>
+                    <label class="label" for="copper"><img src={copper} alt="Sou de cuivre" class="w-14 h-14" /></label>
                     <input  on:change={(event) => updateAttribute(character, "copper", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster}  
@@ -1747,7 +1752,7 @@
     </section>
 
     <!-- MELEE WEAPONS -->
-    <section id="sorts" class="card bg-base-300 w-full">
+    <section id="meleeWeapons" class="card bg-base-300 w-full">
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Armes de mêlée</h2>
@@ -1838,7 +1843,7 @@
     </section>
 
     <!-- RANGE WEAPONS -->
-    <section id="sorts" class="card bg-base-300 w-full">
+    <section id="rangeWeapons" class="card bg-base-300 w-full">
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Armes à distance</h2>

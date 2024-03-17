@@ -21,7 +21,7 @@
         {#if !pageExcludeBackButton.includes($page.url.pathname) }
         <a href={lastPage}>
             <button class="btn btn-neutral hidden md:block font-semibold " >Retour</button>
-            <button class="btn btn-neutral md:hidden font-semibold " >^</button>
+            <button class="btn btn-neutral md:hidden font-semibold " ><iconify-icon class="text-2xl" icon="flowbite:arrow-left-outline"></iconify-icon></button>
         </a>
         {/if}
         </section>
@@ -31,7 +31,7 @@
         </section>
 
         <section class="md:hidden basis-2/12 flex justify-center items-center">
-            <button class="btn btn-neutral font-semibold "  on:click={() => mobileMenuOpen = !mobileMenuOpen}>E</button>
+            <button class="btn btn-neutral font-semibold "  on:click={() => mobileMenuOpen = !mobileMenuOpen}><iconify-icon class="text-2xl" icon={mobileMenuOpen ? "flowbite:close-solid" : "flowbite:bars-outline"}></iconify-icon></button>
         </section>
 
         <section class="basis-2/12 flex bg-base-300 absolute z-10 top-20 right-0 h-[calc(100vh-5rem)] w-2/5 flex-col justify-start items-center gap-5 pt-6 translate-x-96 transition-transform duration-1000 md:static md:h-auto md:flex-row md:justify-center md:p-0 md:translate-x-0" class:mobileMenuOpen>
