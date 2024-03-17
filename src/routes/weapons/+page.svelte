@@ -75,7 +75,10 @@
     });
 
     onDestroy(() => {
-        if(pb) pb.collection("meleeWeapons").unsubscribe();
+        if(pb){
+            pb.collection("meleeWeapons").unsubscribe();
+            pb.collection("rangeWeapons").unsubscribe();
+        }
     });
 
 </script>

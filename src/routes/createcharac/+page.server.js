@@ -235,6 +235,9 @@ export const actions = {
         data.subornation = baseSkills("sociabilite");
         data.survieExterieur = baseSkills("intelligence");
 
+        data.nbPossessions = {};
+        data.nbTalents = {};
+
         try {
             // Creates the new character
             const recordResponse = await fetch('/api/createRecord', {

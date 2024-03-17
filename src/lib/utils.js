@@ -133,6 +133,28 @@ export async function createRangeWeapon(data){
     await createRecord("rangeWeapons", data);  
 }
 
+export async function createArmor(data){
+    if(data.name.length < 3){
+        return {
+            error: true,
+            message: "Le nom de l'armure doit contenir au moins 3 caractères."
+        }
+    }
+    if(data.encombrement < 0 || !data.encombrement) {
+        return {
+            error: true,
+            message: "L'encombrement doit être positif."
+        }
+    }
+    if(data.pa < 0 || !data.pa) {
+        return {
+            error: true,
+            message: "Les dégâts doivent être positifs."
+        }
+    }
+    await createRecord("armor", data);  
+}
+
 
 export async function updateAttribute(character, attribute, value){
     await updateRecord("characters", character.id, {[attribute]: value});
@@ -331,6 +353,10 @@ export async function updateMeleeWeapon(mw, data){
 
 export async function updateRangeWeapon(rw, data){
     await updateRecord("rangeWeapons", rw.id, data);
+}
+
+export async function updateArmor(armor, data){
+    await updateRecord("armor", armor.id, data);
 }
 
 export async function addMeleeWeaponToCharac(charac, mwId){

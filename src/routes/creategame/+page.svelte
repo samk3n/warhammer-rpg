@@ -5,7 +5,7 @@
 
 <h1 class="text-3xl font-semibold text-center">Créer une partie</h1>
 
-<form class="card bg-base-200 shadow-lg mt-10 w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6" method="POST" action="?/creategame">
+<form class="card bg-base-300 shadow-lg mt-10 w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6" method="POST" action="?/creategame">
     <section class="card-body">
         <div class="form-control">
             <label class="label" for="name">Nom</label>
