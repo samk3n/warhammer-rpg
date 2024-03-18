@@ -1,4 +1,5 @@
 <script>
+    import {PUBLIC_DB_ADDRESS} from "$env/static/public";
     import {getRecordFromId, 
         increaseCharacteristic, 
         decreaseCharacteristic, 
@@ -73,7 +74,7 @@
     }
 
     onMount(async () => {
-        pb = new PocketBase("http://localhost:8090");
+        pb = new PocketBase(PUBLIC_DB_ADDRESS);
         pb.authStore?.loadFromCookie(document.cookie || '');
         
         pb.collection("characters").subscribe(character.id, (e) => {

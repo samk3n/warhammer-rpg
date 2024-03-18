@@ -41,6 +41,7 @@
     }
 </script>
 
+<section class="flex flex-col gap-5 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6">
 {#if data && data.games}
     {#if data.games.length == 0}
 
@@ -52,7 +53,7 @@
     {/if}
 
     {#each data.games as game}
-    <section class="card bg-base-200 mt-10 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6">
+    <section class="card bg-base-300 mt-10 w-full">
         <div class="card-body items-center">
             <h2 class="text-base-content text-2xl font-semibold">{game.name}{game.password ? " *" : ""}</h2>
             <div class="divider"></div>
@@ -89,3 +90,4 @@
     </dialog>
 
 {/if}
+</section>

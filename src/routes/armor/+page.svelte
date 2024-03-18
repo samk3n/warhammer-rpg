@@ -1,4 +1,5 @@
 <script>
+    import {PUBLIC_DB_ADDRESS} from "$env/static/public";
     import {updateArmor, deleteRecord, createArmor} from "$lib/utils.js";
     import PocketBase from 'pocketbase';
     import { onDestroy, onMount } from "svelte";
@@ -28,7 +29,7 @@
 
 
     onMount(async () => {
-        pb = new PocketBase("http://localhost:8090");
+        pb = new PocketBase(PUBLIC_DB_ADDRESS);
         pb.authStore?.loadFromCookie(document.cookie || '');
         
         pb.collection("armor").subscribe("*", (e) => {
