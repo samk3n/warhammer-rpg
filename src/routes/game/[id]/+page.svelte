@@ -57,7 +57,7 @@
 
     <section class="w-full flex flex-col gap-5">
         {#if !data.game.expand.characters ||data.game.expand.characters.length == 0}
-        <p class="text-lg italic">Aucun personnage disponibles dans cette partie.</p>
+        <p class="text-lg italic text-center">Aucun personnage disponible dans cette partie.</p>
         
         {:else}
 
