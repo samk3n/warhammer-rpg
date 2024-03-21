@@ -377,9 +377,18 @@ export async function deleteRangeWeaponFromCharac(charac, rwId){
 
 export function transformWordIntoColor(word){
     const length = word.length;
-    let r1 = length > 15 ? 150 : length > 10 ? 170 : 190;
-    let g1 = length > 15 ? 150 : length > 10 ? 170 : 190;
-    let b1 = length > 15 ? 150 : length > 10 ? 170 : 190;
+    let r1 = 0;
+    let g1 = 0;
+    let b1 = 0;
+    if(length % 2 == 0){
+        r1 = 180
+    }
+    else if(length % 3 == 0){
+        g1 = 180;
+    }
+    else {
+        b1 = 180;
+    }
     let r2 = 0;
     let g2 = 0;
     let b2 = 0;
@@ -392,24 +401,21 @@ export function transformWordIntoColor(word){
     for(let letter of letters1){
         if(word.match(new RegExp(letter, "g"))){
             const match = word.match(new RegExp(letter, "g"));
-            r2 += match.length*8;
-            g2 += match.length*4;
+            r2 += match.length*30;
         }
     }
 
     for(let letter of letters2){
         if(word.match(new RegExp(letter, "g"))){
             const match = word.match(new RegExp(letter, "g"));
-            g2 += match.length*8;
-            b2 += match.length*4;
+            g2 += match.length*30;
         }
     }
 
     for(let letter of letters3){
         if(word.match(new RegExp(letter, "g"))){
             const match = word.match(new RegExp(letter, "g"));
-            b2 += match.length*8;
-            r2 += match.length*4;
+            b2 += match.length*30;
         }
     }
 
@@ -425,12 +431,20 @@ export function transformWordIntoColor(word){
     let r = (r1 + r2);
     let g =  (g1 + g2);
     let b = (b1 + b2);
-
     r = r > 255 ? 255 : r;
     g = g > 255 ? 255 : g;
     b = b > 255 ? 255 : b;
 
-    return "#" + r.toString(16) + g.toString(16) + b.toString(16);
+    let r16 = r < 10 ? "0"+r : r.toString(16);
+    let g16 = g < 10 ? "0"+g : g.toString(16);
+    let b16 = b < 10 ? "0"+b : b.toString(16);
+    r16 = r16.length == 1 ? "0"+r16 : r16;
+    g16 = g16.length == 1 ? "0"+g16 : g16;
+    b16 = b16.length == 1 ? "0"+b16 : b16;
+
+    // console.log(word + " - " + r16 + "," + g16 + "," + b16)
+
+    return "#" + r16 + g16 + b16;
 }
 
 export function getHoverColor(hexcolor) {
@@ -438,10 +452,20 @@ export function getHoverColor(hexcolor) {
     var g = parseInt(hexcolor.substring(3,5),16);
     var b = parseInt(hexcolor.substring(5,7),16);
 
-    r = r - Math.floor(r * 0.1) > 255 ? 255 : r - Math.floor(r * 0.1);
-    g = g - Math.floor(g * 0.1) > 255 ? 255 : g - Math.floor(g * 0.1);
-    b = b - Math.floor(b * 0.1) > 255 ? 255 : b - Math.floor(b * 0.1);
-    return "#" + r.toString(16) + g.toString(16) + b.toString(16);
+    const ratio = 0.2
+
+    r = r - Math.floor(r * ratio) > 255 ? 255 : r - Math.floor(r * ratio);
+    g = g - Math.floor(g * ratio) > 255 ? 255 : g - Math.floor(g * ratio);
+    b = b - Math.floor(b * ratio) > 255 ? 255 : b - Math.floor(b * ratio);
+
+    let r16 = r < 10 ? "0"+r : r.toString(16);
+    let g16 = g < 10 ? "0"+g : g.toString(16);
+    let b16 = b < 10 ? "0"+b : b.toString(16);
+    r16 = r16.length == 1 ? "0"+r16 : r16;
+    g16 = g16.length == 1 ? "0"+g16 : g16;
+    b16 = b16.length == 1 ? "0"+b16 : b16;
+
+    return "#" + r16 + g16 + b16;
 }
 
 export function textColorBasedOnBG(hexcolor){
