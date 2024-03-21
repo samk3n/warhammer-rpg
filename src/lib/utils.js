@@ -452,7 +452,7 @@ export function getHoverColor(hexcolor) {
     var g = parseInt(hexcolor.substring(3,5),16);
     var b = parseInt(hexcolor.substring(5,7),16);
 
-    const ratio = 0.2
+    const ratio = 0.2;
 
     r = r - Math.floor(r * ratio) > 255 ? 255 : r - Math.floor(r * ratio);
     g = g - Math.floor(g * ratio) > 255 ? 255 : g - Math.floor(g * ratio);
