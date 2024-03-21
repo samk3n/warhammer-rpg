@@ -61,6 +61,7 @@
     let editCharac = false;
     let editSkill = false;
     let editNotes = false;
+    let editMasterNotes = false;
 
     let addObjectModal;
     let addTalentModal;
@@ -222,11 +223,9 @@
             <button class="btn btn-neutral">{name}</button>
         </a>
         {/each}
-        {#if !isMaster}
-        <a href="#notes" class="flex-grow">
+        <a href={isMaster ? "#masterNotes" : "#notes"} class="flex-grow">
             <button class="btn btn-neutral">Notes</button>
         </a>
-        {/if}
     </nav>
 
     <section id="main" class="card bg-base-300 w-full">
@@ -1467,6 +1466,23 @@
                     class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
                     disabled={isMaster}  
                      name="notes" value={character.notes} />
+                </div>
+            </section>
+        </section>
+    </section>
+    {:else}
+    <section id="masterNotes" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Notes</h2>
+                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editMasterNotes} />
+            </div>
+            <section style:display={editMasterNotes ? "block" : "none"}>
+                <div class="form-control">
+                    <textarea on:change={(event) => updateAttribute(character, "masterNotes", event.target.value)} 
+                    class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
+                    disabled={!isMaster}  
+                     name="notes" value={character.masterNotes} />
                 </div>
             </section>
         </section>

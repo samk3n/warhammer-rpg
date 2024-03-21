@@ -1,10 +1,12 @@
 <script>
-    import {getRecordFromId} from "$lib/utils.js"
+    import {getRecordFromId, updateGameField} from "$lib/utils.js"
 
     export let data;
     export let form;
 
     let gameFormModal;
+
+    let editNotes = false;
 
     $: if(form && form.message){
         gameFormModal.showModal();
@@ -151,6 +153,25 @@
                 
             </div>
             {/each}
+        {/if}
+
+        {#if data.isMaster}
+        <section id="notes" class="card bg-base-300 w-full">
+            <section class="card-body">
+                <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                    <h2 class="card-title">Notes</h2>
+                    <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editNotes} />
+                </div>
+                <section class="" style:display={editNotes ? "block" : "none"}>
+                    <div class="form-control">
+                        <textarea on:change={(event) => updateGameField(data.game, "notes", event.target.value)} 
+                        class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
+                        disabled={!data.isMaster}  
+                        name="notes" value={data.game.notes} />
+                    </div>
+                </section>
+            </section>
+        </section>
         {/if}
         
         <!-- Delete game button form -->

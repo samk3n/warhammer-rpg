@@ -13,8 +13,6 @@
     let pb;
     let spells = data.spells;
 
-    console.log(data)
-
     onMount(async () => {
         pb = new PocketBase(PUBLIC_DB_ADDRESS);
         pb.authStore?.loadFromCookie(document.cookie || '');
