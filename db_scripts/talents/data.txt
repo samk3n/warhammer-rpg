@@ -39,7 +39,7 @@
 000000000000038;Intrigant;Vous êtes passé maître dans l’art des intrigues personnelles. Vous bénéficiez d’un bonus de +10% aux tests de Charisme liés aux intrigues et aux tests de Force Mentale destinés à résister au Charisme d’autrui.
 000000000000039;Lévitation;Vous pouvez voler sur une courte distance au-dessus du sol. Pour plus de détails concernant le vol, reportez-vous au Chapitre 6 : Combat, dégâts et mouvements.
 000000000000040;Linguistique;Vous avez une affinité particulière pour les langues étrangères.Vous bénéficiez d’un bonus de +10% aux tests de Lire/écrire et de Langue.
-000000000000041;Lutte:Le pugilat et les prises n’ont pas de secret pour vous. Vous pouvez porter des attaques à mains nues avec un bonus de +10% en Capacité de Combat quand vous tentez une prise. De plus, vous bénéficiez d’un bonus de +10% à vos tests de Force liés à une prise.
+000000000000041;Lutte;Le pugilat et les prises n’ont pas de secret pour vous. Vous pouvez porter des attaques à mains nues avec un bonus de +10% en Capacité de Combat quand vous tentez une prise. De plus, vous bénéficiez d’un bonus de +10% à vos tests de Force liés à une prise.
 000000000000042;Magie commune;Vous connaissez la plus élémentaire des formes de magie. Comme Science de la magie, il ne s’agit pas d’une compétence unique, mais d’un ensemble de compétences. Chaque talent de Magie commune correspond à la maîtrise d’une forme de magie, cette spécialité étant indiquée entre parenthèses. Par exemple, Magie commune (occulte) est différent de Magie commune (divine). Les formes de Magie commune les plus répandues sont les suivantes : divine, occulte et vulgaire. Si vous avez un talent de Magie commune et au moins 1 dans la caractéristique de Magie,vous pouvez tenter de lancer n’importe quel sort dépendant de cette forme de magie. Reportez-vous au Chapitre 7 : La magie,pour connaître la liste des sorts et autres détails.
 000000000000043;Magie mineure;Vous connaissez un sort commun à tous les types de magie. La Magie mineure est un talent particulier. En réalité, il en existe plusieurs formes, chacune devant être acquise individuellement. Chaque talent de Magie mineure représente un sort séparé, dont le nom apparaît entre parenthèses. Par exemple, Magie mineure (dissipation) est différent de Magie mineure (marche dans les airs). Les sorts de Magie mineure les plus répandus sont les suivants :alarme magique, arme consacrée, armure aethyrique, dissipation, manipulation distante, marche dans les airs, silence et verrou magique. Reportez-vous au Chapitre 7 : La magie pour plus d’informations sur la Magie mineure et la description des divers sorts. Vous devez disposer d’un talent de Magie commune avant d’apprendre un talent de Magie mineure.
 000000000000044;Magie noire;Vous pouvez manipuler le Dhar (la magie noire) afin d’alimenter vos sorts. L’utilisation de la magie noire confère davantage de pouvoir, mais elle est bien plus dangereuse. Quand vous lancez un sort, vous pouvez choisir d’utiliser l’énergie du Dhar pour l’alimenter. Quand vous effectuez votre jet d’incantation pour un sort de Magie noire,lancez 1d10 supplémentaire et ignorez le dé qui donne le résultat le plus faible. Cependant, tous les dés sont comptabilisés pour la Malédiction de Tzeentch. Par exemple, un sorcier qui a 2 en Magie et qui jette un sort de Magie noire lance 3d10 et garde les deux meilleurs résultats pour son jet d’incantation. Toutefois, les 3 dés sont utilisés pour déterminer la Malédiction de Tzeentch. Si notre sorcier obtient trois 6, le jet d’incantation est égal à 12 (6+6), mais le sort déclenche un écho majeur du Chaos. Vous devez utiliser la Magie noire quand vous lancez un sort lié à un Sombre savoir. Pour plus de détails sur l’incantation des sorts, reportez-vous au Chapitre 7 : La magie.
@@ -61,30 +61,23 @@
 000000000000060;Résistance aux maladies;Votre constitution vous immunise contre la plupart des maladies.Vous bénéficiez d’un bonus de +10% aux tests d’Endurance destinés à résister aux maladies.
 000000000000061;Résistance aux poisons;Votre robustesse vous permet de résister aux effets de nombreux poisons. Vous bénéficiez d’un bonus de +10% aux tests d’Endurance destinés à résister aux poisons.
 000000000000062;Robuste;Vous êtes musclé et résistant.Vous ne subissez pas de malus en Mouvement quand vous portez une armure de plaques complète (armure lourde). Pour plus d’informations concernant les armures, reportez-vous au Chapitre 5 : L’équipement.
-000000000000063;
-000000000000064;
-000000000000065;
-000000000000066;
-000000000000067;
-000000000000068;
-000000000000069;
-000000000000070;
-000000000000071;
-000000000000072;
-000000000000073;
-000000000000074;
-000000000000075;
-000000000000076;
-000000000000077;
-000000000000078;
-000000000000079;
-000000000000080;
-000000000000081;
-000000000000082;
-000000000000083;
-000000000000084;
-000000000000085;
-000000000000086;
-000000000000087;
-000000000000088;
-000000000000089;
+000000000000063;Sain d’esprit;Votre détermination est votre rempart contre les chocs psychologiques. Vous n’avez pas besoin d’effectuer de test de Folie avant d’avoir 8 points de Folie (PF) et vous n’en gagnez pas automatiquement une avant d’avoir 14 PF.
+000000000000064;Sang-froid;Vous bénéficiez d’un bonus permanent de +5% en Force Mentale. Modifiez votre profil de départ en conséquence.
+000000000000065;Sans peur;Vous êtes assez brave ou assez fou pour ne pas connaître la peur.Vous êtes immunisé contre la Peur et subissez la Terreur comme s’il s’agissait simplement de Peur.Vous êtes également immunisé contre les effets de la compétence Intimidation et du talent Troublant. Pour plus d’informations sur la Peur et la Terreur, reportez-vous au Chapitre 9 : Le meneur de jeu.
+000000000000066;Savoir-faire nain;Les membres de votre race sont des artisans nés. Vous bénéficiez d’un bonus de +10% aux tests pratiqués conjointement avec les compétences de Métier suivantes : arquebusier, brasseur, cristallier, fabricant d’armes, fabricant d’armures, forgeron, maçon et mineur.
+000000000000067;Science de la magie;ous avez étudié l’une des traditions magiques dans l’un des huit célèbres Collège de Magie de l’Empire. Science de la magie est un talent particulier car il n’est pas unique. Il existe différentes formes de ce talent. La concentration et la difficulté des études nécessaires sont telles qu’on ne peut en maîtriser qu’une seule forme. Chaque talent de Science de la magie correspond à la maîtrise d’une forme de magie, cette spécialité étant indiquée entre parenthèses. Par exemple, Science de la magie (bête) est différent de Science de la magie (feu). Les formes de Science de la magie les plus répandues sont connues sous le nom des Huit Ordres de Magie. Ces domaines sont les suivants : de la bête, des cieux, du feu, de la lumière, du métal, de la mort, de l’ombre et de la vie. Si vous maîtrisez l’un de ces savoirs occultes, vous pouvez tenter de lancer n’importe quel sort dépendant de cette forme de magie. N’oubliez pas que vous ne pouvez maîtriser qu’un seul domaine de magie à la fois. Reportez-vous au Chapitre 7 : La magie pour connaître la liste des sorts et autres détails.
+000000000000068;Sens aiguisés;Vos sens sont naturellement aiguisés. Vous bénéficiez d’un bonus de +20% aux tests de Perception.
+000000000000069;Sens de l’orientation;Vous disposez d’un sens de l’orientation naturel très sûr. Vous vous perdez rarement et savez toujours dans quelle direction se trouve le nord. Vous bénéficiez d’un bonus de +10% aux tests d’Orientation.
+000000000000070;Sixième sens;Vous êtes parcouru d’une étrange sensation quand vous êtes en danger, un avertissement qui vous sauve parfois la mise avant que le pire n’advienne. Quand le danger est proche, le MJ effectue un test de Force Mentale secret. En cas de succès, il peut vous dire que vous avez un mauvais pressentiment ou que vous vous sentez observé. Ce talent peut vous éviter d’être pris par surprise tandis que tous vos alliés le seront.
+000000000000071;Sociable;Vous bénéficiez d’un bonus permanent de +5% en Sociabilité. Modifiez votre profil de départ en conséquence.
+000000000000072;Sombre savoir;Vous vous êtes laissé séduire par les arts interdits de la sorcellerie. Sombre savoir est un talent particulier car il n’est pas unique. Il existe différentes formes de ce talent. La concentration et la difficulté des études nécessaires sont telles qu’on ne peut en maîtriser qu’une seule forme. Chaque talent de Sombre savoir correspond à la parenthèses. Par exemple, Sombre savoir (Chaos) est différent de Sombre savoir (nécromancie). Les Sombres savoirs les plus répandus sont le Chaos et la nécromancie. De futurs suppléments en décriront de nouveaux en détail, parmi lesquels ceux des puissances du Chaos : Nurgle, Slaanesh et Tzeentch. Si vous connaissez un Sombre savoir, vous pouvez tenter de lancer n’importe quel sort dépendant de cette forme de magie. Reportez-vous au Chapitre 7 : La magie pour connaître la liste des sorts et autres détails.
+000000000000073;Sur ses gardes;Vos réflexes aiguisés vous permettent de dégainer rapidement vos armes et d’autres objets. Une fois par round, vous pouvez utiliser l’action dégainer en tant qu’action gratuite.
+000000000000074;Talent artistique;Vous avez une âme d’artiste. Vous bénéficiez d’un bonus de +20% aux tests de Métier (artiste) et aux tests d’Évaluation concernant les oeuvres d’art.
+000000000000075;Terrifiant;La simple vue de votre visage monstrueux fait fuir l’ennemi. Vous provoquez la Terreur, comme indiqué dans le Chapitre 9 : Le meneur de jeu
+000000000000076;Tir de précision;Vous savez trouver la faille dans l’armure de vos ennemis. Quand vous réussissez une attaque à distance, vous pouvez ignorer 1 point d’Armure. Si votre cible n’a pas d’armure, ce talent n’a aucun effet.
+000000000000077;Tir en puissance;Vous êtes capable d’infliger un maximum de dégâts à l’aide de vos tirs.Vous bénéficiez d’un bonus de +1 aux jets de dégâts des armes de tir.
+000000000000078;Tireur d’élite;Vus bénéficiez d’un bonus permanent de +10% en Capacité de Tir. Modifiez votre profil de départ en conséquence.
+000000000000079;Troublant;Votre simple présence dérange vos adversaires. Vos ennemis doivent réussir un test de Force Mentale quand ils vous voient pour éviter de subir un malus de –10% en Capacité de Combat et en Capacité de Tir. Ils peuvent retenter ce test à chaque round jusqu’à ce qu’ils le réussissent ou que vous soyez hors de vue.
+000000000000080;Valeureux;Vous êtes d’une bravoure exceptionnelle. Vous bénéficiez d’un bonus de +10% aux tests de Peur et de Terreur, ainsi qu’aux tests de Force Mentale visant à résister à une tentative d’Intimidation.
+000000000000081;Vision nocturne;Vous voyez parfaitement clair dans l’obscurité naturelle jusqu’à une distance de 30 mètres. Ce talent ne fonctionne pas dans l’obscurité totale et requiert l’équivalent de la lumière des étoiles au moins.
+000000000000082;Vol;Vous savez voler. Pour plus de détails concernant le vol, reportez-vous au Chapitre 6 : Combat, dégâts et mouvements.
