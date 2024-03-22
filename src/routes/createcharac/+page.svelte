@@ -9,7 +9,7 @@
 <p class="text-warning font-semibold mt-5">{form.message}</p>
 {/if}
 
-<form class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6" method="POST" action="?/createCharac">
+<form class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6 xl:w-2/6" method="POST" action="?/createCharac">
     
     <section class="card gap-10 bg-base-300 w-full">
         <div class="card-body">

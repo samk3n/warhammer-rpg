@@ -84,7 +84,7 @@
 
 </script>
 
-<section class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
+<section class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 lg:w-4/6 xl:w-3/6">
 {#if data}
 
     <h1 class="text-3xl font-bold text-center">Armes</h1>
@@ -110,10 +110,10 @@
                 <thead>
                     <tr>
                         <th>Nom</th>
-                        <th>Groupe</th>
-                        <th>Enc.</th>
-                        <th>Dégâts</th>
-                        <th>Propriétés</th>
+                        <th class="hidden xs:table-cell">Groupe</th>
+                        <th class="hidden 2xs:table-cell">Enc.</th>
+                        <th class="hidden 2xs:table-cell">Dégâts</th>
+                        <th class="hidden sm:table-cell">Propriétés</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -127,7 +127,7 @@
                             meleeWeaponToEdit.proprietes = mw.proprietes;
                             editMeleeWeaponModal.show();
                         }}>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">
+                            <td class="text-xs 2xs:text-sm xs:text-base">
                                 <button class="btn btn-ghost btn-circle text-error btn-sm"
                                 on:click={(event) => {
                                     event.stopPropagation();
@@ -135,10 +135,10 @@
                                     deleteMeleeWeaponModal.show();
                                 }}>X</button>
                                 {mw.name}</td>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">{mw.groupe}</td>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">{mw.encombrement}</td>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">{mw.degats}</td>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">{mw.proprietes}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{mw.groupe}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden 2xs:table-cell">{mw.encombrement}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden 2xs:table-cell">{mw.degats}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{mw.proprietes}</td>
                             <td></td>
                         </tr>
                     {/each}
@@ -160,11 +160,11 @@
                 <thead>
                     <tr>
                         <th>Nom</th>
-                        <th>Groupe</th>
-                        <th>Enc.</th>
-                        <th>Dégâts</th>
-                        <th>Portée</th>
-                        <th>Propriétés</th>
+                        <th class="hidden sm:table-cell">Groupe</th>
+                        <th class="hidden xs:table-cell">Enc.</th>
+                        <th class="hidden xs:table-cell">Dégâts</th>
+                        <th class="hidden xs:table-cell">Portée</th>
+                        <th class="hidden md:table-cell">Propriétés</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -187,11 +187,11 @@
                                     deleteRangeWeaponModal.show();
                                 }}>X</button>
                                 {rw.name}</td>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">{rw.groupe}</td>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">{rw.encombrement}</td>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">{rw.degats}</td>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">{rw.portee}</td>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">{rw.proprietes}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{rw.groupe}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{rw.encombrement}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{rw.degats}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{rw.portee}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden md:table-cell">{rw.proprietes}</td>
                             <td></td>
                         </tr>
                     {/each}

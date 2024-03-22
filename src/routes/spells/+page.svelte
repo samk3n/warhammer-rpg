@@ -45,7 +45,7 @@
     <h1 class="text-3xl font-bold text-center mb-5">Sorts</h1>
 
     <section class="card w-full">
-        <section class="grid grid-cols-3 gap-2">
+        <section class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2">
             {#each spells as spell}
             <button class="btn" 
             style="--bgColor: {transformWordIntoColor(spell.name)}; --color: {textColorBasedOnBG(transformWordIntoColor(spell.name))}; --hoverColor: {getHoverColor(transformWordIntoColor(spell.name))}" 

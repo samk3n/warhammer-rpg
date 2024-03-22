@@ -13,7 +13,7 @@
 {/if}
 
 {#each data.games as game}
-<section class="card bg-base-300 shadow-lg mt-10 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6">
+<section class="card bg-base-300 shadow-lg mt-10 w-11/12 mx-2 sm:w-4/5 md:w-3/5 lg:w-3/6 xl:w-2/6">
     <div class="card-body items-center">
         <h2 class="text-2xl font-semibold">{game.name}{game.password ? " *" : ""}</h2>
         <div class="divider"></div>
@@ -32,7 +32,7 @@
 
     <div class="card-actions justify-center">
         <a href={"/game/" + game.id}>
-            <button class="btn btn-neutral btn-wide">Jouer</button>
+            <button class="btn btn-neutral xs:btn-wide">Jouer</button>
         </a>
     </div>
     

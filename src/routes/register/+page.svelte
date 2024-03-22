@@ -6,7 +6,7 @@
     {#if form}
     <p class="text-warning font-semibold text-center">{form.message}</p>
     {/if}
-    <form class="card bg-base-200 shadow-lg mt-10 w-full" method="POST" action="?/register">
+    <form class="card bg-base-300 shadow-lg mt-10 w-full" method="POST" action="?/register">
         <section class="card-body">
             <div class="form-control">
                 <label class="label" for="username">Nom d'utilisateur</label>
@@ -26,5 +26,5 @@
             <button class="btn btn-neutral btn-wide">Inscription</button>
         </section>
     </form>
+    <p class="text-center mt-5">Si vous avez déjà un compte, <a href="/login" class="underline" >connectez-vous!</a></p>
 </section>
-<p class="mt-5">Si vous avez déjà un compte, <a href="/login" class="underline" >connectez-vous!</a></p>

@@ -479,3 +479,11 @@ export function textColorBasedOnBG(hexcolor){
 export async function updateGameField(game, field, value){
     await updateRecord("games", game.id, {[field]: value});
 }
+
+export async function updateCharacterPlayable(character, checked){
+    await updateRecord("characters", character.id, {isPlayable: checked});
+    if(!checked){
+        await updateRecord("users", character.user, {"games-": character.game});
+        await updateRecord("characters", character.id, {user: ""});
+    }
+}

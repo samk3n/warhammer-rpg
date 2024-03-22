@@ -22,7 +22,7 @@
 
 </script>
 
-<section class="flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
+<section class="flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6 xl:w-2/6">
 {#if data && data.game}
 
     <h1 class="text-3xl font-bold">{data.game.name}</h1>
@@ -42,7 +42,7 @@
     <a href={"/createcharac/?gameId=" + data.game.id}>
         <button class="btn btn-primary xs:btn-wide text-xl">Créer un personnage</button>
     </a>
-    <section class="flex flex-wrap gap-2">
+    <section class="flex flex-wrap justify-center gap-2">
         {#each objects as [key, value]}
         <a href={key}>
             <button class="btn btn-secondary">{value}</button>

@@ -21,5 +21,5 @@
             <button class="btn btn-neutral btn-wide">Connexion</button>
         </section>
     </form>
+    <p class="text-center mt-5">Si vous n'avez pas encore de compte, <a href="/register" class="underline" >inscrivez-vous!</a></p>
 </section>
-<p class="mt-5">Si vous n'avez pas encore de compte, <a href="/register" class="underline" >inscrivez-vous!</a></p>

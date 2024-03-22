@@ -3,7 +3,7 @@
     export let form;
 </script>
 
-<section class="flex flex-col gap-5 w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6">
+<section class="flex flex-col gap-5 w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6 xl:w-2/6">
 
     <h1 class="text-3xl font-semibold text-center">Créer une partie</h1>
 
