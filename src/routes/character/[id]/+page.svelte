@@ -42,6 +42,7 @@
         ["blessures", "Blessures"],
         ["ambitions", "Ambitions"],
         ["groupe", "Groupe"],
+        ["exchange", "Échange"],
         ["possessions", "Possessions"],
         ["talents", "Talents"],
         ["sorts", "Sorts"],
@@ -99,7 +100,7 @@
                 objects = [...objects, e.record];
             }
             else if("update" == e.action) {
-                if(character.expand.possession){
+                if(character.expand.possessions){
                     character.expand.possessions = character.expand.possessions.map((obj) => obj.id == e.record.id ? e.record : obj);
                 }
                 objects = objects.map((obj) => obj.id == e.record.id ? e.record : obj);
@@ -1507,48 +1508,11 @@
         {/if}
     </section>
 
-    <!-- Notes -->
-    {#if !isMaster}
-    <section id="notes" class="card bg-base-300 w-full">
-        <section class="card-body">
-            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
-                <h2 class="card-title">Notes</h2>
-                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editNotes} />
-            </div>
-            <section class="" style:display={editNotes ? "block" : "none"}>
-                <div class="form-control">
-                    <textarea on:change={(event) => updateAttribute(character, "notes", event.target.value)} 
-                    class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
-                    disabled={isMaster}  
-                     name="notes" value={character.notes} />
-                </div>
-            </section>
-        </section>
-    </section>
-    {:else}
-    <section id="masterNotes" class="card bg-base-300 w-full">
-        <section class="card-body">
-            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
-                <h2 class="card-title">Notes</h2>
-                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editMasterNotes} />
-            </div>
-            <section style:display={editMasterNotes ? "block" : "none"}>
-                <div class="form-control">
-                    <textarea on:change={(event) => updateAttribute(character, "masterNotes", event.target.value)} 
-                    class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster}  
-                     name="notes" value={character.masterNotes} />
-                </div>
-            </section>
-        </section>
-    </section>
-    {/if}
-
     <!-- ECHANGE -->
-    <section id="echange" class="card bg-base-300 w-full">
+    <section id="exchange" class="card bg-base-300 w-full">
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
-                <h2 class="card-title">Echange MJ-Joueur</h2>
+                <h2 class="card-title text-center">Échange MJ-Joueur</h2>
                 <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editEchange} />
             </div>
             <section class="" style:display={editEchange ? "block" : "none"}>
@@ -1599,7 +1563,7 @@
                                 {/if}
                                 {possession.name}
                             </td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{possession.encombrement}</td>
+                            <td data-tip="sdhbqqhsdbgh" class="tooltip text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{possession.encombrement}</td>
                             <td>
                                 <input on:change={(event) => updateCharacObjectCount(character, possession.id, event.target.value)}
                                 class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
@@ -1632,8 +1596,8 @@
                     <tbody>
                         {#each objects as object}
                             <tr>
-                                <td class="">{object.name}</td>
-                                <td>{object.encombrement}</td>
+                                <td class="text-xs 2xs:text-sm xs:text-base">{object.name}</td>
+                                <td class="text-xs 2xs:text-sm xs:text-base">{object.encombrement}</td>
                                 <td><button class="btn btn-success btn-sm xs:btn-md" 
                                 on:click={() => {
                                     // Adding the object to the character objects list
@@ -1721,7 +1685,7 @@
                     <tbody>
                         {#each talents as talent}
                             <tr>
-                                <td class="text-sm lg:text-lg">{talent.name}</td>
+                                <td class="text-xs 2xs:text-sm xs:text-base">{talent.name}</td>
                                 <td><button class="btn btn-success btn-sm xs:btn-md" 
                                 on:click={() => {
                                     // Adding the talent to the character talents list
@@ -1769,7 +1733,7 @@
                             <th class="hidden xs:table-cell">Portée</th>
                             <th class="hidden xs:table-cell">Cible</th>
                             <th class="hidden sm:table-cell">Durée</th>
-                            <th class="hidden sm:table-cell">Effets</th>
+                            <th class="hidden md:table-cell">Effets</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1791,7 +1755,7 @@
                             <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{spell.portee}</td>
                             <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{spell.cible}</td>
                             <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{spell.duree}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{spell.effets}</td>
+                            <td class="text-xs 2xs:text-sm xs:text-base hidden md:table-cell">{spell.effets}</td>
                             
                         </tr>
                         {/each}
@@ -1814,7 +1778,7 @@
                     <tbody>
                         {#each spells as spell}
                             <tr>
-                                <td class="text-sm lg:text-lg">{spell.name}</td>
+                                <td class="text-xs 2xs:text-sm xs:text-base">{spell.name}</td>
                                 <td><button class="btn btn-success btn-sm xs:btn-md" 
                                 on:click={() => {
                                     // Adding the spell to the character spells list
@@ -1905,7 +1869,7 @@
                     <tbody>
                         {#each meleeWeapons as mw}
                             <tr>
-                                <td class="text-sm lg:text-lg">{mw.name}</td>
+                                <td class="text-xs 2xs:text-sm xs:text-base">{mw.name}</td>
                                 <td><button class="btn btn-success btn-sm xs:btn-md" 
                                 on:click={() => {
                                     // Adding the melee weapon to the character melee weapons list
@@ -1998,7 +1962,7 @@
                     <tbody>
                         {#each rangeWeapons as rw}
                             <tr>
-                                <td class="text-sm lg:text-lg">{rw.name}</td>
+                                <td class="text-xs 2xs:text-sm xs:text-base">{rw.name}</td>
                                 <td><button class="btn btn-success btn-sm xs:btn-md" 
                                 on:click={() => {
                                     // Adding the range weapon to the character range weapons list
@@ -2025,7 +1989,42 @@
     </section>
 
 
-
+    <!-- Notes -->
+    {#if !isMaster}
+    <section id="notes" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Notes</h2>
+                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editNotes} />
+            </div>
+            <section class="" style:display={editNotes ? "block" : "none"}>
+                <div class="form-control">
+                    <textarea on:change={(event) => updateAttribute(character, "notes", event.target.value)} 
+                    class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
+                    disabled={isMaster}  
+                     name="notes" value={character.notes} />
+                </div>
+            </section>
+        </section>
+    </section>
+    {:else}
+    <section id="masterNotes" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Notes</h2>
+                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editMasterNotes} />
+            </div>
+            <section style:display={editMasterNotes ? "block" : "none"}>
+                <div class="form-control">
+                    <textarea on:change={(event) => updateAttribute(character, "masterNotes", event.target.value)} 
+                    class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
+                    disabled={!isMaster}  
+                     name="notes" value={character.masterNotes} />
+                </div>
+            </section>
+        </section>
+    </section>
+    {/if}
 
 
 
