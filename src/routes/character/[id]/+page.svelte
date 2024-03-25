@@ -363,10 +363,10 @@
 
                 <div class="form-control items-center">
                     <label class="label" for="motivation">Motivation</label>
-                    <input on:change={(event) => updateAttribute(character, "motivation", parseInt(event.target.value))} 
+                    <input on:change={(event) => updateAttribute(character, "motivation", event.target.value)} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster} 
-                    type="number" name="motivation" value={character.motivation} />
+                    type="text" name="motivation" value={character.motivation} />
                 </div>
             </section>
         </section>
