@@ -47,37 +47,37 @@ export const actions = {
             }
         }
 
-        if (data.carriere.length < 3){
-            return {
-                error: true,
-                message: "La carrière du personnage doit contenir au moins 3 caractères.",
-                data: data
-            }
-        }
+        // if (data.carriere.length < 3){
+        //     return {
+        //         error: true,
+        //         message: "La carrière du personnage doit contenir au moins 3 caractères.",
+        //         data: data
+        //     }
+        // }
 
-        if (data.echelon.length < 3){
-            return {
-                error: true,
-                message: "L'échelon du personnage doit contenir au moins 3 caractères.",
-                data: data
-            }
-        }
+        // if (data.echelon.length < 3){
+        //     return {
+        //         error: true,
+        //         message: "L'échelon du personnage doit contenir au moins 3 caractères.",
+        //         data: data
+        //     }
+        // }
 
-        if (data.statut.length < 3){
-            return {
-                error: true,
-                message: "Le statut du personnage doit contenir au moins 3 caractères.",
-                data: data
-            }
-        }
+        // if (data.statut.length < 3){
+        //     return {
+        //         error: true,
+        //         message: "Le statut du personnage doit contenir au moins 3 caractères.",
+        //         data: data
+        //     }
+        // }
 
-        if (data.schemaCarriere.length < 3){
-            return {
-                error: true,
-                message: "Le schéma de carrière du personnage doit contenir au moins 3 caractères.",
-                data: data
-            }
-        }
+        // if (data.schemaCarriere.length < 3){
+        //     return {
+        //         error: true,
+        //         message: "Le schéma de carrière du personnage doit contenir au moins 3 caractères.",
+        //         data: data
+        //     }
+        // }
 
         if (data.age < 0){
             return {
@@ -95,21 +95,21 @@ export const actions = {
             }
         }
 
-        if (data.cheveux.length < 3){
-            return {
-                error: true,
-                message: "Les cheveux du personnage doivent contenir au moins 3 caractères.",
-                data: data
-            }
-        }
+        // if (data.cheveux.length < 3){
+        //     return {
+        //         error: true,
+        //         message: "Les cheveux du personnage doivent contenir au moins 3 caractères.",
+        //         data: data
+        //     }
+        // }
 
-        if (data.yeux.length < 3){
-            return {
-                error: true,
-                message: "Les yeux du personnage doivent contenir au moins 3 caractères.",
-                data: data
-            }
-        }
+        // if (data.yeux.length < 3){
+        //     return {
+        //         error: true,
+        //         message: "Les yeux du personnage doivent contenir au moins 3 caractères.",
+        //         data: data
+        //     }
+        // }
 
         if (data.destin < 0){
             return {
