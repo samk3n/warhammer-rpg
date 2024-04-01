@@ -3,7 +3,7 @@ import { redirect } from '@sveltejs/kit';
 export async function load({locals, fetch}) {
 
     const games = [];
-    const userGames = locals.user.games;
+    const userGames = locals.user.games || [];
 
     // Loop through all games the user is in
     for(let gameId of userGames) {

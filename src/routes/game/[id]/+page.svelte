@@ -22,7 +22,7 @@
 
 </script>
 
-<section class="flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6 xl:w-2/6">
+<section class="flex flex-col gap-10 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6 xl:w-2/6">
 {#if data && data.game}
 
     <h1 class="text-3xl font-bold">{data.game.name}</h1>
@@ -57,10 +57,9 @@
     <p class="text-xl font-semibold">Votre personnage</p>
     {/if}
 
-    <section class="w-full flex flex-col gap-5">
-        {#if !data.game.expand.characters ||data.game.expand.characters.length == 0}
-        <p class="text-lg italic text-center">Aucun personnage disponible dans cette partie.</p>
-        
+    <section class="w-full flex flex-col gap-10">
+        {#if data.game.characters.length == 0}
+            <p class="text-lg italic text-center">Aucun personnage disponible dans cette partie.</p>
         {:else}
 
             {#each data.game.expand.characters as character}
@@ -154,8 +153,10 @@
             </div>
             {/each}
         {/if}
+        
+    </section>
 
-        {#if data.isMaster}
+    {#if data.isMaster}
         <section id="notes" class="card bg-base-300 w-full">
             <section class="card-body">
                 <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
@@ -176,7 +177,9 @@
         
         <!-- Delete game button form -->
         {#if data.isMaster}
-        <button class="btn btn-error" onclick="deleteGameModal.showModal()">Supprimer la partie</button>
+        <section class="flex justify-center mt-10">
+            <button class="btn btn-error" onclick="deleteGameModal.showModal()">Supprimer la partie</button>
+        </section>
         <dialog id="deleteGameModal" class="modal modal-bottom sm:modal-middle" >
             <form class="modal-box form-control bg-base-200" method="POST" action="?/deleteGame">
                 <input type="hidden" name="id" value={data.game.id} />
@@ -192,8 +195,6 @@
             </form>
         </dialog>
         {/if}
-        
-    </section>
 {/if}
 
 {#if form && form.message}
