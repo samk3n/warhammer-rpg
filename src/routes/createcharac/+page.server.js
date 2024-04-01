@@ -143,14 +143,6 @@ export const actions = {
             }
         }
 
-        if (data.motivation < 0){
-            return {
-                error: true,
-                message: "La motivation du personnage doit être positive.",
-                data: data
-            }
-        }
-
         if (data.mouvement < 0){
             return {
                 error: true,
