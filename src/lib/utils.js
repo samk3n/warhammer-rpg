@@ -191,25 +191,38 @@ const xpCostCharac = new Map([
     [70, 450]
 ]);
 
-export async function increaseCharacteristic(character, characteristic) {
-    for (let [key, value] of  xpCostCharac.entries()) {
-        if(character[characteristic].aug <= key && character.xpEarned - character.xpSpent >= value){
-            character.xpSpent += value;
-            character[characteristic].aug += 1;
-            await updateRecord("characters", character.id, {[characteristic]: character[characteristic], "xpSpent": character.xpSpent});
-            return;
-        }
+export async function increaseCharacteristic(character, characteristic, isMaster = false) {
+    if(isMaster){
+        character[characteristic].aug += 1;
+        await updateRecord("characters", character.id, {[characteristic]: character[characteristic]});
     }
-}
-
-export async function decreaseCharacteristic(character, characteristic) {
-    if(character[characteristic].aug - 1 >= 0) {
+    else {
         for (let [key, value] of  xpCostCharac.entries()) {
-            if((character[characteristic].aug <= key || character[characteristic].aug == (key+1)) && character.xpSpent >= value) {
-                character.xpSpent -= value;
-                character[characteristic].aug -= 1;
+            if(character[characteristic].aug <= key && character.xpEarned - character.xpSpent >= value){
+                character.xpSpent += value;
+                character[characteristic].aug += 1;
                 await updateRecord("characters", character.id, {[characteristic]: character[characteristic], "xpSpent": character.xpSpent});
                 return;
+            }
+        }
+    }
+    
+}
+
+export async function decreaseCharacteristic(character, characteristic, isMaster = false) {
+    if(character[characteristic].aug - 1 >= 0) {
+        if(isMaster){
+            character[characteristic].aug -= 1;
+            await updateRecord("characters", character.id, {[characteristic]: character[characteristic]});
+        }
+        else {
+            for (let [key, value] of  xpCostCharac.entries()) {
+                if((character[characteristic].aug <= key || character[characteristic].aug == (key+1)) && character.xpSpent >= value) {
+                    character.xpSpent -= value;
+                    character[characteristic].aug -= 1;
+                    await updateRecord("characters", character.id, {[characteristic]: character[characteristic], "xpSpent": character.xpSpent});
+                    return;
+                }
             }
         }
     }
@@ -232,25 +245,37 @@ const xpCostSkill = new Map([
     [70, 380]
 ]);
 
-export async function increaseSkill(character, skill) {
-    for (let [key, value] of  xpCostSkill.entries()) {
-        if(character[skill].aug <= key && character.xpEarned - character.xpSpent >= value) {
-            character.xpSpent += value;
-            character[skill].aug += 1;
-            await updateRecord("characters", character.id, {[skill]: character[skill], "xpSpent": character.xpSpent});
-            return;
+export async function increaseSkill(character, skill, isMaster = false) {
+    if(isMaster) {
+        character[skill].aug += 1;
+        await updateRecord("characters", character.id, {[skill]: character[skill]});
+    }
+    else {
+        for (let [key, value] of  xpCostSkill.entries()) {
+            if(character[skill].aug <= key && character.xpEarned - character.xpSpent >= value) {
+                character.xpSpent += value;
+                character[skill].aug += 1;
+                await updateRecord("characters", character.id, {[skill]: character[skill], "xpSpent": character.xpSpent});
+                return;
+            }
         }
     }
 }
 
-export async function decreaseSkill(character, skill) {
+export async function decreaseSkill(character, skill, isMaster = false) {
     if(character[skill].aug - 1 >= 0) {
-        for (let [key, value] of  xpCostSkill.entries()) {
-            if((character[skill].aug <= key || character[skill].aug == (key+1)) && character.xpSpent >= value ) {
-                character.xpSpent -= value;
-                character[skill].aug -= 1;
-                await updateRecord("characters", character.id, {[skill]: character[skill], "xpSpent": character.xpSpent});
-                return;
+        if(isMaster) {
+            character[skill].aug -= 1;
+            await updateRecord("characters", character.id, {[skill]: character[skill]});
+        }
+        else {
+            for (let [key, value] of  xpCostSkill.entries()) {
+                if((character[skill].aug <= key || character[skill].aug == (key+1)) && character.xpSpent >= value ) {
+                    character.xpSpent -= value;
+                    character[skill].aug -= 1;
+                    await updateRecord("characters", character.id, {[skill]: character[skill], "xpSpent": character.xpSpent});
+                    return;
+                }
             }
         }
     }

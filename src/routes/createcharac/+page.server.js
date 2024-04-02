@@ -182,23 +182,23 @@ export const actions = {
                 }
             }
 
-        const baseCharacteristics = (init) => {
-            return {"init": Number.parseInt(init), "aug": 0, "editable": false};
+        const baseCharacteristics = (init, aug = 0, editable = false) => {
+            return {"init": Number.parseInt(init), "aug": parseInt(aug), "editable": editable};
         }
-        const baseSkills = (charac) => {
-            return {"charac": charac, "aug": 0, "editable": false};
+        const baseSkills = (charac, aug = 0, editable = false) => {
+            return {"charac": charac, "aug": parseInt(aug), "editable": editable};
         }
 
-        data.capCombat = baseCharacteristics(data.capCombat);
-        data.capTir = baseCharacteristics(data.capTir);
-        data.force = baseCharacteristics(data.force);
-        data.endurance = baseCharacteristics(data.endurance);
-        data.initiative = baseCharacteristics(data.initiative);
-        data.agilite = baseCharacteristics(data.agilite);
-        data.dexterite = baseCharacteristics(data.dexterite);
-        data.intelligence = baseCharacteristics(data.intelligence);
-        data.forceMentale = baseCharacteristics(data.forceMentale);
-        data.sociabilite = baseCharacteristics(data.sociabilite);
+        data.capCombat = baseCharacteristics(data.capCombat, data.capCombatAug, data.capCombatEditable == "on");
+        data.capTir = baseCharacteristics(data.capTir, data.capTirAug, data.capTirEditable == "on");
+        data.force = baseCharacteristics(data.force, data.forceAug, data.forceEditable == "on");
+        data.endurance = baseCharacteristics(data.endurance, data.enduranceAug, data.enduranceEditable == "on");
+        data.initiative = baseCharacteristics(data.initiative, data.initiativeAug, data.initiativeEditable == "on");
+        data.agilite = baseCharacteristics(data.agilite, data.agiliteAug, data.agiliteEditable == "on");
+        data.dexterite = baseCharacteristics(data.dexterite, data.dexteriteAug, data.dexteriteEditable == "on");
+        data.intelligence = baseCharacteristics(data.intelligence, data.intelligenceAug, data.intelligenceEditable == "on");
+        data.forceMentale = baseCharacteristics(data.forceMentale, data.forceMentaleAug, data.forceMentaleEditable == "on");
+        data.sociabilite = baseCharacteristics(data.sociabilite, data.sociabiliteAug, data.sociabiliteEditable == "on");
 
         data.art = baseSkills("dexterite");
         data.athletisme = baseSkills("agilite");

@@ -462,10 +462,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.capCombat.aug} {character.capCombat.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.capCombat.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.capCombat.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capCombat")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capCombat")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capCombat", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capCombat", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -486,10 +486,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.capTir.aug} {character.capTir.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.capTir.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.capTir.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capTir")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capTir")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capTir", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capTir", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -510,10 +510,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.force.aug} {character.force.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.force.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.force.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "force")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "force")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "force", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "force", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -534,10 +534,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.endurance.aug} {character.endurance.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.endurance.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.endurance.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "endurance")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "endurance")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "endurance", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "endurance", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -558,10 +558,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.initiative.aug} {character.initiative.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.initiative.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.initiative.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "initiative")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "initiative")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "initiative", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "initiative", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -582,10 +582,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.agilite.aug} {character.agilite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.agilite.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.agilite.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "agilite")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "agilite")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "agilite", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "agilite", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -606,10 +606,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.dexterite.aug} {character.dexterite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.dexterite.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.dexterite.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "dexterite")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "dexterite")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "dexterite", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "dexterite", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -630,10 +630,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.intelligence.aug} {character.intelligence.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.intelligence.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.intelligence.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "intelligence")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "intelligence")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "intelligence", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "intelligence", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -654,10 +654,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.forceMentale.aug} {character.forceMentale.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.forceMentale.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.forceMentale.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "forceMentale")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "forceMentale")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "forceMentale", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "forceMentale", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -678,10 +678,10 @@
                     <p class="italic font-semibold text-sm hidden xs:block">{character.sociabilite.aug} {character.sociabilite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.sociabilite.aug} aug.</p>
                     {/if}
-                    {#if (!isMaster || !character.isPlayable) && character.sociabilite.editable}
+                    {#if character.capCombat.editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "sociabilite")}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "sociabilite")}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "sociabilite", isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "sociabilite", isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
