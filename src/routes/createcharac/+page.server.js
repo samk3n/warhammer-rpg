@@ -182,6 +182,21 @@ export const actions = {
                 }
             }
 
+        if(data.capCombatAug < 0 || data.capTirAug < 0 || data.forceAug < 0 || data.enduranceAug < 0 || data.initiativeAug < 0 || 
+            data.agiliteAug < 0  || data.dexteriteAug < 0  || data.intelligenceAug < 0 || data.intelligenceAug > 100 ||
+            data.forceMentaleAug < 0 || data.sociabiliteAug < 0 || data.artAug < 0 || data.athletismeAug < 0 || data.calmeAug < 0 ||
+            data.charmeAug < 0 || data.chevaucherAug < 0 || data.commandementAug < 0 || data.conduiteAttelageAug < 0 ||
+            data.cacBaseAug < 0 || data.cacAug < 0 || data.discretionAug < 0 || data.divertissementAug < 0 || data.empriseAnimauxAug < 0 ||
+            data.escaladeAug < 0 || data.esquiveAug < 0 || data.intimidationAug < 0 || data.intuitionAug < 0 || data.marchandageAug < 0 ||
+            data.navigationAug < 0 || data.pariAug < 0 || data.perceptionAug < 0 || data.ragotAug < 0 || data.ramerAug < 0 ||
+            data.resistanceAug < 0 || data.resistanceAlcoolAug < 0 || data.subornationAug < 0 || data.survieExterieurAug < 0) {
+                return {
+                    error: true,
+                    message: "Les augmentations doivent être positives.",
+                    data: data
+                }
+            }
+
         const baseCharacteristics = (init, aug = 0, editable = false) => {
             return {"init": Number.parseInt(init), "aug": parseInt(aug), "editable": editable};
         }
