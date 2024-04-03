@@ -4,6 +4,20 @@
     export let data;
     export let form;
 
+    let talents = data.talents;
+
+    let selectedTalents = [];
+
+    function selectTalent(talent) {
+        if(!selectedTalents.includes(talent.id)) {
+            selectedTalents = [...selectedTalents, talent.id];
+        }
+    }
+
+    function unselectTalent(talent) {
+        selectedTalents = selectedTalents.filter((e) => e != talent.id);
+    }
+
     $: capCombat = form?.data?.capCombat ?? "";
     $: capTir = form?.data?.capTir ?? "";
     $: force = form?.data?.force ?? "";
@@ -631,6 +645,24 @@
                 </div>
 
             </section>
+        </section>
+    </section>
+
+    <section class="card gap-10 bg-base-300 w-full">
+        <section class="card-body">
+            <h2 class="text-xl font-semibold text-center mb-5" >Talents</h2>
+            {#if talents}
+            <div class="flex flex-col gap-5 h-72 overflow-scroll overflow-x-hidden">
+                {#each talents as talent}
+                <div class="flex flex-start items-center gap-10">
+                    <input type="checkbox" id={talent.id} class="checkbox" 
+                    on:change={(event) => event.target.checked ? selectTalent(talent) : unselectTalent(talent) } />
+                    <label for={talent.id}>{talent.name}</label>
+                </div>
+                {/each}
+            </div>
+            {/if}
+            <input type="hidden" name="talents" value={selectedTalents} />
         </section>
     </section>
 

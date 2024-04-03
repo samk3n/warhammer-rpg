@@ -359,7 +359,7 @@ export async function addTalentToCharac(charac, talentId){
 }
 
 export async function updateCharacTalentCount(charac, talentId, value){
-    charac.nbTalents[talentId].count = value;
+    charac.nbTalents[talentId].count = parseInt(value);
     await updateRecord("characters", charac.id, {"nbTalents": charac.nbTalents});
 }
 
@@ -556,18 +556,21 @@ export function getEncombrementMax(character) {
 export function getEncombrement(character) {
     let enc = 0;
     if(character.expand) {
-        for(let obj of character.expand.possessions) {
-            enc += obj.encombrement;
+        if(character.expand.possessions){
+            for(let obj of character.expand.possessions) {
+                enc += obj.encombrement;
+            }
         }
-        for(let mw of character.expand.meleeWeapons) {
-            enc += mw.encombrement;
+        if(character.expand.meleeWeapons){
+            for(let mw of character.expand.meleeWeapons) {
+                enc += mw.encombrement;
+            }
         }
-        for(let rw of character.expand.rangeWeapons) {
-            enc += rw.encombrement;
+        if(character.expand.rangeWeapons){
+            for(let rw of character.expand.rangeWeapons) {
+                enc += rw.encombrement;
+            }
         }
-        // for(let armor of character.expand.armor) {
-        //     enc += armor.encombrement;
-        // }
     }
 
     return enc;

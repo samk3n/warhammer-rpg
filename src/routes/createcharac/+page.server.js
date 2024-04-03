@@ -1,14 +1,26 @@
 import { redirect } from '@sveltejs/kit';
 
-export function load({url}) {
+export async function load({url, fetch}) {
     const gameId = url.searchParams.get("gameId");
     
     if(!gameId){
         throw redirect(303, "/");
     }
+
+    // Get all talents
+    const talentResponse = await fetch("/api/getFullCollection", {
+        method: "POST",
+        body: JSON.stringify({collection: "talents", sort: "name"}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const talentResponseJson = await talentResponse.json();
+    let talents = talentResponseJson.records;
     
     return {
-        gameId: gameId
+        gameId: gameId,
+        talents: talents
     }    
 }
 
@@ -242,8 +254,15 @@ export const actions = {
         data.subornation = baseSkills("sociabilite", data.subornationAug, data.subornationEditable == 'on');
         data.survieExterieur = baseSkills("intelligence", data.survieExterieurAug, data.survieExterieurEditable == 'on');
 
-        data.nbPossessions = {};
+        data.talents = data.talents.split(",");
         data.nbTalents = {};
+        for(let talent of data.talents){
+            data.nbTalents[talent] = {};
+            data.nbTalents[talent].count = 1;
+        }
+
+        data.nbPossessions = {};
+        
 
         try {
             // Creates the new character
