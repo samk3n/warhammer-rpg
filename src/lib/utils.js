@@ -1,3 +1,5 @@
+const durACuire = "000000000000022";
+
 export async function getRecordFromId(collection, id){
     const response = await fetch('/api/findRecord', {
             method: "POST",
@@ -286,7 +288,13 @@ export function calculateWoundsMax(character){
     const be = Math.floor( (character.endurance.init + character.endurance.aug) / 10 );
     const bfm = Math.floor( (character.forceMentale.init + character.forceMentale.aug) / 10 );
 
-    return bf + 2*be + bfm;
+    let wounds = bf + 2*be + bfm;
+
+    if(character.talents.includes(durACuire)) {
+        wounds ++;
+    }
+
+    return wounds;
 }
 
 export async function deleteRecord(collection, record){
@@ -528,4 +536,8 @@ export async function createObject(data){
         }
     }
     await createRecord("objects", data);  
+}
+
+export function compareObjectsName(a, b){
+    return a.toUpperCase() > b.toUpperCase() ? 1 : a.toUpperCase() < b.toUpperCase() ? -1 : 0;
 }

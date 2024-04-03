@@ -21,7 +21,8 @@
         deleteMeleeWeaponFromCharac,
         addRangeWeaponToCharac,
         deleteRangeWeaponFromCharac,
-        updateCharacterPlayable} from "$lib/utils.js"
+        updateCharacterPlayable,
+        compareObjectsName} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -1557,8 +1558,8 @@
                                     // Deleting object from character's objects list
                                     deleteObjectFromCharac(character, possession.id);
                                     // Adding the deleted objects to the list of available objects
-                                    // in the add object modal.
-                                    objects = [...objects, possession];
+                                    // in the add object modal, sorted alphabetically.
+                                    objects = [...objects, possession].sort((a, b) => compareObjectsName(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {possession.name}
@@ -1651,8 +1652,8 @@
                                     // Deleting talent from character's talents list
                                     deleteTalentFromCharac(character, talent.id);
                                     // Adding the deleted talent to the list of available talents
-                                    // in the add talent modal.
-                                    talents = [...talents, talent];
+                                    // in the add talent modal, sorted alphabetically.
+                                    talents = [...talents, talent].sort((a, b) => compareObjectsName(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {talent.name}</td>
@@ -1746,8 +1747,8 @@
                                     // Deleting spell from character's spells list
                                     deleteSpellFromCharac(character, spell.id);
                                     // Adding the deleted spell to the list of available spells
-                                    // in the add spell modal.
-                                    spells = [...spells, spell];
+                                    // in the add spell modal, sorted alphabetically.
+                                    spells = [...spells, spell].sort((a, b) => compareObjectsName(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {spell.name}</td>
@@ -1838,8 +1839,8 @@
                                     // Deleting melee weapon from character's melee weapons list
                                     deleteMeleeWeaponFromCharac(character, mw.id);
                                     // Adding the deleted melee weapon to the list of available melee weapons
-                                    // in the add melee weapon modal.
-                                    meleeWeapons = [...meleeWeapons, mw];
+                                    // in the add melee weapon modal, sorted alphabetically.
+                                    meleeWeapons = [...meleeWeapons, mw].sort((a, b) => compareObjectsName(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {mw.name}</td>
@@ -1930,8 +1931,8 @@
                                     // Deleting range weapon from character's range weapons list
                                     deleteRangeWeaponFromCharac(character, rw.id);
                                     // Adding the deleted range weapon to the list of available range weapons
-                                    // in the add range weapon modal.
-                                    rangeWeapons = [...rangeWeapons, rw];
+                                    // in the add range weapon modal, sorted alphabetically.
+                                    rangeWeapons = [...rangeWeapons, rw].sort((a, b) => compareObjectsName(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {rw.name}</td>

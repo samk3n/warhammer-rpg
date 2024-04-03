@@ -25,7 +25,7 @@ export async function load({fetch, params, locals}){
     // Get all objects (to be shown in the add object modal)
     const objectsResponse = await fetch("/api/getFullCollection", {
         method: "POST",
-        body: JSON.stringify({collection: "objects"}),
+        body: JSON.stringify({collection: "objects", sort: "name"}),
         headers: {
             'content-type': "application/json"
         }
@@ -44,7 +44,7 @@ export async function load({fetch, params, locals}){
     // Get all talents (to be shown in the add talent modal)
     const talentResponse = await fetch("/api/getFullCollection", {
         method: "POST",
-        body: JSON.stringify({collection: "talents"}),
+        body: JSON.stringify({collection: "talents", sort: "name"}),
         headers: {
             'content-type': "application/json"
         }
@@ -63,7 +63,7 @@ export async function load({fetch, params, locals}){
     // Get all spells (to be shown in the add spell modal)
     const spellResponse = await fetch("/api/getFullCollection", {
         method: "POST",
-        body: JSON.stringify({collection: "spells"}),
+        body: JSON.stringify({collection: "spells", sort: "name"}),
         headers: {
             'content-type': "application/json"
         }
@@ -82,7 +82,7 @@ export async function load({fetch, params, locals}){
     // Get all melee weapons (to be shown in the add melee weapons modal)
     const meleeWeaponsResponse = await fetch("/api/getFullCollection", {
         method: "POST",
-        body: JSON.stringify({collection: "meleeWeapons"}),
+        body: JSON.stringify({collection: "meleeWeapons", sort: "name"}),
         headers: {
             'content-type': "application/json"
         }
@@ -101,7 +101,7 @@ export async function load({fetch, params, locals}){
     // Get all range weapons (to be shown in the add range weapons modal)
     const rangeWeaponsResponse = await fetch("/api/getFullCollection", {
         method: "POST",
-        body: JSON.stringify({collection: "rangeWeapons"}),
+        body: JSON.stringify({collection: "rangeWeapons", sort: "name"}),
         headers: {
             'content-type': "application/json"
         }
