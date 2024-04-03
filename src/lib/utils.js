@@ -541,3 +541,34 @@ export async function createObject(data){
 export function compareObjectsName(a, b){
     return a.toUpperCase() > b.toUpperCase() ? 1 : a.toUpperCase() < b.toUpperCase() ? -1 : 0;
 }
+
+export function isCharacCorrupted(character){
+    const be = Math.floor((character.endurance.init + character.endurance.aug) / 10);
+    const bfm = Math.floor((character.forceMentale.init + character.forceMentale.aug) / 10);
+    
+    return character.corruption > (be + bfm);
+}
+
+export function getEncombrementMax(character) {
+    return Math.floor((character.force.init + character.force.aug) / 10) + Math.floor((character.endurance.init + character.endurance.aug) / 10);
+}
+
+export function getEncombrement(character) {
+    let enc = 0;
+    if(character.expand) {
+        for(let obj of character.expand.possessions) {
+            enc += obj.encombrement;
+        }
+        for(let mw of character.expand.meleeWeapons) {
+            enc += mw.encombrement;
+        }
+        for(let rw of character.expand.rangeWeapons) {
+            enc += rw.encombrement;
+        }
+        // for(let armor of character.expand.armor) {
+        //     enc += armor.encombrement;
+        // }
+    }
+
+    return enc;
+}

@@ -1,28 +1,10 @@
 <script>
     import {PUBLIC_DB_ADDRESS} from "$env/static/public";
-    import {getRecordFromId, 
-        increaseCharacteristic, 
-        decreaseCharacteristic, 
-        updateAttribute, 
-        updateCharacteristic, 
-        increaseSkill, 
-        decreaseSkill, 
-        calculateWoundsMax,
-        updateGroup,
-        addObjectToCharac,
-        updateCharacObjectCount,
-        deleteObjectFromCharac,
-        updateCharacTalentCount,
-        deleteTalentFromCharac,
-        addTalentToCharac,
-        addSpellToCharac,
-        deleteSpellFromCharac,
-        addMeleeWeaponToCharac,
-        deleteMeleeWeaponFromCharac,
-        addRangeWeaponToCharac,
-        deleteRangeWeaponFromCharac,
-        updateCharacterPlayable,
-        compareObjectsName} from "$lib/utils.js"
+    import {getRecordFromId, increaseCharacteristic, decreaseCharacteristic, updateAttribute, updateCharacteristic, increaseSkill, 
+        decreaseSkill, calculateWoundsMax, updateGroup, addObjectToCharac, updateCharacObjectCount, deleteObjectFromCharac,
+        updateCharacTalentCount, deleteTalentFromCharac, addTalentToCharac, addSpellToCharac, deleteSpellFromCharac, addMeleeWeaponToCharac,
+        deleteMeleeWeaponFromCharac, addRangeWeaponToCharac, deleteRangeWeaponFromCharac, updateCharacterPlayable, compareObjectsName,
+        isCharacCorrupted, getEncombrement, getEncombrementMax} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -48,7 +30,9 @@
         ["talents", "Talents"],
         ["sorts", "Sorts"],
         ["meleeWeapons", "Armes de mêlée"],
-        ["rangeWeapons", "Armes à distance"],]
+        ["rangeWeapons", "Armes à distance"],
+        ["corruption", "Corruption"],
+        ["encombrement", "Encombrement"],]
     );
 
     let character = data.character;
@@ -1987,6 +1971,51 @@
                 <button>Close</button>
             </form>
         </dialog>
+    </section>
+
+     <!-- CORRUPTION -->
+    <section id="corruption" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <h2 class="card-title">Corruption et mutations</h2>
+
+            <section>
+                <div class="form-control">
+                    <label class="label" for="corruption">Corruption</label>
+                    <input type="number" class="input input-bordered disabled:cursor-default disabled:text-base-content" 
+                    class:input-error={isCharacCorrupted(character)}
+                    class:text-error={isCharacCorrupted(character)}
+                    min="0" value={character.corruption} disabled={!isMaster} 
+                    on:change={(event) => updateAttribute(character, "corruption", event.target.value)} />
+                </div>
+                <div class="form-control">
+                    <label for="mutations" class="label">Mutations</label>
+                    <textarea on:change={(event) => updateAttribute(character, "mutations", event.target.value)} 
+                    class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
+                    disabled={!isMaster}  
+                     name="mutations" value={character.notes} />
+                </div>
+            </section>
+        </section>
+    </section>
+
+    <!-- ENCOMBREMENT -->
+    <section id="encombrement" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <h2 class="card-title self-center mb-5">Encombrement</h2>
+
+            <section class="grid gap-5 grid-cols-1 xs:grid-cols-2">
+                <div class="form-control items-center">
+                    <label class="label" for="encMax">Max.</label>
+                    <input type="number" name="encMax" class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    value={getEncombrementMax(character)} disabled  />
+                </div>
+                <div class="form-control items-center">
+                    <label class="label" for="encTotal">Total</label>
+                    <input type="number" name="encTotal" class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    value={getEncombrement(character)} disabled  />
+                </div>
+            </section>
+        </section>
     </section>
 
 
