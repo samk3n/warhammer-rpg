@@ -1,12 +1,12 @@
 <script>
     import {PUBLIC_DB_ADDRESS} from "$env/static/public";
-    import {updateObject, deleteRecord} from "$lib/utils.js";
+    import {updateObject, deleteRecord, createObject} from "$lib/utils.js";
     import PocketBase from 'pocketbase';
     import { onDestroy, onMount } from "svelte";
     export let data;
 
     // Object used in the edit modal
-    let objectToEdit = {id: ""};
+    let objectToEdit = {id: "", name: "", encombrement: 0};
     // Ref to the edit modal
     let editObjectModal;
 
@@ -14,6 +14,13 @@
     let objectToDelete = {name: ""};
     // Ref to the delete modal
     let deletObjectModal;
+
+    // Object used in the add modal
+    let objectToAdd = {name: "", encombrement: 0};
+    // Ref to the add modal
+    let addObjectModal;
+    // "Form" message after creating an object in DB
+    let createObjectMessage = "";
 
     let pb;
     let objects = data.objects;
@@ -50,9 +57,7 @@
     <h2 class="text-2xl font-semibold text-center">Aucun objet trouvé!</h2>
     {/if}
     <h1 class="text-3xl font-bold text-center">Objets</h1>
-    <a href="/createobject">
-        <button class="btn btn-primary mt-5 xs:btn-wide">Créer un objet</button>
-    </a>
+    <button class="btn btn-primary mt-5 xs:btn-wide" onclick="addObjectModal.showModal()">Créer un objet</button>
 
     <section class="card bg-base-300 w-full">
         <table class="card-body table table-zebra">
@@ -84,6 +89,55 @@
             </tbody>
         </table>
 
+        <!-- ADD OBJECT MODAL -->
+        <dialog id="addObjectModal" class="modal modal-bottom sm:modal-middle" bind:this={addObjectModal} >
+            <section class="modal-box form-control bg-base-200">
+                <input type="hidden" name="id" value={objectToAdd.id} />
+
+                <div class="form-control">
+                    <label class="label" for="name">Nom</label>
+                    <input on:change={(event) => objectToAdd.name = event.target.value}
+                     class="input input-bordered" type="text" name="name" value={objectToAdd.name}/>
+                </div>
+                <div class="form-control">
+                    <label class="label" for="encombrement">Enc.</label>
+                    <input on:change={(event) => objectToAdd.encombrement = event.target.value}
+                     class="input input-bordered" type="number" name="encombrement" value={objectToAdd.encombrement}/>
+                </div>
+
+                {#if createObjectMessage != ""}
+                    <p class="text-warning text-center text-lg">{createObjectMessage}</p>
+                {/if}
+
+                <div class="modal-action">
+                    <button class="btn btn-neutral" type="button" onclick="addObjectModal.close()"
+                    on:click={() => {
+                        objectToAdd.name = "";
+                        objectToAdd.id="";
+                        objectToAdd.encombrement = 0;
+                    }}>Fermer</button>
+                    <button class="btn btn-success" type="submit"
+                    on:click={async () => {
+                        const resp = await createObject(objectToAdd);
+                        if(resp && resp.error){
+                            createObjectMessage = resp.message;
+                        }else {
+                            createObjectMessage = "";
+                            addObjectModal.close();
+                        }
+                    }}>Valider</button>
+                </div>
+            </section>
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
+                <button on:click={() => {
+                    objectToAdd.name = "";
+                    objectToAdd.id="";
+                    objectToAdd.encombrement = 0;
+                }}>Close</button>
+            </form>
+        </dialog>
+
+        <!-- EDIT OBJECT MODAL -->
         <dialog id="editObjectModal" class="modal modal-bottom sm:modal-middle" bind:this={editObjectModal} >
             <section class="modal-box form-control bg-base-200">
                 <input type="hidden" name="id" value={objectToEdit.id} />
@@ -122,6 +176,7 @@
             </form>
         </dialog>
 
+        <!-- DELETE OBJECT MODAL -->
         <dialog id="deletObjectModal" class="modal modal-bottom sm:modal-middle" bind:this={deletObjectModal}>
             <section class="modal-box form-control bg-base-200">
 

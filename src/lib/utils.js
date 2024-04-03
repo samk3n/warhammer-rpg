@@ -512,3 +512,20 @@ export async function updateCharacterPlayable(character, checked){
         await updateRecord("characters", character.id, {user: ""});
     }
 }
+
+export async function createObject(data){
+    console.log(!data.encombrement);
+    if(data.name.length < 3){
+        return {
+            error: true,
+            message: "Le nom de l'objet doit contenir au moins 3 caractères."
+        }
+    }
+    if(data.encombrement < 0 || data.encombrement == "") {
+        return {
+            error: true,
+            message: "L'encombrement doit être positif."
+        }
+    }
+    await createRecord("objects", data);  
+}
