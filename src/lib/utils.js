@@ -575,3 +575,16 @@ export function getEncombrement(character) {
 
     return enc;
 }
+
+
+export function getCharacteristicInit(character, characteristic){
+    return character[characteristic].init;
+}
+
+export function getCharacteristicFull(character, characteristic){
+    return character[characteristic].init + character[characteristic].aug;
+}
+
+export function getSkillFull(character, skill){
+    return getCharacteristicFull(character, character[skill].charac) + character[skill].aug;
+}

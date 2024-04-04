@@ -4,7 +4,8 @@
         decreaseSkill, calculateWoundsMax, updateGroup, addObjectToCharac, updateCharacObjectCount, deleteObjectFromCharac,
         updateCharacTalentCount, deleteTalentFromCharac, addTalentToCharac, addSpellToCharac, deleteSpellFromCharac, addMeleeWeaponToCharac,
         deleteMeleeWeaponFromCharac, addRangeWeaponToCharac, deleteRangeWeaponFromCharac, updateCharacterPlayable, compareObjectsName,
-        isCharacCorrupted, getEncombrement, getEncombrementMax} from "$lib/utils.js"
+        isCharacCorrupted, getEncombrement, getEncombrementMax, getCharacteristicInit, getCharacteristicFull,
+        getSkillFull} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -442,7 +443,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "capCombat", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="capCombat" value={isMaster ? character.capCombat.init : character.capCombat.init + character.capCombat.aug} />
+                    type="number" name="capCombat" value={isMaster ? getCharacteristicInit(character, "capCombat") : getCharacteristicFull(character, "capCombat")} />
                     {#if isMaster || character.capCombat.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.capCombat.aug} {character.capCombat.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.capCombat.aug} aug.</p>
@@ -466,7 +467,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "capTir", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="capCombat" value={isMaster ? character.capTir.init : character.capTir.init + character.capTir.aug} />
+                    type="number" name="capCombat" value={isMaster ? getCharacteristicInit(character, "capTir") : getCharacteristicFull(character, "capTir")} />
                     {#if isMaster || character.capTir.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.capTir.aug} {character.capTir.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.capTir.aug} aug.</p>
@@ -490,7 +491,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "force", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="force" value={isMaster ? character.force.init : character.force.init + character.force.aug} />
+                    type="number" name="force" value={isMaster ? getCharacteristicInit(character, "force") : getCharacteristicFull(character, "force")} />
                     {#if isMaster || character.force.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.force.aug} {character.force.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.force.aug} aug.</p>
@@ -514,7 +515,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "endurance", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="endurance" value={isMaster ? character.endurance.init : character.endurance.init + character.endurance.aug} />
+                    type="number" name="endurance" value={isMaster ? getCharacteristicInit(character, "endurance") : getCharacteristicFull(character, "endurance")} />
                     {#if isMaster || character.endurance.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.endurance.aug} {character.endurance.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.endurance.aug} aug.</p>
@@ -538,7 +539,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "initiative", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="initiative" value={isMaster ? character.initiative.init : character.initiative.init + character.initiative.aug} />
+                    type="number" name="initiative" value={isMaster ? getCharacteristicInit(character, "initiative") : getCharacteristicFull(character, "initiative")} />
                     {#if isMaster || character.initiative.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.initiative.aug} {character.initiative.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.initiative.aug} aug.</p>
@@ -562,7 +563,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "agilite", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="agilite" value={isMaster ? character.agilite.init : character.agilite.init + character.agilite.aug} />
+                    type="number" name="agilite" value={isMaster ? getCharacteristicInit(character, "agilite") : getCharacteristicFull(character, "agilite")} />
                     {#if isMaster || character.agilite.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.agilite.aug} {character.agilite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.agilite.aug} aug.</p>
@@ -586,7 +587,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "dexterite", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="dexterite" value={isMaster ? character.dexterite.init : character.dexterite.init + character.dexterite.aug} />
+                    type="number" name="dexterite" value={isMaster ? getCharacteristicInit(character, "dexterite") : getCharacteristicFull(character, "dexterite")} />
                     {#if isMaster || character.dexterite.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.dexterite.aug} {character.dexterite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.dexterite.aug} aug.</p>
@@ -610,7 +611,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "intelligence", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="intelligence" value={isMaster ? character.intelligence.init : character.intelligence.init + character.intelligence.aug} />
+                    type="number" name="intelligence" value={isMaster ? getCharacteristicInit(character, "intelligence") : getCharacteristicFull(character, "intelligence")} />
                     {#if isMaster || character.intelligence.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.intelligence.aug} {character.intelligence.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.intelligence.aug} aug.</p>
@@ -634,7 +635,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "forceMentale", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="forceMentale" value={isMaster ? character.forceMentale.init : character.forceMentale.init + character.forceMentale.aug} />
+                    type="number" name="forceMentale" value={isMaster ? getCharacteristicInit(character, "forceMentale") : getCharacteristicFull(character, "forceMentale")} />
                     {#if isMaster || character.forceMentale.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.forceMentale.aug} {character.forceMentale.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.forceMentale.aug} aug.</p>
@@ -658,7 +659,7 @@
                     <input on:change={(event) => updateCharacteristic(character, "sociabilite", "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="sociabilite" value={isMaster ? character.sociabilite.init : character.sociabilite.init + character.sociabilite.aug} />
+                    type="number" name="sociabilite" value={isMaster ? getCharacteristicInit(character, "sociabilite") : getCharacteristicFull(character, "sociabilite")} />
                     {#if isMaster || character.sociabilite.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.sociabilite.aug} {character.sociabilite.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.sociabilite.aug} aug.</p>
@@ -699,7 +700,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="art" 
-                    value={isMaster ? character[character.art.charac].init + character[character.art.charac].aug : character[character.art.charac].init + character[character.art.charac].aug + character.art.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.art.charac) : getSkillFull(character, "art")} />
                     {#if isMaster || character.art.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.art.aug} {character.art.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.art.aug} aug.</p>
@@ -723,7 +724,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="athletisme" 
-                    value={isMaster ? character[character.athletisme.charac].init + character[character.athletisme.charac].aug : character[character.athletisme.charac].init + character[character.athletisme.charac].aug + character.athletisme.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.athletisme.charac) : getSkillFull(character, "athletisme")} />
                     {#if isMaster || character.athletisme.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.athletisme.aug} {character.athletisme.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.athletisme.aug} aug.</p>
@@ -747,7 +748,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="calme" 
-                    value={isMaster ? character[character.calme.charac].init + character[character.calme.charac].aug : character[character.calme.charac].init + character[character.calme.charac].aug + character.calme.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.calme.charac) : getSkillFull(character, "calme")} />
                     {#if isMaster || character.calme.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.calme.aug} {character.calme.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.calme.aug} aug.</p>
@@ -771,7 +772,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="charme" 
-                    value={isMaster ? character[character.charme.charac].init + character[character.charme.charac].aug : character[character.charme.charac].init + character[character.charme.charac].aug + character.charme.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.charme.charac) : getSkillFull(character, "charme")} />
                     {#if isMaster || character.charme.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.charme.aug} {character.charme.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.charme.aug} aug.</p>
@@ -795,7 +796,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="chevaucher" 
-                    value={isMaster ? character[character.chevaucher.charac].init + character[character.chevaucher.charac].aug : character[character.chevaucher.charac].init + character[character.chevaucher.charac].aug + character.chevaucher.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.chevaucher.charac) : getSkillFull(character, "chevaucher")} />
                     {#if isMaster || character.chevaucher.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.chevaucher.aug} {character.chevaucher.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.chevaucher.aug} aug.</p>
@@ -819,7 +820,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="commandement" 
-                    value={isMaster ? character[character.commandement.charac].init + character[character.commandement.charac].aug : character[character.commandement.charac].init + character[character.commandement.charac].aug + character.commandement.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.commandement.charac) : getSkillFull(character, "commandement")} />
                     {#if isMaster || character.commandement.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.commandement.aug} {character.commandement.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.commandement.aug} aug.</p>
@@ -843,7 +844,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="conduiteAttelage" 
-                    value={isMaster ? character[character.conduiteAttelage.charac].init + character[character.conduiteAttelage.charac].aug : character[character.conduiteAttelage.charac].init + character[character.conduiteAttelage.charac].aug + character.conduiteAttelage.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.conduiteAttelage.charac) : getSkillFull(character, "conduiteAttelage")} />
                     {#if isMaster || character.conduiteAttelage.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.conduiteAttelage.aug} {character.conduiteAttelage.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.conduiteAttelage.aug} aug.</p>
@@ -867,7 +868,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="cacBase" 
-                    value={isMaster ? character[character.cacBase.charac].init + character[character.cacBase.charac].aug : character[character.cacBase.charac].init + character[character.cacBase.charac].aug + character.cacBase.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.cacBase.charac) : getSkillFull(character, "cacBase")} />
                     {#if isMaster || character.cacBase.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.cacBase.aug} {character.cacBase.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.cacBase.aug} aug.</p>
@@ -891,7 +892,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="cac" 
-                    value={isMaster ? character[character.cac.charac].init + character[character.cac.charac].aug : character[character.cac.charac].init + character[character.cac.charac].aug + character.cac.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.cac.charac) : getSkillFull(character, "cac")} />
                     {#if isMaster || character.cac.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.cac.aug} {character.cac.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.cac.aug} aug.</p>
@@ -915,7 +916,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="discretion" 
-                    value={isMaster ? character[character.discretion.charac].init + character[character.discretion.charac].aug : character[character.discretion.charac].init + character[character.discretion.charac].aug + character.discretion.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.discretion.charac) : getSkillFull(character, "discretion")} />
                     {#if isMaster || character.discretion.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.discretion.aug} {character.discretion.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.discretion.aug} aug.</p>
@@ -939,7 +940,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="divertissement" 
-                    value={isMaster ? character[character.divertissement.charac].init + character[character.divertissement.charac].aug : character[character.divertissement.charac].init + character[character.divertissement.charac].aug + character.divertissement.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.divertissement.charac) : getSkillFull(character, "divertissement")} />
                     {#if isMaster || character.divertissement.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.divertissement.aug} {character.divertissement.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.divertissement.aug} aug.</p>
@@ -963,7 +964,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="empriseAnimaux" 
-                    value={isMaster ? character[character.empriseAnimaux.charac].init + character[character.empriseAnimaux.charac].aug : character[character.empriseAnimaux.charac].init + character[character.empriseAnimaux.charac].aug + character.empriseAnimaux.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.empriseAnimaux.charac) : getSkillFull(character, "empriseAnimaux")} />
                     {#if isMaster || character.empriseAnimaux.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.empriseAnimaux.aug} {character.empriseAnimaux.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.empriseAnimaux.aug} aug.</p>
@@ -987,7 +988,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="escalade" 
-                    value={isMaster ? character[character.escalade.charac].init + character[character.escalade.charac].aug : character[character.escalade.charac].init + character[character.escalade.charac].aug + character.escalade.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.escalade.charac) : getSkillFull(character, "escalade")} />
                     {#if isMaster || character.escalade.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.escalade.aug} {character.escalade.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.escalade.aug} aug.</p>
@@ -1011,7 +1012,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="esquive" 
-                    value={isMaster ? character[character.esquive.charac].init + character[character.esquive.charac].aug : character[character.esquive.charac].init + character[character.esquive.charac].aug + character.esquive.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.esquive.charac) : getSkillFull(character, "esquive")} />
                     {#if isMaster || character.esquive.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.esquive.aug} {character.esquive.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.esquive.aug} aug.</p>
@@ -1035,7 +1036,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="intimidation" 
-                    value={isMaster ? character[character.intimidation.charac].init + character[character.intimidation.charac].aug : character[character.intimidation.charac].init + character[character.intimidation.charac].aug + character.intimidation.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.intimidation.charac) : getSkillFull(character, "intimidation")} />
                     {#if isMaster || character.intimidation.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.intimidation.aug} {character.intimidation.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.intimidation.aug} aug.</p>
@@ -1059,7 +1060,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="intuition" 
-                    value={isMaster ? character[character.intuition.charac].init + character[character.intuition.charac].aug : character[character.intuition.charac].init + character[character.intuition.charac].aug + character.intuition.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.intuition.charac) : getSkillFull(character, "intuition")} />
                     {#if isMaster || character.intuition.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.intuition.aug} {character.intuition.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.intuition.aug} aug.</p>
@@ -1083,7 +1084,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="marchandage" 
-                    value={isMaster ? character[character.marchandage.charac].init + character[character.marchandage.charac].aug : character[character.marchandage.charac].init + character[character.marchandage.charac].aug + character.marchandage.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.marchandage.charac) : getSkillFull(character, "marchandage")} />
                     {#if isMaster || character.marchandage.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.marchandage.aug} {character.marchandage.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.marchandage.aug} aug.</p>
@@ -1107,7 +1108,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="navigation" 
-                    value={isMaster ? character[character.navigation.charac].init + character[character.navigation.charac].aug : character[character.navigation.charac].init + character[character.navigation.charac].aug + character.navigation.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.navigation.charac) : getSkillFull(character, "navigation")} />
                     {#if isMaster || character.navigation.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.navigation.aug} {character.navigation.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.navigation.aug} aug.</p>
@@ -1131,7 +1132,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="pari" 
-                    value={isMaster ? character[character.pari.charac].init + character[character.pari.charac].aug : character[character.pari.charac].init + character[character.pari.charac].aug + character.pari.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.pari.charac) : getSkillFull(character, "pari")} />
                     {#if isMaster || character.pari.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.pari.aug} {character.pari.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.pari.aug} aug.</p>
@@ -1155,7 +1156,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="perception" 
-                    value={isMaster ? character[character.perception.charac].init + character[character.perception.charac].aug : character[character.perception.charac].init + character[character.perception.charac].aug + character.perception.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.perception.charac) : getSkillFull(character, "perception")} />
                     {#if isMaster || character.perception.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.perception.aug} {character.perception.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.perception.aug} aug.</p>
@@ -1179,7 +1180,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="ragot" 
-                    value={isMaster ? character[character.ragot.charac].init + character[character.ragot.charac].aug : character[character.ragot.charac].init + character[character.ragot.charac].aug + character.ragot.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.ragot.charac) : getSkillFull(character, "ragot")} />
                     {#if isMaster || character.ragot.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.ragot.aug} {character.ragot.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.ragot.aug} aug.</p>
@@ -1203,7 +1204,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="ramer" 
-                    value={isMaster ? character[character.ramer.charac].init + character[character.ramer.charac].aug : character[character.ramer.charac].init + character[character.ramer.charac].aug + character.ramer.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.ramer.charac) : getSkillFull(character, "ramer")} />
                     {#if isMaster || character.ramer.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.ramer.aug} {character.ramer.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.ramer.aug} aug.</p>
@@ -1227,7 +1228,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="resistance" 
-                    value={isMaster ? character[character.resistance.charac].init + character[character.resistance.charac].aug : character[character.resistance.charac].init + character[character.resistance.charac].aug + character.resistance.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.resistance.charac) : getSkillFull(character, "resistance")} />
                     {#if isMaster || character.resistance.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.resistance.aug} {character.resistance.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.resistance.aug} aug.</p>
@@ -1251,7 +1252,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="resistanceAlcool" 
-                    value={isMaster ? character[character.resistanceAlcool.charac].init + character[character.resistanceAlcool.charac].aug : character[character.resistanceAlcool.charac].init + character[character.resistanceAlcool.charac].aug + character.resistanceAlcool.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.resistanceAlcool.charac) : getSkillFull(character, "resistanceAlcool")} />
                     {#if isMaster || character.resistanceAlcool.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.resistanceAlcool.aug} {character.resistanceAlcool.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.resistanceAlcool.aug} aug.</p>
@@ -1275,7 +1276,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="subornation" 
-                    value={isMaster ? character[character.subornation.charac].init + character[character.subornation.charac].aug : character[character.subornation.charac].init + character[character.subornation.charac].aug + character.subornation.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.subornation.charac) : getSkillFull(character, "subornation")} />
                     {#if isMaster || character.subornation.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.subornation.aug} {character.subornation.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.subornation.aug} aug.</p>
@@ -1299,7 +1300,7 @@
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name="survieExterieur" 
-                    value={isMaster ? character[character.survieExterieur.charac].init + character[character.survieExterieur.charac].aug : character[character.survieExterieur.charac].init + character[character.survieExterieur.charac].aug + character.survieExterieur.aug} />
+                    value={isMaster ? getCharacteristicFull(character, character.survieExterieur.charac) : getSkillFull(character, "survieExterieur")} />
                     {#if isMaster || character.survieExterieur.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{character.survieExterieur.aug} {character.survieExterieur.aug > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{character.survieExterieur.aug} aug.</p>
