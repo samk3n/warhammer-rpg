@@ -171,8 +171,13 @@ export async function updateObject(object, attribute, value){
 }
 
 export async function updateCharacteristic(character, characteristic, characElement, value){
-    character[characteristic][characElement] = value;
-    await updateRecord("characters", character.id, {[characteristic]: character[characteristic]});
+    character.characteristics[characteristic][characElement] = value;
+    await updateRecord("characters", character.id, {characteristics: character.characteristics});
+}
+
+export async function updateBaseSkill(character, skill, skillElement, value){
+    character.baseSkills[skill][skillElement] = value;
+    await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
 }
 
 
@@ -195,15 +200,15 @@ const xpCostCharac = new Map([
 
 export async function increaseCharacteristic(character, characteristic, isMaster = false) {
     if(isMaster){
-        character[characteristic].aug += 1;
-        await updateRecord("characters", character.id, {[characteristic]: character[characteristic]});
+        character.characteristics[characteristic].aug += 1;
+        await updateRecord("characters", character.id, {characteristics: character.characteristics});
     }
     else {
         for (let [key, value] of  xpCostCharac.entries()) {
-            if(character[characteristic].aug <= key && character.xpEarned - character.xpSpent >= value){
+            if(character.characteristics.aug <= key && character.xpEarned - character.xpSpent >= value){
                 character.xpSpent += value;
-                character[characteristic].aug += 1;
-                await updateRecord("characters", character.id, {[characteristic]: character[characteristic], "xpSpent": character.xpSpent});
+                character.characteristics.aug += 1;
+                await updateRecord("characters", character.id, {characteristics: character.characteristics, "xpSpent": character.xpSpent});
                 return;
             }
         }
@@ -212,17 +217,17 @@ export async function increaseCharacteristic(character, characteristic, isMaster
 }
 
 export async function decreaseCharacteristic(character, characteristic, isMaster = false) {
-    if(character[characteristic].aug - 1 >= 0) {
+    if(character.characteristics[characteristic].aug - 1 >= 0) {
         if(isMaster){
-            character[characteristic].aug -= 1;
-            await updateRecord("characters", character.id, {[characteristic]: character[characteristic]});
+            character.characteristics[characteristic].aug -= 1;
+            await updateRecord("characters", character.id, {characteristics: character.characteristics});
         }
         else {
             for (let [key, value] of  xpCostCharac.entries()) {
-                if((character[characteristic].aug <= key || character[characteristic].aug == (key+1)) && character.xpSpent >= value) {
+                if((character.characteristics[characteristic].aug <= key || character.characteristics[characteristic].aug == (key+1)) && character.xpSpent >= value) {
                     character.xpSpent -= value;
-                    character[characteristic].aug -= 1;
-                    await updateRecord("characters", character.id, {[characteristic]: character[characteristic], "xpSpent": character.xpSpent});
+                    character.characteristics[characteristic].aug -= 1;
+                    await updateRecord("characters", character.id, {characteristics: character.characteristics[characteristic], "xpSpent": character.xpSpent});
                     return;
                 }
             }
@@ -249,15 +254,15 @@ const xpCostSkill = new Map([
 
 export async function increaseSkill(character, skill, isMaster = false) {
     if(isMaster) {
-        character[skill].aug += 1;
-        await updateRecord("characters", character.id, {[skill]: character[skill]});
+        character.baseSkills[skill].aug += 1;
+        await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
     }
     else {
         for (let [key, value] of  xpCostSkill.entries()) {
-            if(character[skill].aug <= key && character.xpEarned - character.xpSpent >= value) {
+            if(character.baseSkills[skill].aug <= key && character.xpEarned - character.xpSpent >= value) {
                 character.xpSpent += value;
-                character[skill].aug += 1;
-                await updateRecord("characters", character.id, {[skill]: character[skill], "xpSpent": character.xpSpent});
+                character.baseSkills[skill].aug += 1;
+                await updateRecord("characters", character.id, {baseSkills: character.baseSkills, "xpSpent": character.xpSpent});
                 return;
             }
         }
@@ -265,17 +270,17 @@ export async function increaseSkill(character, skill, isMaster = false) {
 }
 
 export async function decreaseSkill(character, skill, isMaster = false) {
-    if(character[skill].aug - 1 >= 0) {
+    if(character.baseSkills[skill].aug - 1 >= 0) {
         if(isMaster) {
-            character[skill].aug -= 1;
-            await updateRecord("characters", character.id, {[skill]: character[skill]});
+            character.baseSkills[skill].aug -= 1;
+            await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
         }
         else {
             for (let [key, value] of  xpCostSkill.entries()) {
-                if((character[skill].aug <= key || character[skill].aug == (key+1)) && character.xpSpent >= value ) {
+                if((character.baseSkills[skill].aug <= key || character.baseSkills[skill].aug == (key+1)) && character.xpSpent >= value ) {
                     character.xpSpent -= value;
-                    character[skill].aug -= 1;
-                    await updateRecord("characters", character.id, {[skill]: character[skill], "xpSpent": character.xpSpent});
+                    character.baseSkills[skill].aug -= 1;
+                    await updateRecord("characters", character.id, {baseSkills: character.baseSkills, "xpSpent": character.xpSpent});
                     return;
                 }
             }
@@ -578,13 +583,21 @@ export function getEncombrement(character) {
 
 
 export function getCharacteristicInit(character, characteristic){
-    return character[characteristic].init;
+    return character.characteristics[characteristic].init;
+}
+
+export function getCharacteristicAug(character, characteristic) {
+    return character.characteristics[characteristic].aug;
 }
 
 export function getCharacteristicFull(character, characteristic){
-    return character[characteristic].init + character[characteristic].aug;
+    return character.characteristics[characteristic].init + character.characteristics[characteristic].aug;
 }
 
 export function getSkillFull(character, skill){
-    return getCharacteristicFull(character, character[skill].charac) + character[skill].aug;
+    return getCharacteristicFull(character, character.baseSkills[skill].charac) + character.baseSkills[skill].aug;
+}
+
+export function getBaseSkillAug(character, skill){
+    return character.baseSkills[skill].aug;
 }

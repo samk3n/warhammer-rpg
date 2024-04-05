@@ -5,7 +5,7 @@
         updateCharacTalentCount, deleteTalentFromCharac, addTalentToCharac, addSpellToCharac, deleteSpellFromCharac, addMeleeWeaponToCharac,
         deleteMeleeWeaponFromCharac, addRangeWeaponToCharac, deleteRangeWeaponFromCharac, updateCharacterPlayable, compareObjectsString,
         isCharacCorrupted, getEncombrement, getEncombrementMax, getCharacteristicInit, getCharacteristicFull,
-        getSkillFull} from "$lib/utils.js"
+        getSkillFull, getCharacteristicAug, getBaseSkillAug, updateBaseSkill} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -43,6 +43,50 @@
     let meleeWeapons = data.meleeWeapons;
     let rangeWeapons = data.rangeWeapons;
     const isMaster = data.isMaster;
+
+    $: characteristicsMap = new Map(Object.entries(character.characteristics).sort((a, b) => a[1].order - b[1].order));
+    $: baseSkillsMap = new Map(Object.entries(character.baseSkills));
+
+    const characNameMap = new Map([
+        ["capCombat", "CC"],
+        ["capTir", "CT"],
+        ["force", "F"],
+        ["endurance", "E"],
+        ["initiative", "I"],
+        ["agilite", "Ag"],
+        ["dexterite", "Dex"],
+        ["intelligence", "Int"],
+        ["forceMentale", "FM"],
+        ["sociabilite", "Soc"],
+    ]);
+
+    const baseSkillsNameMap = new Map([
+        ["art", "Art"],
+        ["athletisme", "Athlétisme"],
+        ["calme", "Calme"],
+        ["charme", "Charme"],
+        ["chevaucher", "Chevaucher"],
+        ["commandement", "Commandement"],
+        ["conduiteAttelage", "Conduite d'attelage"],
+        ["cac", "C. à C."],
+        ["discretion", "Discrétion"],
+        ["divertissement", "Divertissement"],
+        ["empriseAnimaux", "Emprise sur les animaux"],
+        ["escalade", "Escalade"],
+        ["esquive", "Esquive"],
+        ["intimidation", "Intimidation"],
+        ["intuition", "Intuition"],
+        ["marchandage", "Marchandage"],
+        ["navigation", "Navigation"],
+        ["pari", "Pari"],
+        ["perception", "Perception"],
+        ["ragot", "Ragôt"],
+        ["ramer", "Ramer"],
+        ["resistance", "Résistance"],
+        ["resistanceAlcool", "Résistance à l'alcool"],
+        ["subornation", "Subornation"],
+        ["survieExterieur", "Survie en extérieur"],
+    ]);
 
     let pb;
 
@@ -431,251 +475,36 @@
             </div>
 
             <section class="grid gap-5 grid-cols-2">
-
+                {#each characteristicsMap as [characName, object]}
                 <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="capCombat">
-                        CC
+                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for={characName}>
+                        {characNameMap.get(characName)}
                         {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac}  bind:checked={character.capCombat.editable}
-                        on:change={(event) => updateCharacteristic(character, "capCombat", "editable", event.target.checked)} />
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac}  bind:checked={character.characteristics[characName].editable}
+                        on:change={(event) => updateCharacteristic(character, characName, "editable", event.target.checked)} />
                         {/if}
                     </label>
-                    <input on:change={(event) => updateCharacteristic(character, "capCombat", "init", parseInt(event.target.value))} 
+                    <input on:change={(event) => updateCharacteristic(character, characName, "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name="capCombat" value={isMaster ? getCharacteristicInit(character, "capCombat") : getCharacteristicFull(character, "capCombat")} />
-                    {#if isMaster || character.capCombat.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.capCombat.aug} {character.capCombat.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.capCombat.aug} aug.</p>
+                    type="number" name={characName} value={isMaster ? getCharacteristicInit(character, characName) : getCharacteristicFull(character, characName)} />
+                    {#if isMaster || character[characName].editable}
+                    <p class="italic font-semibold text-sm hidden xs:block">{getCharacteristicAug(character, characName)} {getCharacteristicAug(character, characName) > 1 ? "augmentations" : "augmentation"}</p>
+                    <p class="italic font-semibold text-sm block xs:hidden">{getCharacteristicAug(character, characName)} aug.</p>
                     {/if}
-                    {#if character.capCombat.editable && editCharac}
+                    {#if character.characteristics[characName].editable && editCharac}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capCombat", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capCombat", isMaster)}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, characName, isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, characName, isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="capTir">
-                        CT
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.capTir.editable}
-                        on:change={(event) => updateCharacteristic(character, "capTir", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input on:change={(event) => updateCharacteristic(character, "capTir", "init", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name="capCombat" value={isMaster ? getCharacteristicInit(character, "capTir") : getCharacteristicFull(character, "capTir")} />
-                    {#if isMaster || character.capTir.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.capTir.aug} {character.capTir.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.capTir.aug} aug.</p>
-                    {/if}
-                    {#if character.capTir.editable && editCharac}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "capTir", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "capTir", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="force">
-                        Force
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.force.editable}
-                        on:change={(event) => updateCharacteristic(character, "force", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input on:change={(event) => updateCharacteristic(character, "force", "init", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name="force" value={isMaster ? getCharacteristicInit(character, "force") : getCharacteristicFull(character, "force")} />
-                    {#if isMaster || character.force.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.force.aug} {character.force.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.force.aug} aug.</p>
-                    {/if}
-                    {#if character.force.editable && editCharac}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "force", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "force", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="endurance">
-                        Endurance
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.endurance.editable}
-                        on:change={(event) => updateCharacteristic(character, "endurance", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input on:change={(event) => updateCharacteristic(character, "endurance", "init", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name="endurance" value={isMaster ? getCharacteristicInit(character, "endurance") : getCharacteristicFull(character, "endurance")} />
-                    {#if isMaster || character.endurance.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.endurance.aug} {character.endurance.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.endurance.aug} aug.</p>
-                    {/if}
-                    {#if character.endurance.editable && editCharac}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "endurance", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "endurance", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="initiative">
-                        Initiative
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.initiative.editable}
-                        on:change={(event) => updateCharacteristic(character, "initiative", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input on:change={(event) => updateCharacteristic(character, "initiative", "init", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name="initiative" value={isMaster ? getCharacteristicInit(character, "initiative") : getCharacteristicFull(character, "initiative")} />
-                    {#if isMaster || character.initiative.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.initiative.aug} {character.initiative.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.initiative.aug} aug.</p>
-                    {/if}
-                    {#if character.initiative.editable && editCharac}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "initiative", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "initiative", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="agilite">
-                        Agilité
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.agilite.editable}
-                        on:change={(event) => updateCharacteristic(character, "agilite", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input on:change={(event) => updateCharacteristic(character, "agilite", "init", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name="agilite" value={isMaster ? getCharacteristicInit(character, "agilite") : getCharacteristicFull(character, "agilite")} />
-                    {#if isMaster || character.agilite.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.agilite.aug} {character.agilite.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.agilite.aug} aug.</p>
-                    {/if}
-                    {#if character.agilite.editable && editCharac}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "agilite", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "agilite", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="dexterite">
-                        Dextérité
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.dexterite.editable}
-                        on:change={(event) => updateCharacteristic(character, "dexterite", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input on:change={(event) => updateCharacteristic(character, "dexterite", "init", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name="dexterite" value={isMaster ? getCharacteristicInit(character, "dexterite") : getCharacteristicFull(character, "dexterite")} />
-                    {#if isMaster || character.dexterite.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.dexterite.aug} {character.dexterite.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.dexterite.aug} aug.</p>
-                    {/if}
-                    {#if character.dexterite.editable && editCharac}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "dexterite", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "dexterite", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="intelligence">
-                        Intelligence
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.intelligence.editable}
-                        on:change={(event) => updateCharacteristic(character, "intelligence", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input on:change={(event) => updateCharacteristic(character, "intelligence", "init", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name="intelligence" value={isMaster ? getCharacteristicInit(character, "intelligence") : getCharacteristicFull(character, "intelligence")} />
-                    {#if isMaster || character.intelligence.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.intelligence.aug} {character.intelligence.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.intelligence.aug} aug.</p>
-                    {/if}
-                    {#if character.intelligence.editable && editCharac}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "intelligence", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "intelligence", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="forceMentale">
-                        FM
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.forceMentale.editable}
-                        on:change={(event) => updateCharacteristic(character, "forceMentale", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input on:change={(event) => updateCharacteristic(character, "forceMentale", "init", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name="forceMentale" value={isMaster ? getCharacteristicInit(character, "forceMentale") : getCharacteristicFull(character, "forceMentale")} />
-                    {#if isMaster || character.forceMentale.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.forceMentale.aug} {character.forceMentale.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.forceMentale.aug} aug.</p>
-                    {/if}
-                    {#if character.forceMentale.editable && editCharac}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "forceMentale", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "forceMentale", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="sociabilite">
-                        Sociablité
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac} bind:checked={character.sociabilite.editable}
-                        on:change={(event) => updateCharacteristic(character, "sociabilite", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input on:change={(event) => updateCharacteristic(character, "sociabilite", "init", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name="sociabilite" value={isMaster ? getCharacteristicInit(character, "sociabilite") : getCharacteristicFull(character, "sociabilite")} />
-                    {#if isMaster || character.sociabilite.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.sociabilite.aug} {character.sociabilite.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.sociabilite.aug} aug.</p>
-                    {/if}
-                    {#if character.sociabilite.editable && editCharac}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, "sociabilite", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, "sociabilite", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                
+                {/each}
             </section>
         </section>
     </section>
+
+
 
     <!-- COMPETENCES DE BASE -->
     <section id="competences" class="card bg-base-300 w-full">
@@ -686,637 +515,36 @@
                 <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editSkill} />
                 {/if}
             </div>
-
+            
             <section class="grid gap-5 grid-cols-2">
-
+                {#each baseSkillsMap as [skillName, object]}
                 <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="art">
-                        Art
+                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for={skillName}>
+                        {baseSkillsNameMap.get(skillName)}
                         {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.art.editable}
-                        on:change={(event) => updateCharacteristic(character, "art", "editable", event.target.checked)} />
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.baseSkills[skillName].editable}
+                        on:change={(event) => updateBaseSkill(character, skillName, "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
-                    type="number" name="art" 
-                    value={isMaster ? getCharacteristicFull(character, character.art.charac) : getSkillFull(character, "art")} />
-                    {#if isMaster || character.art.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.art.aug} {character.art.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.art.aug} aug.</p>
+                    type="number" name={skillName} 
+                    value={isMaster ? getCharacteristicFull(character, character[skillName].charac) : getSkillFull(character, skillName)} />
+                    {#if isMaster || character[skillName].editable}
+                    <p class="italic font-semibold text-sm hidden xs:block">{getBaseSkillAug(character, skillName)} {getBaseSkillAug(character, skillName) > 1 ? "augmentations" : "augmentation"}</p>
+                    <p class="italic font-semibold text-sm block xs:hidden">{getBaseSkillAug(character, skillName)} aug.</p>
                     {/if}
-                    {#if character.art.editable && editSkill}
+                    {#if character.baseSkills[skillName].editable && editSkill}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "art", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "art", isMaster)}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, skillName, isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, skillName, isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="athletisme">
-                        Athlétisme
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.athletisme.editable}
-                        on:change={(event) => updateCharacteristic(character, "athletisme", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="athletisme" 
-                    value={isMaster ? getCharacteristicFull(character, character.athletisme.charac) : getSkillFull(character, "athletisme")} />
-                    {#if isMaster || character.athletisme.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.athletisme.aug} {character.athletisme.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.athletisme.aug} aug.</p>
-                    {/if}
-                    {#if character.athletisme.editable && editSkill}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "athletisme", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "athletisme", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="calme">
-                        Calme
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.calme.editable}
-                        on:change={(event) => updateCharacteristic(character, "calme", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="calme" 
-                    value={isMaster ? getCharacteristicFull(character, character.calme.charac) : getSkillFull(character, "calme")} />
-                    {#if isMaster || character.calme.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.calme.aug} {character.calme.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.calme.aug} aug.</p>
-                    {/if}
-                    {#if character.calme.editable && editSkill}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "calme", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "calme", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="charme">
-                        Charme
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.charme.editable}
-                        on:change={(event) => updateCharacteristic(character, "charme", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="charme" 
-                    value={isMaster ? getCharacteristicFull(character, character.charme.charac) : getSkillFull(character, "charme")} />
-                    {#if isMaster || character.charme.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.charme.aug} {character.charme.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.charme.aug} aug.</p>
-                    {/if}
-                    {#if character.charme.editable && editSkill}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "charme", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "charme", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="chevaucher">
-                        Chevaucher
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.chevaucher.editable}
-                        on:change={(event) => updateCharacteristic(character, "chevaucher", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="chevaucher" 
-                    value={isMaster ? getCharacteristicFull(character, character.chevaucher.charac) : getSkillFull(character, "chevaucher")} />
-                    {#if isMaster || character.chevaucher.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.chevaucher.aug} {character.chevaucher.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.chevaucher.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.chevaucher.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "chevaucher", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "chevaucher", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="commandement">
-                        Commandement
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.commandement.editable}
-                        on:change={(event) => updateCharacteristic(character, "commandement", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="commandement" 
-                    value={isMaster ? getCharacteristicFull(character, character.commandement.charac) : getSkillFull(character, "commandement")} />
-                    {#if isMaster || character.commandement.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.commandement.aug} {character.commandement.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.commandement.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.commandement.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "commandement", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "commandement", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="conduiteAttelage">
-                        Conduite d'attelage
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.conduiteAttelage.editable}
-                        on:change={(event) => updateCharacteristic(character, "conduiteAttelage", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="conduiteAttelage" 
-                    value={isMaster ? getCharacteristicFull(character, character.conduiteAttelage.charac) : getSkillFull(character, "conduiteAttelage")} />
-                    {#if isMaster || character.conduiteAttelage.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.conduiteAttelage.aug} {character.conduiteAttelage.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.conduiteAttelage.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.conduiteAttelage.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "conduiteAttelage", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "conduiteAttelage", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="cacBase">
-                        C. à C. (base)
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.cacBase.editable}
-                        on:change={(event) => updateCharacteristic(character, "cacBase", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="cacBase" 
-                    value={isMaster ? getCharacteristicFull(character, character.cacBase.charac) : getSkillFull(character, "cacBase")} />
-                    {#if isMaster || character.cacBase.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.cacBase.aug} {character.cacBase.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.cacBase.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.cacBase.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "cacBase", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "cacBase", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="cac">
-                        C.à C.
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.cac.editable}
-                        on:change={(event) => updateCharacteristic(character, "cac", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="cac" 
-                    value={isMaster ? getCharacteristicFull(character, character.cac.charac) : getSkillFull(character, "cac")} />
-                    {#if isMaster || character.cac.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.cac.aug} {character.cac.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.cac.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.cac.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "cac", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "cac", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="discretion">
-                        Discrétion
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.discretion.editable}
-                        on:change={(event) => updateCharacteristic(character, "discretion", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="discretion" 
-                    value={isMaster ? getCharacteristicFull(character, character.discretion.charac) : getSkillFull(character, "discretion")} />
-                    {#if isMaster || character.discretion.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.discretion.aug} {character.discretion.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.discretion.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.discretion.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "discretion", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "discretion", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="divertissement">
-                        Divertissement
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.divertissement.editable}
-                        on:change={(event) => updateCharacteristic(character, "divertissement", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="divertissement" 
-                    value={isMaster ? getCharacteristicFull(character, character.divertissement.charac) : getSkillFull(character, "divertissement")} />
-                    {#if isMaster || character.divertissement.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.divertissement.aug} {character.divertissement.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.divertissement.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.divertissement.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "divertissement", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "divertissement", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="empriseAnimaux">
-                        Emprise animaux
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.empriseAnimaux.editable}
-                        on:change={(event) => updateCharacteristic(character, "empriseAnimaux", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="empriseAnimaux" 
-                    value={isMaster ? getCharacteristicFull(character, character.empriseAnimaux.charac) : getSkillFull(character, "empriseAnimaux")} />
-                    {#if isMaster || character.empriseAnimaux.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.empriseAnimaux.aug} {character.empriseAnimaux.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.empriseAnimaux.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.empriseAnimaux.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "empriseAnimaux", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "empriseAnimaux", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="escalade">
-                        Escalade
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.escalade.editable}
-                        on:change={(event) => updateCharacteristic(character, "escalade", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="escalade" 
-                    value={isMaster ? getCharacteristicFull(character, character.escalade.charac) : getSkillFull(character, "escalade")} />
-                    {#if isMaster || character.escalade.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.escalade.aug} {character.escalade.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.escalade.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.escalade.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "escalade", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "escalade", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="esquive">
-                        Esquive
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.esquive.editable}
-                        on:change={(event) => updateCharacteristic(character, "esquive", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="esquive" 
-                    value={isMaster ? getCharacteristicFull(character, character.esquive.charac) : getSkillFull(character, "esquive")} />
-                    {#if isMaster || character.esquive.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.esquive.aug} {character.esquive.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.esquive.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.esquive.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "esquive", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "esquive", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="intimidation">
-                        Intimidation
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.intimidation.editable}
-                        on:change={(event) => updateCharacteristic(character, "intimidation", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="intimidation" 
-                    value={isMaster ? getCharacteristicFull(character, character.intimidation.charac) : getSkillFull(character, "intimidation")} />
-                    {#if isMaster || character.intimidation.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.intimidation.aug} {character.intimidation.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.intimidation.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.intimidation.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "intimidation", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "intimidation", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="intuition">
-                        Intuition
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.intuition.editable}
-                        on:change={(event) => updateCharacteristic(character, "intuition", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="intuition" 
-                    value={isMaster ? getCharacteristicFull(character, character.intuition.charac) : getSkillFull(character, "intuition")} />
-                    {#if isMaster || character.intuition.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.intuition.aug} {character.intuition.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.intuition.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.intuition.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "intuition", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "intuition", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="marchandage">
-                        Marchandage
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.marchandage.editable}
-                        on:change={(event) => updateCharacteristic(character, "marchandage", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="marchandage" 
-                    value={isMaster ? getCharacteristicFull(character, character.marchandage.charac) : getSkillFull(character, "marchandage")} />
-                    {#if isMaster || character.marchandage.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.marchandage.aug} {character.marchandage.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.marchandage.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.marchandage.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "marchandage", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "marchandage", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="navigation">
-                        Navigation
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.navigation.editable}
-                        on:change={(event) => updateCharacteristic(character, "navigation", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="navigation" 
-                    value={isMaster ? getCharacteristicFull(character, character.navigation.charac) : getSkillFull(character, "navigation")} />
-                    {#if isMaster || character.navigation.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.navigation.aug} {character.navigation.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.navigation.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.navigation.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "navigation", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "navigation", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="pari">
-                        Pari
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.pari.editable}
-                        on:change={(event) => updateCharacteristic(character, "pari", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="pari" 
-                    value={isMaster ? getCharacteristicFull(character, character.pari.charac) : getSkillFull(character, "pari")} />
-                    {#if isMaster || character.pari.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.pari.aug} {character.pari.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.pari.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.pari.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "pari", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "pari", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="perception">
-                        Perception
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.perception.editable}
-                        on:change={(event) => updateCharacteristic(character, "perception", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="perception" 
-                    value={isMaster ? getCharacteristicFull(character, character.perception.charac) : getSkillFull(character, "perception")} />
-                    {#if isMaster || character.perception.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.perception.aug} {character.perception.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.perception.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.perception.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "perception", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "perception", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="ragot">
-                        Ragot
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.ragot.editable}
-                        on:change={(event) => updateCharacteristic(character, "ragot", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="ragot" 
-                    value={isMaster ? getCharacteristicFull(character, character.ragot.charac) : getSkillFull(character, "ragot")} />
-                    {#if isMaster || character.ragot.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.ragot.aug} {character.ragot.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.ragot.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.ragot.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "ragot", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "ragot", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="ramer">
-                        Ramer
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.ramer.editable}
-                        on:change={(event) => updateCharacteristic(character, "ramer", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="ramer" 
-                    value={isMaster ? getCharacteristicFull(character, character.ramer.charac) : getSkillFull(character, "ramer")} />
-                    {#if isMaster || character.ramer.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.ramer.aug} {character.ramer.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.ramer.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.ramer.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "ramer", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "ramer", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="resistance">
-                        Résistance
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.resistance.editable}
-                        on:change={(event) => updateCharacteristic(character, "resistance", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="resistance" 
-                    value={isMaster ? getCharacteristicFull(character, character.resistance.charac) : getSkillFull(character, "resistance")} />
-                    {#if isMaster || character.resistance.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.resistance.aug} {character.resistance.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.resistance.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.resistance.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "resistance", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "resistance", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="resistanceAlcool">
-                        Résistance à l'alcool
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.resistanceAlcool.editable}
-                        on:change={(event) => updateCharacteristic(character, "resistanceAlcool", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="resistanceAlcool" 
-                    value={isMaster ? getCharacteristicFull(character, character.resistanceAlcool.charac) : getSkillFull(character, "resistanceAlcool")} />
-                    {#if isMaster || character.resistanceAlcool.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.resistanceAlcool.aug} {character.resistanceAlcool.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.resistanceAlcool.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.resistanceAlcool.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "resistanceAlcool", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "resistanceAlcool", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="subornation">
-                        Subornation
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.subornation.editable}
-                        on:change={(event) => updateCharacteristic(character, "subornation", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="subornation" 
-                    value={isMaster ? getCharacteristicFull(character, character.subornation.charac) : getSkillFull(character, "subornation")} />
-                    {#if isMaster || character.subornation.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.subornation.aug} {character.subornation.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.subornation.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.subornation.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "subornation", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "subornation", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for="survieExterieur">
-                        Survie en extérieur
-                        {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.survieExterieur.editable}
-                        on:change={(event) => updateCharacteristic(character, "survieExterieur", "editable", event.target.checked)} />
-                        {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name="survieExterieur" 
-                    value={isMaster ? getCharacteristicFull(character, character.survieExterieur.charac) : getSkillFull(character, "survieExterieur")} />
-                    {#if isMaster || character.survieExterieur.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{character.survieExterieur.aug} {character.survieExterieur.aug > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{character.survieExterieur.aug} aug.</p>
-                    {/if}
-                    {#if editSkill && character.survieExterieur.editable}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, "survieExterieur", isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, "survieExterieur", isMaster)}>+</button>
-                    </div>
-                    {/if}
-                </div>
-
+                {/each}
             </section>
         </section>
     </section>
-
 
 
     <!-- RICHESSES -->
