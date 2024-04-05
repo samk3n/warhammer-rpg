@@ -30,6 +30,8 @@ export const actions = {
     createCharac: async ({request, fetch}) => {
         const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
+
+        console.log(JSON.stringify(data.advancedSkills));
         
         if(data.isPlayable == 'on') {
             data.isPlayable = true;
