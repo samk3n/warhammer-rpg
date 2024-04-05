@@ -538,7 +538,7 @@ export async function createObject(data){
     await createRecord("objects", data);  
 }
 
-export function compareObjectsName(a, b){
+export function compareObjectsString(a, b){
     return a.toUpperCase() > b.toUpperCase() ? 1 : a.toUpperCase() < b.toUpperCase() ? -1 : 0;
 }
 

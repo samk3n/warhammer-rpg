@@ -3,7 +3,7 @@
     import {getRecordFromId, increaseCharacteristic, decreaseCharacteristic, updateAttribute, updateCharacteristic, increaseSkill, 
         decreaseSkill, calculateWoundsMax, updateGroup, addObjectToCharac, updateCharacObjectCount, deleteObjectFromCharac,
         updateCharacTalentCount, deleteTalentFromCharac, addTalentToCharac, addSpellToCharac, deleteSpellFromCharac, addMeleeWeaponToCharac,
-        deleteMeleeWeaponFromCharac, addRangeWeaponToCharac, deleteRangeWeaponFromCharac, updateCharacterPlayable, compareObjectsName,
+        deleteMeleeWeaponFromCharac, addRangeWeaponToCharac, deleteRangeWeaponFromCharac, updateCharacterPlayable, compareObjectsString,
         isCharacCorrupted, getEncombrement, getEncombrementMax, getCharacteristicInit, getCharacteristicFull,
         getSkillFull} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
@@ -1544,7 +1544,7 @@
                                     deleteObjectFromCharac(character, possession.id);
                                     // Adding the deleted objects to the list of available objects
                                     // in the add object modal, sorted alphabetically.
-                                    objects = [...objects, possession].sort((a, b) => compareObjectsName(a.name, b.name));
+                                    objects = [...objects, possession].sort((a, b) => compareObjectsString(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {possession.name}
@@ -1638,7 +1638,7 @@
                                     deleteTalentFromCharac(character, talent.id);
                                     // Adding the deleted talent to the list of available talents
                                     // in the add talent modal, sorted alphabetically.
-                                    talents = [...talents, talent].sort((a, b) => compareObjectsName(a.name, b.name));
+                                    talents = [...talents, talent].sort((a, b) => compareObjectsString(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {talent.name}</td>
@@ -1733,7 +1733,7 @@
                                     deleteSpellFromCharac(character, spell.id);
                                     // Adding the deleted spell to the list of available spells
                                     // in the add spell modal, sorted alphabetically.
-                                    spells = [...spells, spell].sort((a, b) => compareObjectsName(a.name, b.name));
+                                    spells = [...spells, spell].sort((a, b) => compareObjectsString(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {spell.name}</td>
@@ -1825,7 +1825,7 @@
                                     deleteMeleeWeaponFromCharac(character, mw.id);
                                     // Adding the deleted melee weapon to the list of available melee weapons
                                     // in the add melee weapon modal, sorted alphabetically.
-                                    meleeWeapons = [...meleeWeapons, mw].sort((a, b) => compareObjectsName(a.name, b.name));
+                                    meleeWeapons = [...meleeWeapons, mw].sort((a, b) => compareObjectsString(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {mw.name}</td>
@@ -1917,7 +1917,7 @@
                                     deleteRangeWeaponFromCharac(character, rw.id);
                                     // Adding the deleted range weapon to the list of available range weapons
                                     // in the add range weapon modal, sorted alphabetically.
-                                    rangeWeapons = [...rangeWeapons, rw].sort((a, b) => compareObjectsName(a.name, b.name));
+                                    rangeWeapons = [...rangeWeapons, rw].sort((a, b) => compareObjectsString(a.name, b.name));
                                 }}>X</button>
                                 {/if}
                                 {rw.name}</td>

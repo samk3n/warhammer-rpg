@@ -209,50 +209,71 @@ export const actions = {
                 }
             }
 
-        const baseCharacteristics = (init, aug = 0, editable = false) => {
-            return {"init": Number.parseInt(init), "aug": parseInt(aug), "editable": editable};
+        const characteristic = (init, aug = 0, order, editable = false) => {
+            return {"init": Number.parseInt(init), "aug": parseInt(aug), "editable": editable, order: order};
         }
-        const baseSkills = (charac, aug = 0, editable = false) => {
+        function characteristics(list) {
+            let object = {};
+            for(let element of list) {
+                object[element[0]] = element[1];
+            }
+            return object;
+        }
+
+        const baseSkill = (charac, aug = 0, editable = false) => {
             return {"charac": charac, "aug": parseInt(aug), "editable": editable};
         }
 
-        data.capCombat = baseCharacteristics(data.capCombat, data.capCombatAug, data.capCombatEditable == "on");
-        data.capTir = baseCharacteristics(data.capTir, data.capTirAug, data.capTirEditable == "on");
-        data.force = baseCharacteristics(data.force, data.forceAug, data.forceEditable == "on");
-        data.endurance = baseCharacteristics(data.endurance, data.enduranceAug, data.enduranceEditable == "on");
-        data.initiative = baseCharacteristics(data.initiative, data.initiativeAug, data.initiativeEditable == "on");
-        data.agilite = baseCharacteristics(data.agilite, data.agiliteAug, data.agiliteEditable == "on");
-        data.dexterite = baseCharacteristics(data.dexterite, data.dexteriteAug, data.dexteriteEditable == "on");
-        data.intelligence = baseCharacteristics(data.intelligence, data.intelligenceAug, data.intelligenceEditable == "on");
-        data.forceMentale = baseCharacteristics(data.forceMentale, data.forceMentaleAug, data.forceMentaleEditable == "on");
-        data.sociabilite = baseCharacteristics(data.sociabilite, data.sociabiliteAug, data.sociabiliteEditable == "on");
+        data.capCombat = characteristic(data.capCombat, data.capCombatAug, 0, data.capCombatEditable == "on");
+        data.capTir = characteristic(data.capTir, data.capTirAug, 1, data.capTirEditable == "on");
+        data.force = characteristic(data.force, data.forceAug, 2, data.forceEditable == "on");
+        data.endurance = characteristic(data.endurance, data.enduranceAug, 3, data.enduranceEditable == "on");
+        data.initiative = characteristic(data.initiative, data.initiativeAug, 4, data.initiativeEditable == "on");
+        data.agilite = characteristic(data.agilite, data.agiliteAug, 5, data.agiliteEditable == "on");
+        data.dexterite = characteristic(data.dexterite, data.dexteriteAug, 6, data.dexteriteEditable == "on");
+        data.intelligence = characteristic(data.intelligence, data.intelligenceAug, 7, data.intelligenceEditable == "on");
+        data.forceMentale = characteristic(data.forceMentale, data.forceMentaleAug, 8, data.forceMentaleEditable == "on");
+        data.sociabilite = characteristic(data.sociabilite, data.sociabiliteAug, 9, data.sociabiliteEditable == "on");
 
-        data.art = baseSkills("dexterite", data.artAug, data.artEditable == 'on');
-        data.athletisme = baseSkills("agilite", data.athletismeAug, data.athletismeEditable == 'on');
-        data.calme = baseSkills("forceMentale", data.calmeAug, data.calmeEditable == 'on');
-        data.charme = baseSkills("sociabilite", data.charmeAug, data.charmeEditable == 'on');
-        data.chevaucher = baseSkills("agilite", data.chevaucherAug, data.chevaucherEditable == 'on');
-        data.commandement = baseSkills("sociabilite", data.commandementAug, data.commandementEditable == 'on');
-        data.conduiteAttelage = baseSkills("agilite", data.conduiteAttelageAug, data.conduiteAttelageEditable == 'on');
-        data.cacBase = baseSkills("capCombat", data.cacBaseAug, data.cacBaseEditable == 'on');
-        data.cac = baseSkills("capCombat", data.cacAug, data.cacEditable == 'on');
-        data.discretion = baseSkills("agilite", data.discretionAug, data.discretionEditable == 'on');
-        data.divertissement = baseSkills("sociabilite", data.divertissementAug, data.divertissementEditable == 'on');
-        data.empriseAnimaux = baseSkills("forceMentale", data.empriseAnimauxAug, data.empriseAnimauxEditable == 'on');
-        data.escalade = baseSkills("force", data.escaladeAug, data.escaladeEditable == 'on');
-        data.esquive = baseSkills("agilite", data.esquiveAug, data.esquiveEditable == 'on');
-        data.intimidation = baseSkills("force", data.intimidationAug, data.intimidationEditable == 'on');
-        data.intuition = baseSkills("initiative", data.intuitionAug, data.intuitionEditable == 'on');
-        data.marchandage = baseSkills("sociabilite", data.marchandageAug, data.marchandageEditable == 'on');
-        data.navigation = baseSkills("initiative", data.navigationAug, data.navigationEditable == 'on');
-        data.pari = baseSkills("intelligence", data.pariAug, data.pariEditable == 'on');
-        data.perception = baseSkills("initiative", data.perceptionAug, data.perceptionEditable == 'on');
-        data.ragot = baseSkills("sociabilite", data.ragotAug, data.ragotEditable == 'on');
-        data.ramer = baseSkills("force", data.ramerAug, data.ramerEditable == 'on');
-        data.resistance = baseSkills("endurance", data.resistanceAug, data.resistanceEditable == 'on');
-        data.resistanceAlcool = baseSkills("endurance", data.resistanceAlcoolAug, data.resistanceAlcoolEditable == 'on');
-        data.subornation = baseSkills("sociabilite", data.subornationAug, data.subornationEditable == 'on');
-        data.survieExterieur = baseSkills("intelligence", data.survieExterieurAug, data.survieExterieurEditable == 'on');
+        data.characteristics = characteristics([
+            ["capCombat", data.capCombat],
+            ["capTir", data.capTir],
+            ["force", data.force],
+            ["endurance", data.endurance],
+            ["initiative", data.initiative],
+            ["agilite", data.agilite],
+            ["dexterite", data.dexterite],
+            ["intelligence", data.intelligence],
+            ["forceMentale", data.forceMentale],
+            ["sociabilite", data.sociabilite],
+        ]);
+
+        data.art = baseSkill("dexterite", data.artAug, data.artEditable == 'on');
+        data.athletisme = baseSkill("agilite", data.athletismeAug, data.athletismeEditable == 'on');
+        data.calme = baseSkill("forceMentale", data.calmeAug, data.calmeEditable == 'on');
+        data.charme = baseSkill("sociabilite", data.charmeAug, data.charmeEditable == 'on');
+        data.chevaucher = baseSkill("agilite", data.chevaucherAug, data.chevaucherEditable == 'on');
+        data.commandement = baseSkill("sociabilite", data.commandementAug, data.commandementEditable == 'on');
+        data.conduiteAttelage = baseSkill("agilite", data.conduiteAttelageAug, data.conduiteAttelageEditable == 'on');
+        data.cacBase = baseSkill("capCombat", data.cacBaseAug, data.cacBaseEditable == 'on');
+        data.cac = baseSkill("capCombat", data.cacAug, data.cacEditable == 'on');
+        data.discretion = baseSkill("agilite", data.discretionAug, data.discretionEditable == 'on');
+        data.divertissement = baseSkill("sociabilite", data.divertissementAug, data.divertissementEditable == 'on');
+        data.empriseAnimaux = baseSkill("forceMentale", data.empriseAnimauxAug, data.empriseAnimauxEditable == 'on');
+        data.escalade = baseSkill("force", data.escaladeAug, data.escaladeEditable == 'on');
+        data.esquive = baseSkill("agilite", data.esquiveAug, data.esquiveEditable == 'on');
+        data.intimidation = baseSkill("force", data.intimidationAug, data.intimidationEditable == 'on');
+        data.intuition = baseSkill("initiative", data.intuitionAug, data.intuitionEditable == 'on');
+        data.marchandage = baseSkill("sociabilite", data.marchandageAug, data.marchandageEditable == 'on');
+        data.navigation = baseSkill("initiative", data.navigationAug, data.navigationEditable == 'on');
+        data.pari = baseSkill("intelligence", data.pariAug, data.pariEditable == 'on');
+        data.perception = baseSkill("initiative", data.perceptionAug, data.perceptionEditable == 'on');
+        data.ragot = baseSkill("sociabilite", data.ragotAug, data.ragotEditable == 'on');
+        data.ramer = baseSkill("force", data.ramerAug, data.ramerEditable == 'on');
+        data.resistance = baseSkill("endurance", data.resistanceAug, data.resistanceEditable == 'on');
+        data.resistanceAlcool = baseSkill("endurance", data.resistanceAlcoolAug, data.resistanceAlcoolEditable == 'on');
+        data.subornation = baseSkill("sociabilite", data.subornationAug, data.subornationEditable == 'on');
+        data.survieExterieur = baseSkill("intelligence", data.survieExterieurAug, data.survieExterieurEditable == 'on');
 
         data.talents = data.talents.split(",");
         data.nbTalents = {};
