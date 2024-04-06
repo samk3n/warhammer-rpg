@@ -27,11 +27,12 @@ export async function load({url, fetch}) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-    createCharac: async ({request, fetch}) => {
+    default: async ({request, fetch}) => {
         const formData = await request.formData();
         const data = Object.fromEntries([...formData]);
 
-        console.log(JSON.stringify(data.advancedSkills));
+        data.advancedSkills = JSON.parse(data.advancedSkills);
+        data.advancedSkillsProps = JSON.parse(data.advancedSkillsProps);
         
         if(data.isPlayable == 'on') {
             data.isPlayable = true;

@@ -18,24 +18,30 @@
         selectedTalents = selectedTalents.filter((e) => e != talent.id);
     }
 
-    $: capCombat = form?.data?.capCombat ?? "";
-    $: capTir = form?.data?.capTir ?? "";
-    $: force = form?.data?.force ?? "";
-    $: endurance = form?.data?.endurance ?? "";
-    $: initiative = form?.data?.initiative ?? "";
-    $: agilite = form?.data?.agilite ?? "";
-    $: dexterite = form?.data?.dexterite ?? "";
-    $: intelligence = form?.data?.intelligence ?? "";
-    $: forceMentale = form?.data?.forceMentale ?? "";
-    $: sociabilite = form?.data?.sociabilite ?? "";
+    $: characteristics = new Map([
+        ["capCombat", form?.data?.capCombat ?? 0],
 
-    $: map = new Map([
-        ["crochetage", {selected: false, grouped: false, charac: "dexterite", value: dexterite}],
-        ["dressage", {selected: false, grouped: true, charac: "intelligence", value: intelligence}],
+        ["dexterite", form?.data?.dexterite ?? 0],
     ]);
 
-    let advancedSkills = {};
-    $: advancedSkillsMap = new Map(Object.entries(advancedSkills));
+    $: capCombat = form?.data?.capCombat ?? 0;
+    $: capTir = form?.data?.capTir ?? 0;
+    $: force = form?.data?.force ?? 0;
+    $: endurance = form?.data?.endurance ?? 0;
+    $: initiative = form?.data?.initiative ?? 0;
+    $: agilite = form?.data?.agilite ?? 0;
+    $: dexterite = form?.data?.dexterite ?? 0;
+    $: intelligence = form?.data?.intelligence ?? 0;
+    $: forceMentale = form?.data?.forceMentale ?? 0;
+    $: sociabilite = form?.data?.sociabilite ?? 0;
+
+    $: advancedSkillsProps = form?.data?.advancedSkillsProps ?? {
+        "crochetage": {selected: false, grouped: false, charac: "dexterite", value: dexterite},
+        "dressage": {selected: false, grouped: true, charac: "intelligence", value: intelligence}
+    };
+    $: advancedSkillsPropsMap = new Map(Object.entries(advancedSkillsProps));
+
+    $: advancedSkills = form?.data?.advancedSkills ?? {};
 
     function addAdvancedSkill(skill, prop) {
         advancedSkills[skill] = {aug: 0, editable: false, charac: prop.charac}
@@ -51,7 +57,11 @@
 
 <h1 class="text-3xl font-semibold">Créer un personnage</h1>
 
-<form class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6 xl:w-2/6" method="POST" action="?/createCharac" use:enhance>
+{#if form && form.message}
+    <p class="text-warning font-semibold mt-5">{form.message}</p>
+{/if}
+
+<form class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6 xl:w-2/6" method="POST">
     
     <section class="card gap-10 bg-base-300 w-full">
         <div class="card-body">
@@ -191,7 +201,7 @@
                         CC
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="capCombatEditable" checked={form?.data?.capCombatEditable == "on" ? true: false}/>
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="capCombat" bind:value={capCombat}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="capCombat" value={capCombat}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="capCombatAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="capCombatAug">Aug.</label>
@@ -204,7 +214,7 @@
                         CT
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="capTirEditable" checked={form?.data?.capTirEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="capTir" bind:value={capTir}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="capTir" value={form?.data?.capTir ?? 0}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="capTirAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="capTirAug">Aug.</label>
@@ -217,7 +227,7 @@
                         F
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="forceEditable" checked={form?.data?.forceEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="force" bind:value={force}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="force" value={form?.data?.force ?? 0}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="forceAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="forceAug">Aug.</label>
@@ -230,7 +240,7 @@
                         E
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="enduranceEditable" checked={form?.data?.enduranceEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="endurance" bind:value={endurance}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="endurance" value={form?.data?.endurance ?? 0}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="enduranceAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="enduranceAug">Aug.</label>
@@ -243,7 +253,7 @@
                         I
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="initiativeEditable" checked={form?.data?.initiativeEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="initiative" bind:value={initiative}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="initiative" value={form?.data?.initiative ?? 0}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="initiativeAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="initiativeAug">Aug.</label>
@@ -256,7 +266,7 @@
                         Ag
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="agiliteEditable" checked={form?.data?.agiliteEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="agilite" bind:value={agilite}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="agilite" value={form?.data?.agilite ?? 0}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="agiliteAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="agiliteAug">Aug.</label>
@@ -269,7 +279,11 @@
                         Dex
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="dexteriteEditable" checked={form?.data?.dexteriteEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="dexterite" bind:value={dexterite}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="dexterite" value={characteristics.get("dexterite")} 
+                    on:change={(event) => {
+                        characteristics.set("dexterite", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="dexteriteAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="dexteriteAug">Aug.</label>
@@ -282,7 +296,7 @@
                         Int
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="intelligenceEditable" checked={form?.data?.intelligenceEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="intelligence" bind:value={intelligence}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="intelligence" value={form?.data?.intelligence ?? 0}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="intelligenceAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="intelligenceAug">Aug.</label>
@@ -295,7 +309,7 @@
                         FM
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="forceMentaleEditable" checked={form?.data?.forceMentaleEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="forceMentale" bind:value={forceMentale}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="forceMentale" value={form?.data?.forceMentale ?? 0}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="forceMentaleAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="forceMentaleAug">Aug.</label>
@@ -308,7 +322,7 @@
                         Soc
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="sociabiliteEditable" checked={form?.data?.sociabiliteEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="sociabilite" bind:value={sociabilite}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="sociabilite" value={form?.data?.sociabilite ?? 0}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="sociabiliteAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="sociabiliteAug">Aug.</label>
@@ -672,9 +686,9 @@
             <h2 class="text-xl font-semibold text-center mb-5" >Sélectionner compétences avancées</h2>
             <p>{JSON.stringify(advancedSkills)}</p>
             <section class="grid grid-cols-1 gap-5">
-                {#each map as [skill, prop]}
+                {#each advancedSkillsPropsMap as [skill, prop]}
                 <div>
-                    <input type="checkbox" class="checkbox" bind:checked={prop.selected}
+                    <input type="checkbox" class="checkbox" bind:checked={advancedSkillsProps[skill].selected}
                     on:change={(event) => event.target.checked ? addAdvancedSkill(skill, prop) : removeAdvancedSkill(skill)} />
                     <p>{skill} - {JSON.stringify(prop)}</p>
                 </div>
@@ -688,11 +702,12 @@
             <h2 class="text-xl font-semibold text-center mb-5" >Compétences avancées</h2>
 
             <section class="grid grid-cols-1 gap-5">
-                {#each map as [skill, prop]}
+                {#each advancedSkillsPropsMap as [skill, prop]}
                 {#if prop.selected}
                 <div class="flex flex-col gap-3">
+                    <p>{JSON.stringify(advancedSkills[skill])}</p>
                     <label for="" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        {skill}
+                        {skill} - {prop.charac}:{characteristics.get(prop.charac)}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default"
                          checked={advancedSkills[skill]?.editable ?? false} 
                          on:change={(event) => advancedSkills[skill].editable = event.target.checked}/>
@@ -706,8 +721,10 @@
                 </div>
                 {/if}
                 {/each}
-
+                <!-- Hidden input used to pass the data related to advanced skills,  -->
+                <!-- to be able to return them from the form action (in createcharac/+page.server.js) if an error occurs -->
                 <input type="hidden" name="advancedSkills" value={JSON.stringify(advancedSkills)} />
+                <input type="hidden" name="advancedSkillsProps" value={JSON.stringify(advancedSkillsProps)} />
             </section>
         </section>
     </section>  
@@ -1006,12 +1023,6 @@
 
 
 
-
-
-
-    {#if form && form.message}
-        <p class="text-warning font-semibold mt-5">{form.message}</p>
-    {/if}
         
 
     <input type="hidden" name="game" value={data.gameId} />
