@@ -5,7 +5,8 @@
         updateCharacTalentCount, deleteTalentFromCharac, addTalentToCharac, addSpellToCharac, deleteSpellFromCharac, addMeleeWeaponToCharac,
         deleteMeleeWeaponFromCharac, addRangeWeaponToCharac, deleteRangeWeaponFromCharac, updateCharacterPlayable, compareObjectsString,
         isCharacCorrupted, getEncombrement, getEncombrementMax, getCharacteristicInit, getCharacteristicFull,
-        getSkillFull, getCharacteristicAug, getBaseSkillAug, updateBaseSkill} from "$lib/utils.js"
+        getBaseSkillFull, getCharacteristicAug, getBaseSkillAug, updateBaseSkill, getAdvancedSkillAug, getAdvancedSkillFull,
+        updateAdvancedSkill} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -46,6 +47,7 @@
 
     $: characteristicsMap = new Map(Object.entries(character.characteristics).sort((a, b) => a[1].order - b[1].order));
     $: baseSkillsMap = new Map(Object.entries(character.baseSkills));
+    $: advancedSkillsMap = new Map(Object.entries(character.advancedSkills));
 
     const characNameMap = new Map([
         ["capCombat", "CC"],
@@ -91,7 +93,8 @@
     let pb;
 
     let editCharac = false;
-    let editSkill = false;
+    let editSkills = false;
+    let editAdvancedSkills = false;
     let editNotes = false;
     let editMasterNotes = false;
     let editEchange = false;
@@ -512,29 +515,69 @@
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Compétences de base</h2>
                 {#if isMaster}
-                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editSkill} />
+                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editSkills} />
                 {/if}
             </div>
             
             <section class="grid gap-5 grid-cols-2">
-                {#each baseSkillsMap as [skillName, object]}
+                {#each baseSkillsMap as [skillName, prop]}
                 <div class="form-control items-center">
                     <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for={skillName}>
                         {baseSkillsNameMap.get(skillName)}
                         {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkill} bind:checked={character.baseSkills[skillName].editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkills} bind:checked={character.baseSkills[skillName].editable}
                         on:change={(event) => updateBaseSkill(character, skillName, "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled
                     type="number" name={skillName} 
-                    value={isMaster ? getCharacteristicFull(character, character[skillName].charac) : getSkillFull(character, skillName)} />
-                    {#if isMaster || character[skillName].editable}
+                    value={isMaster ? getCharacteristicFull(character, prop.charac) : getBaseSkillFull(character, skillName)} />
+                    {#if isMaster || prop.editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{getBaseSkillAug(character, skillName)} {getBaseSkillAug(character, skillName) > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{getBaseSkillAug(character, skillName)} aug.</p>
                     {/if}
-                    {#if character.baseSkills[skillName].editable && editSkill}
+                    {#if character.baseSkills[skillName].editable && editSkills}
+                    <div class="w-1/3 flex justify-center">
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, skillName, isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, skillName, isMaster)}>+</button>
+                    </div>
+                    {/if}
+                </div>
+                {/each}
+            </section>
+        </section>
+    </section>
+
+    <!-- COMPETENCES AVANCEES -->
+    <section id="competencesAvancees" class="card bg-base-300 w-full">
+        <section class="card-body">
+            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
+                <h2 class="card-title">Compétences Avancées</h2>
+                {#if isMaster}
+                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editAdvancedSkills} />
+                {/if}
+            </div>
+            
+            <section class="grid gap-5 grid-cols-2">
+                {#each advancedSkillsMap as [skillName, prop]}
+                <div class="form-control items-center">
+                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for={skillName}>
+                        {skillName}
+                        {#if isMaster && !prop.grouped}
+                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editAdvancedSkills} bind:checked={character.advancedSkills[skillName].editable}
+                        on:change={(event) => updateAdvancedSkill(character, skillName, "editable", event.target.checked)} />
+                        {/if}
+                    </label>
+                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    disabled
+                    type="number" name={skillName} 
+                    value={isMaster ? getCharacteristicFull(character, prop.charac) : getAdvancedSkillFull(character, skillName)} />
+                    {#if isMaster || prop.editable}
+                    <p class="italic font-semibold text-sm hidden xs:block">{getAdvancedSkillAug(character, skillName)} {getAdvancedSkillAug(character, skillName) > 1 ? "augmentations" : "augmentation"}</p>
+                    <p class="italic font-semibold text-sm block xs:hidden">{getAdvancedSkillAug(character, skillName)} aug.</p>
+                    {/if}
+                    {#if prop.editable && editAdvancedSkills}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, skillName, isMaster)}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, skillName, isMaster)}>+</button>

@@ -18,10 +18,19 @@
         selectedTalents = selectedTalents.filter((e) => e != talent.id);
     }
 
+    let specialtyInputText = new Map();
+
     $: characteristics = new Map([
         ["capCombat", form?.data?.capCombat ?? 0],
-
+        ["capTir", form?.data?.capTir ?? 0],
+        ["force", form?.data?.force ?? 0],
+        ["endurance", form?.data?.endurance ?? 0],
+        ["initiative", form?.data?.initiative ?? 0],
+        ["agilite", form?.data?.agilite ?? 0],
         ["dexterite", form?.data?.dexterite ?? 0],
+        ["intelligence", form?.data?.intelligence ?? 0],
+        ["forceMentale", form?.data?.forceMentale ?? 0],
+        ["sociabilite", form?.data?.sociabilite ?? 0],
     ]);
 
     $: capCombat = form?.data?.capCombat ?? 0;
@@ -36,20 +45,40 @@
     $: sociabilite = form?.data?.sociabilite ?? 0;
 
     $: advancedSkillsProps = form?.data?.advancedSkillsProps ?? {
-        "crochetage": {selected: false, grouped: false, charac: "dexterite", value: dexterite},
-        "dressage": {selected: false, grouped: true, charac: "intelligence", value: intelligence}
+        "crochetage": {selected: false, grouped: false, charac: "dexterite"},
+        "dressage": {selected: false, grouped: true, charac: "intelligence"}
     };
     $: advancedSkillsPropsMap = new Map(Object.entries(advancedSkillsProps));
 
     $: advancedSkills = form?.data?.advancedSkills ?? {};
+    $: advancedSkillsMap =  new Map(Object.entries(advancedSkills));
 
     function addAdvancedSkill(skill, prop) {
-        advancedSkills[skill] = {aug: 0, editable: false, charac: prop.charac}
+        if(prop.grouped) {
+            advancedSkills[skill] = {charac: prop.charac, spe: [], grouped: true}
+        }
+        else {
+            advancedSkills[skill] = {aug: 0, editable: false, charac: prop.charac}
+        }        
         advancedSkills = advancedSkills;
     }
 
     function removeAdvancedSkill(skill) {
         delete advancedSkills[skill];
+        advancedSkills = advancedSkills;
+    }
+
+    function addSkillSpecialty(skill, specialty) {
+        advancedSkills[skill].spe = [...advancedSkills[skill].spe, specialty];
+        advancedSkills[skill][specialty] = {aug: 0, editable: false};
+        advancedSkills = advancedSkills;
+        // Reset input text
+        specialtyInputText.set(skill, "");
+    }
+
+    function removeSkillSpecialty(skill, specialty) {
+        delete advancedSkills[skill][specialty];
+        advancedSkills[skill].spe = advancedSkills[skill].spe.filter((element) => element != specialty);
         advancedSkills = advancedSkills;
     }
 
@@ -61,7 +90,7 @@
     <p class="text-warning font-semibold mt-5">{form.message}</p>
 {/if}
 
-<form class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6 xl:w-2/6" method="POST">
+<form class="mt-10 flex flex-col gap-7 items-center w-11/12 sm:w-4/5 md:w-3/5 lg:w-3/6" method="POST">
     
     <section class="card gap-10 bg-base-300 w-full">
         <div class="card-body">
@@ -201,7 +230,11 @@
                         CC
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="capCombatEditable" checked={form?.data?.capCombatEditable == "on" ? true: false}/>
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="capCombat" value={capCombat}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="capCombat" value={characteristics.get("capCombat")}
+                    on:change={(event) => {
+                        characteristics.set("capCombat", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="capCombatAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="capCombatAug">Aug.</label>
@@ -214,7 +247,11 @@
                         CT
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="capTirEditable" checked={form?.data?.capTirEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="capTir" value={form?.data?.capTir ?? 0}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="capTir" value={characteristics.get("capTir")}
+                    on:change={(event) => {
+                        characteristics.set("capTir", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="capTirAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="capTirAug">Aug.</label>
@@ -227,7 +264,11 @@
                         F
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="forceEditable" checked={form?.data?.forceEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="force" value={form?.data?.force ?? 0}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="force" value={characteristics.get("force")}
+                    on:change={(event) => {
+                        characteristics.set("force", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="forceAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="forceAug">Aug.</label>
@@ -240,7 +281,11 @@
                         E
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="enduranceEditable" checked={form?.data?.enduranceEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="endurance" value={form?.data?.endurance ?? 0}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="endurance" value={characteristics.get("endurance")}
+                    on:change={(event) => {
+                        characteristics.set("endurance", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="enduranceAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="enduranceAug">Aug.</label>
@@ -253,7 +298,11 @@
                         I
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="initiativeEditable" checked={form?.data?.initiativeEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="initiative" value={form?.data?.initiative ?? 0}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="initiative" value={characteristics.get("initiative")}
+                    on:change={(event) => {
+                        characteristics.set("initiative", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="initiativeAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="initiativeAug">Aug.</label>
@@ -266,7 +315,11 @@
                         Ag
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="agiliteEditable" checked={form?.data?.agiliteEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="agilite" value={form?.data?.agilite ?? 0}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="agilite" value={characteristics.get("agilite")}
+                    on:change={(event) => {
+                        characteristics.set("agilite", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="agiliteAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="agiliteAug">Aug.</label>
@@ -296,7 +349,11 @@
                         Int
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="intelligenceEditable" checked={form?.data?.intelligenceEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="intelligence" value={form?.data?.intelligence ?? 0}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="intelligence" value={characteristics.get("intelligence")}
+                    on:change={(event) => {
+                        characteristics.set("intelligence", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="intelligenceAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="intelligenceAug">Aug.</label>
@@ -309,7 +366,11 @@
                         FM
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="forceMentaleEditable" checked={form?.data?.forceMentaleEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="forceMentale" value={form?.data?.forceMentale ?? 0}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="forceMentale" value={characteristics.get("forceMentale")}
+                    on:change={(event) => {
+                        characteristics.set("forceMentale", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="forceMentaleAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="forceMentaleAug">Aug.</label>
@@ -322,7 +383,11 @@
                         Soc
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="sociabiliteEditable" checked={form?.data?.sociabiliteEditable == "on" ? true: false} />
                     </label>
-                    <input class="input input-bordered w-3/4 text-center" type="number" name="sociabilite" value={form?.data?.sociabilite ?? 0}/>
+                    <input class="input input-bordered w-3/4 text-center" type="number" name="sociabilite" value={characteristics.get("sociabilite")}
+                    on:change={(event) => {
+                        characteristics.set("sociabilite", event.target.value);
+                        characteristics = characteristics;
+                    }}/>
                     <div class="flex flex-col items-center">
                         <label class="label hidden xs:flex" for="sociabiliteAug">Augmentations</label>
                         <label class="label flex xs:hidden" for="sociabiliteAug">Aug.</label>
@@ -702,24 +767,57 @@
             <h2 class="text-xl font-semibold text-center mb-5" >Compétences avancées</h2>
 
             <section class="grid grid-cols-1 gap-5">
-                {#each advancedSkillsPropsMap as [skill, prop]}
-                {#if prop.selected}
-                <div class="flex flex-col gap-3">
-                    <p>{JSON.stringify(advancedSkills[skill])}</p>
-                    <label for="" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        {skill} - {prop.charac}:{characteristics.get(prop.charac)}
+                {#each advancedSkillsMap as [skill, prop]}
+                <div class="flex flex-col items-center gap-3 p-3 border-2 border-base-100 rounded-xl">
+                    <label for="" class="label flex flex-col items-start gap-3 2xs:flex-row 2xs:justify-center text-sm xs:text-base w-full">
+                        <p class="font-medium text-center">{skill} [{prop.charac}: {characteristics.get(prop.charac)}]</p>
+                        {#if !prop.grouped}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default"
                          checked={advancedSkills[skill]?.editable ?? false} 
                          on:change={(event) => advancedSkills[skill].editable = event.target.checked}/>
+                         {/if}
                     </label>
-                    <div class="form-control">
-                        <label class="label" for={skill}>Aug.</label>
-                        <input type="number" name={skill} class="input input-numbered" value={advancedSkills[skill]?.aug ?? ""} 
-                        on:change={(event) => advancedSkills[skill].aug = parseInt(event.target.value)}/>
+
+                    {#if !prop.grouped}
+                    <div class="form-control items-center">
+                        <label class="label text-sm xs:text-base" for={skill}>Aug.</label>
+                        <input type="number" name={skill} class="input input-bordered w-3/4 text-center" value={advancedSkills[skill]?.aug ?? 0} 
+                        on:change={(event) => advancedSkills[skill].aug = parseInt(event.target.value)} />
                     </div>
+                    {:else}
+                    <div class="form-control">
+                            {#each advancedSkills[skill].spe as spe}
+                            <label for="" class="label flex flex-col items-start gap-3 2xs:flex-row 2xs:justify-start 2xs:items-center text-sm xs:text-base w-full">
+                                <div>
+                                    <button type="button" class="btn btn-ghost text-error"
+                                    on:click={() => removeSkillSpecialty(skill, spe)}>X</button>
+                                    {skill} ({spe})
+                                </div>
+                                <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default"
+                                checked={advancedSkills[skill][spe]?.editable ?? false} 
+                                on:change={(event) => advancedSkills[skill][spe].editable = event.target.checked}/>
+                            </label>
+                                <div class="form-control items-center">
+                                    <label class="label text-sm xs:text-base" for={skill+spe}>Aug.</label>
+                                    <input type="number" class="input input-bordered w-3/4 text-center" id={skill+spe} value={advancedSkills[skill][spe]?.aug ?? 0} 
+                                    on:change={(event) => advancedSkills[skill][spe].aug = parseInt(event.target.value)} />
+                                </div>
+                            {/each}
+
+                        <label for="specialty" class="label text-sm xs:text-base mt-5">Ajouter une spécialité</label>
+                        <div class="flex flex-col items-center w-full xs:flex-row">
+                            <input type="text" class="input input-bordered xs:flex-1 w-full" id="specialty" value={specialtyInputText.get(skill) ?? ""}
+                            on:change={(event) => {
+                                specialtyInputText.set(skill, event.target.value);
+                                specialtyInputText = specialtyInputText;
+                            }}/>
+                            <button type="button" class="btn btn-success w-1/5" on:click={() => addSkillSpecialty(skill, specialtyInputText.get(skill))}>+</button>
+                        </div>
+                       
+                    </div>
+                    {/if}
                     
                 </div>
-                {/if}
                 {/each}
                 <!-- Hidden input used to pass the data related to advanced skills,  -->
                 <!-- to be able to return them from the form action (in createcharac/+page.server.js) if an error occurs -->
@@ -733,274 +831,6 @@
 
 
 
-    <section class="card gap-10 bg-base-300 w-full">
-        <section class="card-body">
-            <h2 class="text-xl font-semibold text-center mb-5" >Compétences avancées</h2>
-
-            <section class="grid grid-cols-2 gap-5">
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="crochetage" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        crochetage
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="crochetageEditable" checked={form?.data?.crochetageEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="crochetage" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="crochetageAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="crochetageAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="crochetageAug" type="number" value={form?.data?.crochetageAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="dressage" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        dressage
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="dressageEditable" checked={form?.data?.dressageEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="dressage" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="dressageAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="dressageAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="dressageAug" type="number" value={form?.data?.dressageAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="escamotage" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        escamotage
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="escamotageEditable" checked={form?.data?.escamotageEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="escamotage" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="escamotageAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="escamotageAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="escamotageAug" type="number" value={form?.data?.escamotageAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="evaluation" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        evaluation
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="evaluationEditable" checked={form?.data?.evaluationEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="evaluation" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="evaluationAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="evaluationAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="evaluationAug" type="number" value={form?.data?.evaluationAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="focalisation" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        focalisation
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="focalisationEditable" checked={form?.data?.focalisationEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="focalisation" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="focalisationAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="focalisationAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="focalisationAug" type="number" value={form?.data?.focalisationAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="guerison" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        guerison
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="guerisonEditable" checked={form?.data?.guerisonEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="guerison" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="guerisonAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="guerisonAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="guerisonAug" type="number" value={form?.data?.guerisonAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="langue" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        langue
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="langueEditable" checked={form?.data?.langueEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="langue" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="langueAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="langueAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="langueAug" type="number" value={form?.data?.langueAug ?? 0} />
-                    </div>
-                </div>
-                
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="metier" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        metier
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="metierEditable" checked={form?.data?.metierEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="metier" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="metierAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="metierAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="metierAug" type="number" value={form?.data?.metierAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="musicien" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        musicien
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="musicienEditable" checked={form?.data?.musicienEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="musicien" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="musicienAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="musicienAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="musicienAug" type="number" value={form?.data?.musicienAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="natation" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        natation
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="natationEditable" checked={form?.data?.natationEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="natation" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="natationAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="natationAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="natationAug" type="number" value={form?.data?.natationAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="piegeage" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        piegeage
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="piegeageEditable" checked={form?.data?.piegeageEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="piegeage" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="piegeageAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="piegeageAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="piegeageAug" type="number" value={form?.data?.piegeageAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="pistage" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        pistage
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="pistageEditable" checked={form?.data?.pistageEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="pistage" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="pistageAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="pistageAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="pistageAug" type="number" value={form?.data?.pistageAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="priere" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        priere
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="priereEditable" checked={form?.data?.priereEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="priere" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="priereAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="priereAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="priereAug" type="number" value={form?.data?.priereAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="projectiles" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        projectiles
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="projectilesEditable" checked={form?.data?.projectilesEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="projectiles" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="projectilesAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="projectilesAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="projectilesAug" type="number" value={form?.data?.projectilesAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="recherche" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        recherche
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="rechercheEditable" checked={form?.data?.rechercheEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="recherche" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="rechercheAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="rechercheAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="rechercheAug" type="number" value={form?.data?.rechercheAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="representation" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        representation
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="representationEditable" checked={form?.data?.representationEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="representation" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="representationAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="representationAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="representationAug" type="number" value={form?.data?.representationAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="savoir" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        savoir
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="savoirEditable" checked={form?.data?.savoirEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="savoir" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="savoirAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="savoirAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="savoirAug" type="number" value={form?.data?.savoirAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="signesSecrets" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        signesSecrets
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="signesSecretsEditable" checked={form?.data?.signesSecretsEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="signesSecrets" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="signesSecretsAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="signesSecretsAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="signesSecretsAug" type="number" value={form?.data?.signesSecretsAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="soinAnimaux" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        soinAnimaux
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="soinAnimauxEditable" checked={form?.data?.soinAnimauxEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="soinAnimaux" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="soinAnimauxAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="soinAnimauxAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="soinAnimauxAug" type="number" value={form?.data?.soinAnimauxAug ?? 0} />
-                    </div>
-                </div>
-
-                <div class="form-control items-center border-2 rounded-lg border-base-200">
-                    <label for="voile" class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
-                        voile
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" name="voileEditable" checked={form?.data?.voileEditable == "on" ? true: false}/>
-                    </label>
-                    <input class="input input-bordered w-3/4 text-center disabled:cursor-default disabled:text-base-content" disabled type="number" name="voile" value={dexterite}/>
-                    <div class="form-control items-center">
-                        <label class="label hidden xs:flex" for="voileAug">Augmentations</label>
-                        <label class="label flex xs:hidden" for="voileAug">Aug.</label>
-                        <input class="input input-bordered w-1/2 text-center" name="voileAug" type="number" value={form?.data?.voileAug ?? 0} />
-                    </div>
-                </div>
-
-            </section>
-        </section>
-    </section>
 
     <section class="card gap-10 bg-base-300 w-full">
         <section class="card-body">

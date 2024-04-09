@@ -180,6 +180,16 @@ export async function updateBaseSkill(character, skill, skillElement, value){
     await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
 }
 
+export async function updateAdvancedSkill(character, skill, skillElement, value, spe=""){
+    if(spe != ""){
+        character.advancedSkills[skill][spe][skillElement] = value;
+    }
+    else {
+        character.advancedSkills[skill][skillElement] = value;
+    }
+    await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills});
+}
+
 
 const xpCostCharac = new Map([
     [5, 25],
@@ -594,10 +604,28 @@ export function getCharacteristicFull(character, characteristic){
     return character.characteristics[characteristic].init + character.characteristics[characteristic].aug;
 }
 
-export function getSkillFull(character, skill){
+export function getBaseSkillFull(character, skill){
     return getCharacteristicFull(character, character.baseSkills[skill].charac) + character.baseSkills[skill].aug;
 }
 
 export function getBaseSkillAug(character, skill){
     return character.baseSkills[skill].aug;
+}
+
+export function getAdvancedSkillFull(character, skill, spe=""){
+    if(spe != "") {
+        return getCharacteristicFull(character, character.advancedSkills[skill].charac) + character.advancedSkills[skill][spe].aug;
+    }
+    else {
+        return getCharacteristicFull(character, character.advancedSkills[skill].charac) + character.advancedSkills[skill].aug;
+    }
+}
+
+export function getAdvancedSkillAug(character, skill, spe=""){
+    if(spe != "") {
+        return character.advancedSkills[skill][spe].aug;
+    }
+    else {
+        return character.advancedSkills[skill].aug;
+    }
 }
