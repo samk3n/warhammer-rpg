@@ -262,7 +262,7 @@ const xpCostSkill = new Map([
     [70, 380]
 ]);
 
-export async function increaseSkill(character, skill, isMaster = false) {
+export async function increaseBaseSkill(character, skill, isMaster = false) {
     if(isMaster) {
         character.baseSkills[skill].aug += 1;
         await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
@@ -279,7 +279,7 @@ export async function increaseSkill(character, skill, isMaster = false) {
     }
 }
 
-export async function decreaseSkill(character, skill, isMaster = false) {
+export async function decreaseBaseSkill(character, skill, isMaster = false) {
     if(character.baseSkills[skill].aug - 1 >= 0) {
         if(isMaster) {
             character.baseSkills[skill].aug -= 1;
@@ -292,6 +292,80 @@ export async function decreaseSkill(character, skill, isMaster = false) {
                     character.baseSkills[skill].aug -= 1;
                     await updateRecord("characters", character.id, {baseSkills: character.baseSkills, "xpSpent": character.xpSpent});
                     return;
+                }
+            }
+        }
+    }
+}
+
+export async function increaseAdvancedSkill(character, skill, spe="", isMaster = false) {
+    if(isMaster) {
+        if(spe != ""){
+            character.advancedSkills[skill][spe].aug += 1;
+        }
+        else {
+            character.advancedSkills[skill].aug += 1;
+        }
+        
+        await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills});
+    }
+    else {
+        if(spe != ""){
+            for (let [key, value] of  xpCostSkill.entries()) {
+                if(character.advancedSkills[skill][spe].aug <= key && character.xpEarned - character.xpSpent >= value) {
+                    character.xpSpent += value;
+                    character.advancedSkills[skill][spe].aug += 1;
+                    await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills, "xpSpent": character.xpSpent});
+                    return;
+                }
+            }
+        }
+        else {
+            for (let [key, value] of  xpCostSkill.entries()) {
+                if(character.advancedSkills[skill].aug <= key && character.xpEarned - character.xpSpent >= value) {
+                    character.xpSpent += value;
+                    character.advancedSkills[skill].aug += 1;
+                    await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills, "xpSpent": character.xpSpent});
+                    return;
+                }
+            }
+        }
+    }
+}
+
+export async function decreaseAdvancedSkill(character, skill, spe="", isMaster = false) {
+    if(spe != ""){
+        if(character.advancedSkills[skill][spe].aug - 1 >= 0) {
+            if(isMaster) {
+                character.advancedSkills[skill][spe].aug -= 1;
+                await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills});
+            }
+            else {
+                for (let [key, value] of  xpCostSkill.entries()) {
+                    if((character.advancedSkills[skill][spe].aug <= key || character.advancedSkills[skill][spe].aug == (key+1)) && character.xpSpent >= value ) {
+                        character.xpSpent -= value;
+                        character.advancedSkills[skill][spe].aug -= 1;
+                        await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills, "xpSpent": character.xpSpent});
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    else {
+        if(character.advancedSkills[skill].aug - 1 >= 0) {
+            if(isMaster) {
+                character.advancedSkills[skill].aug -= 1;
+                await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills});
+            }
+            else {
+                for (let [key, value] of  xpCostSkill.entries()) {
+                    if((character.advancedSkills[skill].aug <= key || character.advancedSkills[skill].aug == (key+1)) && character.xpSpent >= value ) {
+                        character.xpSpent -= value;
+                        character.advancedSkills[skill].aug -= 1;
+                        await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills, "xpSpent": character.xpSpent});
+                        return;
+                    }
                 }
             }
         }
@@ -629,3 +703,38 @@ export function getAdvancedSkillAug(character, skill, spe=""){
         return character.advancedSkills[skill].aug;
     }
 }
+
+export async function removeAdvancedSkill(character, skill, spe="") {
+    if(spe != "") {
+        character.advancedSkills[skill].spe = character.advancedSkills[skill].spe.filter((element) => element != spe);
+    }
+    else {
+        delete character.advancedSkills[skill];
+    }
+    await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills});
+}
+
+export async function addAdvancedSkill(character, skill, charac, spe="") {
+    if(spe != "") {
+        if(character.advancedSkills[skill]) {
+            if(!character.advancedSkills[skill].spe.includes(spe)) {
+                character.advancedSkills[skill].spe.push(spe);
+                if(!character.advancedSkills[skill][spe]) {
+                    character.advancedSkills[skill][spe] = {aug: 0, editable: false};
+                }
+            }
+        }
+        else {
+            character.advancedSkills[skill] = {aug: 0, spe: [spe], grouped: true, charac: charac, [spe]: {aug: 0, editable: false}};
+        }
+        
+        
+    }
+    else {
+        if(!character.advancedSkills[skill]){
+            character.advancedSkills[skill] = {aug: 0, charac: charac, editable: false}
+        }
+    }
+    await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills});
+    
+} 

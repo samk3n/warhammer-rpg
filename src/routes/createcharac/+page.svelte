@@ -46,7 +46,24 @@
 
     $: advancedSkillsProps = form?.data?.advancedSkillsProps ?? {
         "crochetage": {selected: false, grouped: false, charac: "dexterite"},
-        "dressage": {selected: false, grouped: true, charac: "intelligence"}
+        "dressage": {selected: false, grouped: true, charac: "intelligence"},
+        "escamotage": {selected: false, grouped: false, charac: "dexterite"},
+        "evaluation": {selected: false, grouped: true, charac: "intelligence"},
+        "focalisation": {selected: false, grouped: true, charac: "forceMentale"},
+        "guerison": {selected: false, grouped: false, charac: "intelligence"},
+        "langue": {selected: false, grouped: true, charac: "intelligence"},
+        "metier": {selected: false, grouped: true, charac: "dexterite"},
+        "musicien": {selected: false, grouped: true, charac: "dexterite"},
+        "natation": {selected: false, grouped: false, charac: "force"},
+        "piegeage": {selected: false, grouped: false, charac: "dexterite"},
+        "pistage": {selected: false, grouped: false, charac: "initiative"},
+        "priere": {selected: false, grouped: false, charac: "sociabilite"},
+        "projectiles": {selected: false, grouped: true, charac: "capTir"},
+        "recherche": {selected: false, grouped: false, charac: "intelligence"},
+        "representation": {selected: false, grouped: true, charac: "agilite"},
+        "savoir": {selected: false, grouped: true, charac: "intelligence"},
+        "signesSecrets": {selected: false, grouped: true, charac: "intelligence"},
+        "soinAnimaux": {selected: false, grouped: false, charac: "intelligence"},
     };
     $: advancedSkillsPropsMap = new Map(Object.entries(advancedSkillsProps));
 

@@ -1,12 +1,12 @@
 <script>
     import {PUBLIC_DB_ADDRESS} from "$env/static/public";
-    import {getRecordFromId, increaseCharacteristic, decreaseCharacteristic, updateAttribute, updateCharacteristic, increaseSkill, 
-        decreaseSkill, calculateWoundsMax, updateGroup, addObjectToCharac, updateCharacObjectCount, deleteObjectFromCharac,
+    import {getRecordFromId, increaseCharacteristic, decreaseCharacteristic, updateAttribute, updateCharacteristic, increaseBaseSkill, 
+        decreaseBaseSkill, calculateWoundsMax, updateGroup, addObjectToCharac, updateCharacObjectCount, deleteObjectFromCharac,
         updateCharacTalentCount, deleteTalentFromCharac, addTalentToCharac, addSpellToCharac, deleteSpellFromCharac, addMeleeWeaponToCharac,
         deleteMeleeWeaponFromCharac, addRangeWeaponToCharac, deleteRangeWeaponFromCharac, updateCharacterPlayable, compareObjectsString,
         isCharacCorrupted, getEncombrement, getEncombrementMax, getCharacteristicInit, getCharacteristicFull,
         getBaseSkillFull, getCharacteristicAug, getBaseSkillAug, updateBaseSkill, getAdvancedSkillAug, getAdvancedSkillFull,
-        updateAdvancedSkill} from "$lib/utils.js"
+        updateAdvancedSkill, increaseAdvancedSkill, decreaseAdvancedSkill, removeAdvancedSkill, addAdvancedSkill} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -22,7 +22,8 @@
         ["mouvement", "Mouvement"],
         ["experience", "Expérience"],
         ["carac", "Caractéristiques"],
-        ["competences", "Compétences"],
+        ["competences", "Compétences de base"],
+        ["competencesAvancees", "Compétences Avancées"],
         ["richesses", "Richesses"],
         ["blessures", "Blessures"],
         ["ambitions", "Ambitions"],
@@ -48,6 +49,42 @@
     $: characteristicsMap = new Map(Object.entries(character.characteristics).sort((a, b) => a[1].order - b[1].order));
     $: baseSkillsMap = new Map(Object.entries(character.baseSkills));
     $: advancedSkillsMap = new Map(Object.entries(character.advancedSkills));
+
+    $: advancedSkillsProps = new Map([
+        ["crochetage", {selected: false, grouped: false, charac: "dexterite", available: true}],
+        ["dressage", {selected: false, grouped: true, charac: "intelligence"}],
+        ["escamotage", {selected: false, grouped: false, charac: "dexterite", available: true}],
+        ["evaluation", {selected: false, grouped: true, charac: "intelligence"}],
+        ["focalisation", {selected: false, grouped: true, charac: "forceMentale"}],
+        ["guerison", {selected: false, grouped: false, charac: "intelligence", available: true}],
+        ["langue", {selected: false, grouped: true, charac: "intelligence"}],
+        ["metier", {selected: false, grouped: true, charac: "dexterite"}],
+        ["musicien", {selected: false, grouped: true, charac: "dexterite"}],
+        ["natation", {selected: false, grouped: false, charac: "force", available: true}],
+        ["piegeage", {selected: false, grouped: false, charac: "dexterite", available: true}],
+        ["pistage", {selected: false, grouped: false, charac: "initiative", available: true}],
+        ["priere", {selected: false, grouped: false, charac: "sociabilite", available: true}],
+        ["projectiles", {selected: false, grouped: true, charac: "capTir"}],
+        ["recherche", {selected: false, grouped: false, charac: "intelligence", available: true}],
+        ["representation", {selected: false, grouped: true, charac: "agilite"}],
+        ["savoir", {selected: false, grouped: true, charac: "intelligence"}],
+        ["signesSecrets", {selected: false, grouped: true, charac: "intelligence"}],
+        ["soinAnimaux", {selected: false, grouped: false, charac: "intelligence", available: true}],
+    ]);
+
+
+    $: for(let [skill, prop] of advancedSkillsProps) {
+        if(prop.grouped || (!prop.grouped && !advancedSkillsMap.has(skill))){
+            prop.available = true; 
+        }
+        else {
+            prop.available = false;
+        }
+        advancedSkillsProps.set(skill, prop);
+    }
+
+    let addAdvancedSkillSpeText = new Map();
+
 
     const characNameMap = new Map([
         ["capCombat", "CC"],
@@ -539,8 +576,8 @@
                     {/if}
                     {#if character.baseSkills[skillName].editable && editSkills}
                     <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, skillName, isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, skillName, isMaster)}>+</button>
+                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseBaseSkill(character, skillName, isMaster)}>-</button>
+                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseBaseSkill(character, skillName, isMaster)}>+</button>
                     </div>
                     {/if}
                 </div>
@@ -558,32 +595,107 @@
                 <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editAdvancedSkills} />
                 {/if}
             </div>
+
+            <!-- Section used to select advanced skills and add them to the character. If skill is grouped, enter the specialty before adding -->
+            {#if isMaster}
+                <div class="flex flex-col gap-3 mb-10 h-96 overflow-y-scroll">
+                    {#each advancedSkillsProps as [skill, prop]}
+                        {#if prop.grouped}
+                            <div class="flex flex-col gap-3 even:bg-base-100 odd:bg-base-200 p-2 rounded-md md:flex-row md:items-center">
+                                <p>{skill}</p>
+                                <div class="flex items-center gap-3 justify-between">
+                                    <input type="text" class="input input-numbered border-2 border-base-300" placeholder="Entrez une spécialité"
+                                    value={addAdvancedSkillSpeText.get(skill) ?? ""} on:change={(event) => addAdvancedSkillSpeText.set(skill, event.target.value)} />
+                                    <button class="btn btn-success btn-md" 
+                                    on:click={() => {
+                                        if(addAdvancedSkillSpeText.get(skill) != ""){
+                                            addAdvancedSkill(character, skill, prop.charac, addAdvancedSkillSpeText.get(skill));
+                                            addAdvancedSkillSpeText.set(skill, "");
+                                        }
+                                    }}>+</button>
+                                </div>
+                            </div>
+                        {:else if prop.available}
+                            <div class="flex even:bg-base-100 odd:bg-base-200 p-2 rounded-md items-center">
+                                <p>{skill}</p>
+                                <button class="btn btn-success btn-xsm" 
+                                on:click={() => {
+                                    addAdvancedSkill(character, skill, prop.charac);
+                                    prop.available = false;
+                                    advancedSkillsProps.set(skill, prop);
+                                    advancedSkillsProps = advancedSkillsProps;
+                                }}>+</button>
+                            </div>
+                        {/if}
+                    {/each}
+                </div>
+            {/if}
             
             <section class="grid gap-5 grid-cols-2">
                 {#each advancedSkillsMap as [skillName, prop]}
-                <div class="form-control items-center">
-                    <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for={skillName}>
-                        {skillName}
-                        {#if isMaster && !prop.grouped}
-                        <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editAdvancedSkills} bind:checked={character.advancedSkills[skillName].editable}
-                        on:change={(event) => updateAdvancedSkill(character, skillName, "editable", event.target.checked)} />
+                    {#if prop.grouped}
+                        {#each prop.spe as spe}
+                        <div class="form-control items-center">
+                            <label class="label flex flex-col items-start gap-3 sm:flex-row sm:justify-between sm:items-center text-sm xs:text-base w-3/4" for={spe}>
+                                {skillName} ({spe})
+                                <div class="flex gap-5 items-center">
+                                    {#if isMaster}
+                                    <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editAdvancedSkills} bind:checked={character.advancedSkills[skillName][spe].editable}
+                                    on:change={(event) => updateAdvancedSkill(character, skillName, "editable", event.target.checked, spe)} />
+                                    {/if}
+                                    {#if isMaster && editAdvancedSkills}
+                                    <button type="button" class="btn btn-ghost text-error btn-xs"
+                                    on:click={() => removeAdvancedSkill(character, skillName, spe)}>X</button>
+                                    {/if}
+                                </div>
+                            </label>
+                            <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                            disabled
+                            type="number" name={spe} 
+                            value={isMaster ? getCharacteristicFull(character, prop.charac) : getAdvancedSkillFull(character, skillName, spe)} />
+                            {#if isMaster || prop[spe].editable}
+                            <p class="italic font-semibold text-sm hidden xs:block">{getAdvancedSkillAug(character, skillName, spe)} {getAdvancedSkillAug(character, skillName, spe) > 1 ? "augmentations" : "augmentation"}</p>
+                            <p class="italic font-semibold text-sm block xs:hidden">{getAdvancedSkillAug(character, skillName, spe)} aug.</p>
+                            {/if}
+                            {#if prop[spe].editable && editAdvancedSkills}
+                            <div class="w-1/3 flex justify-center">
+                                <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseAdvancedSkill(character, skillName, spe, isMaster)}>-</button>
+                                <button class="btn btn-success text-2xl flex-1" on:click={() => increaseAdvancedSkill(character, skillName, spe, isMaster)}>+</button>
+                            </div>
+                            {/if}
+                        </div>
+                        {/each}
+                    {:else}
+                    <div class="form-control items-center">
+                        <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for={skillName}>
+                            {skillName}
+                            <div class="flex gap-5 items-center">
+                                {#if isMaster}
+                                <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editAdvancedSkills} bind:checked={character.advancedSkills[skillName].editable}
+                                on:change={(event) => updateAdvancedSkill(character, skillName, "editable", event.target.checked)} />
+                                {/if}
+                                {#if isMaster && editAdvancedSkills}
+                                    <button type="button" class="btn btn-ghost text-error btn-xs"
+                                    on:click={() => removeAdvancedSkill(character, skillName, "")}>X</button>
+                                {/if}
+                            </div>
+                        </label>
+                        <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                        disabled
+                        type="number" name={skillName} 
+                        value={isMaster ? getCharacteristicFull(character, prop.charac) : getAdvancedSkillFull(character, skillName)} />
+                        {#if isMaster || prop.editable}
+                        <p class="italic font-semibold text-sm hidden xs:block">{getAdvancedSkillAug(character, skillName)} {getAdvancedSkillAug(character, skillName) > 1 ? "augmentations" : "augmentation"}</p>
+                        <p class="italic font-semibold text-sm block xs:hidden">{getAdvancedSkillAug(character, skillName)} aug.</p>
                         {/if}
-                    </label>
-                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled
-                    type="number" name={skillName} 
-                    value={isMaster ? getCharacteristicFull(character, prop.charac) : getAdvancedSkillFull(character, skillName)} />
-                    {#if isMaster || prop.editable}
-                    <p class="italic font-semibold text-sm hidden xs:block">{getAdvancedSkillAug(character, skillName)} {getAdvancedSkillAug(character, skillName) > 1 ? "augmentations" : "augmentation"}</p>
-                    <p class="italic font-semibold text-sm block xs:hidden">{getAdvancedSkillAug(character, skillName)} aug.</p>
-                    {/if}
-                    {#if prop.editable && editAdvancedSkills}
-                    <div class="w-1/3 flex justify-center">
-                        <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseSkill(character, skillName, isMaster)}>-</button>
-                        <button class="btn btn-success text-2xl flex-1" on:click={() => increaseSkill(character, skillName, isMaster)}>+</button>
+                        {#if prop.editable && editAdvancedSkills}
+                        <div class="w-1/3 flex justify-center">
+                            <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseAdvancedSkill(character, skillName, "", isMaster)}>-</button>
+                            <button class="btn btn-success text-2xl flex-1" on:click={() => increaseAdvancedSkill(character, skillName, "", isMaster)}>+</button>
+                        </div>
+                        {/if}
                     </div>
                     {/if}
-                </div>
                 {/each}
             </section>
         </section>
