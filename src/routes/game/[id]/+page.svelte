@@ -1,5 +1,5 @@
 <script>
-    import {getRecordFromId, updateGameField} from "$lib/utils.js"
+    import {getRecordFromId, updateGameField, characNameMap, getCharacteristicFull} from "$lib/utils.js"
 
     export let data;
     export let form;
@@ -84,55 +84,13 @@
                         <p class="font-bold text-xl input flex-1 flex gap-2 items-center">Classe: <span class="font-normal">{character.classe}</span></p>
                     </div>
                     <div class="grid grid-cols-2 2xs:grid-cols-5 gap-1">
+                        {#each new Map(Object.entries(character.characteristics).sort((a, b) => a[1].order - b[1].order)) as [charac, prop]}
                         <div class="form-control">
-                            <label class="label font-semibold self-center" for="cc">CC</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="cc" value={character.capCombat.init + character.capCombat.aug} />
+                            <label class="label font-semibold self-center" for={charac}>{characNameMap.get(charac)}</label>
+                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name={charac} value={getCharacteristicFull(character, charac)} />
                         </div>
+                        {/each}
 
-                        <div class="form-control">
-                            <label class="label font-semibold self-center" for="ct">CT</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="ct" value={character.capTir.init + character.capTir.aug} />
-                        </div>
-
-                        <div class="form-control">
-                            <label class="label font-semibold self-center" for="f">F</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="f" value={character.force.init + character.force.aug} />
-                        </div>
-
-                        <div class="form-control">
-                            <label class="label font-semibold self-center" for="e">E</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="e" value={character.endurance.init + character.endurance.aug} />
-                        </div>
-
-                        <div class="form-control">
-                            <label class="label font-semibold self-center" for="i">I</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="i" value={character.initiative.init + character.initiative.aug} />
-                        </div>
-
-                        <div class="form-control">
-                            <label class="label font-semibold self-center" for="ag">Ag</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="ag" value={character.agilite.init + character.agilite.aug} />
-                        </div>
-
-                        <div class="form-control">
-                            <label class="label font-semibold self-center" for="dex">Dex</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="dex" value={character.dexterite.init + character.dexterite.aug} />
-                        </div>
-
-                        <div class="form-control">
-                            <label class="label font-semibold self-center" for="int">Int</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="int" value={character.intelligence.init + character.intelligence.aug} />
-                        </div>
-
-                        <div class="form-control">
-                            <label class="label font-semibold self-center" for="fm">FM</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="fm" value={character.forceMentale.init + character.forceMentale.aug} />
-                        </div>
-
-                        <div class="form-control">
-                            <label class="label font-semibold self-center" for="soc">Soc</label>
-                            <input class="input text-center disabled:text-base-content disabled:cursor-default" type="number" disabled name="soc" value={character.sociabilite.init + character.sociabilite.aug} />
-                        </div>
                     </div>
                 </div>
 

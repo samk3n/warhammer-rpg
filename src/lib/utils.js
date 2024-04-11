@@ -73,6 +73,47 @@ export async function createRecord(collection, data){
     }
 }
 
+export async function deleteRecord(collection, record){
+    const response = await fetch('/api/deleteRecord', {
+        method: "DELETE",
+        body: JSON.stringify({collection: collection, id: record.id}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const respJson = await response.json();
+    if(respJson.error){
+        return {
+            error: true,
+            message: "Erreur lors de la suppression de l'objet."
+        }
+    }
+
+    return {
+        success: true
+    }
+
+}
+
+export async function getFullCollection(collection){
+    const response = await fetch('/api/getFullCollection', {
+        method: "POST",
+        body: JSON.stringify({collection: collection}),
+        headers: {
+            'content-type': "application/json"
+        }
+    });
+    const respJson = await response.json();
+    if(respJson.error){
+        return {
+            error: true,
+            message: "Erreur lors de la récupération des " + collection
+        }
+    }
+    
+    return respJson.records;
+}
+
 export async function createMeleeWeapon(data){
     if(data.name.length < 3){
         return {
@@ -175,8 +216,13 @@ export async function updateCharacteristic(character, characteristic, characElem
     await updateRecord("characters", character.id, {characteristics: character.characteristics});
 }
 
-export async function updateBaseSkill(character, skill, skillElement, value){
-    character.baseSkills[skill][skillElement] = value;
+export async function updateBaseSkill(character, skill, skillElement, value, spe=""){
+    if(spe != ""){
+        character.baseSkills[skill][spe][skillElement] = value;
+    }
+    else {
+        character.baseSkills[skill][skillElement] = value;
+    }
     await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
 }
 
@@ -262,36 +308,73 @@ const xpCostSkill = new Map([
     [70, 380]
 ]);
 
-export async function increaseBaseSkill(character, skill, isMaster = false) {
+export async function increaseBaseSkill(character, skill, isMaster = false, spe="") {
     if(isMaster) {
-        character.baseSkills[skill].aug += 1;
+        if(spe != "") {
+            character.baseSkills[skill][spe].aug += 1;
+        }
+        else {
+            character.baseSkills[skill].aug += 1;
+        }
         await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
     }
     else {
-        for (let [key, value] of  xpCostSkill.entries()) {
-            if(character.baseSkills[skill].aug <= key && character.xpEarned - character.xpSpent >= value) {
-                character.xpSpent += value;
-                character.baseSkills[skill].aug += 1;
-                await updateRecord("characters", character.id, {baseSkills: character.baseSkills, "xpSpent": character.xpSpent});
-                return;
+        if(spe != "") {
+            for (let [key, value] of  xpCostSkill.entries()) {
+                if(character.baseSkills[skill][spe].aug <= key && character.xpEarned - character.xpSpent >= value) {
+                    character.xpSpent += value;
+                    character.baseSkills[skill][spe].aug += 1;
+                    await updateRecord("characters", character.id, {baseSkills: character.baseSkills, "xpSpent": character.xpSpent});
+                    return;
+                }
+            }
+        }
+        else {
+            for (let [key, value] of  xpCostSkill.entries()) {
+                if(character.baseSkills[skill].aug <= key && character.xpEarned - character.xpSpent >= value) {
+                    character.xpSpent += value;
+                    character.baseSkills[skill].aug += 1;
+                    await updateRecord("characters", character.id, {baseSkills: character.baseSkills, "xpSpent": character.xpSpent});
+                    return;
+                }
             }
         }
     }
 }
 
-export async function decreaseBaseSkill(character, skill, isMaster = false) {
-    if(character.baseSkills[skill].aug - 1 >= 0) {
-        if(isMaster) {
-            character.baseSkills[skill].aug -= 1;
-            await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
+export async function decreaseBaseSkill(character, skill, isMaster = false, spe="") {
+    if(spe != "") {
+        if(character.baseSkills[skill][spe].aug - 1 >= 0) {
+            if(isMaster) {
+                character.baseSkills[skill][spe].aug -= 1;
+                await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
+            }
+            else {
+                for (let [key, value] of  xpCostSkill.entries()) {
+                    if((character.baseSkills[skill][spe].aug <= key || character.baseSkills[skill][spe].aug == (key+1)) && character.xpSpent >= value ) {
+                        character.xpSpent -= value;
+                        character.baseSkills[skill][spe].aug -= 1;
+                        await updateRecord("characters", character.id, {baseSkills: character.baseSkills, "xpSpent": character.xpSpent});
+                        return;
+                    }
+                }
+            }
         }
-        else {
-            for (let [key, value] of  xpCostSkill.entries()) {
-                if((character.baseSkills[skill].aug <= key || character.baseSkills[skill].aug == (key+1)) && character.xpSpent >= value ) {
-                    character.xpSpent -= value;
-                    character.baseSkills[skill].aug -= 1;
-                    await updateRecord("characters", character.id, {baseSkills: character.baseSkills, "xpSpent": character.xpSpent});
-                    return;
+    }
+    else {
+        if(character.baseSkills[skill].aug - 1 >= 0) {
+            if(isMaster) {
+                character.baseSkills[skill].aug -= 1;
+                await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
+            }
+            else {
+                for (let [key, value] of  xpCostSkill.entries()) {
+                    if((character.baseSkills[skill].aug <= key || character.baseSkills[skill].aug == (key+1)) && character.xpSpent >= value ) {
+                        character.xpSpent -= value;
+                        character.baseSkills[skill].aug -= 1;
+                        await updateRecord("characters", character.id, {baseSkills: character.baseSkills, "xpSpent": character.xpSpent});
+                        return;
+                    }
                 }
             }
         }
@@ -373,9 +456,9 @@ export async function decreaseAdvancedSkill(character, skill, spe="", isMaster =
 }
 
 export function calculateWoundsMax(character){
-    const bf = Math.floor( (character.force.init + character.force.aug) / 10 );
-    const be = Math.floor( (character.endurance.init + character.endurance.aug) / 10 );
-    const bfm = Math.floor( (character.forceMentale.init + character.forceMentale.aug) / 10 );
+    const bf = Math.floor( (character.characteristics.force.init + character.characteristics.force.aug) / 10 );
+    const be = Math.floor( (character.characteristics.endurance.init + character.characteristics.endurance.aug) / 10 );
+    const bfm = Math.floor( (character.characteristics.forceMentale.init + character.characteristics.forceMentale.aug) / 10 );
 
     let wounds = bf + 2*be + bfm;
 
@@ -384,47 +467,6 @@ export function calculateWoundsMax(character){
     }
 
     return wounds;
-}
-
-export async function deleteRecord(collection, record){
-    const response = await fetch('/api/deleteRecord', {
-        method: "DELETE",
-        body: JSON.stringify({collection: collection, id: record.id}),
-        headers: {
-            'content-type': "application/json"
-        }
-    });
-    const respJson = await response.json();
-    if(respJson.error){
-        return {
-            error: true,
-            message: "Erreur lors de la suppression de l'objet."
-        }
-    }
-
-    return {
-        success: true
-    }
-
-}
-
-export async function getFullCollection(collection){
-    const response = await fetch('/api/getFullCollection', {
-        method: "POST",
-        body: JSON.stringify({collection: collection}),
-        headers: {
-            'content-type': "application/json"
-        }
-    });
-    const respJson = await response.json();
-    if(respJson.error){
-        return {
-            error: true,
-            message: "Erreur lors de la récupération des " + collection
-        }
-    }
-    
-    return respJson.records;
 }
 
 export async function addObjectToCharac(charac, objId){
@@ -611,7 +653,6 @@ export async function updateCharacterPlayable(character, checked){
 }
 
 export async function createObject(data){
-    console.log(!data.encombrement);
     if(data.name.length < 3){
         return {
             error: true,
@@ -632,14 +673,14 @@ export function compareObjectsString(a, b){
 }
 
 export function isCharacCorrupted(character){
-    const be = Math.floor((character.endurance.init + character.endurance.aug) / 10);
-    const bfm = Math.floor((character.forceMentale.init + character.forceMentale.aug) / 10);
+    const be = Math.floor((character.characteristics.endurance.init + character.characteristics.endurance.aug) / 10);
+    const bfm = Math.floor((character.characteristics.forceMentale.init + character.characteristics.forceMentale.aug) / 10);
     
     return character.corruption > (be + bfm);
 }
 
 export function getEncombrementMax(character) {
-    return Math.floor((character.force.init + character.force.aug) / 10) + Math.floor((character.endurance.init + character.endurance.aug) / 10);
+    return Math.floor((character.characteristics.force.init + character.characteristics.force.aug) / 10) + Math.floor((character.characteristics.endurance.init + character.characteristics.endurance.aug) / 10);
 }
 
 export function getEncombrement(character) {
@@ -678,12 +719,22 @@ export function getCharacteristicFull(character, characteristic){
     return character.characteristics[characteristic].init + character.characteristics[characteristic].aug;
 }
 
-export function getBaseSkillFull(character, skill){
-    return getCharacteristicFull(character, character.baseSkills[skill].charac) + character.baseSkills[skill].aug;
+export function getBaseSkillFull(character, skill, spe=""){
+    if(spe != ""){
+        return getCharacteristicFull(character, character.baseSkills[skill].charac) + character.baseSkills[skill][spe].aug;
+    }
+    else {
+        return getCharacteristicFull(character, character.baseSkills[skill].charac) + character.baseSkills[skill].aug;
+    }
 }
 
-export function getBaseSkillAug(character, skill){
-    return character.baseSkills[skill].aug;
+export function getBaseSkillAug(character, skill, spe=""){
+    if(spe != ""){
+        return character.baseSkills[skill][spe].aug;
+    }
+    else {
+        return character.baseSkills[skill].aug;
+    }
 }
 
 export function getAdvancedSkillFull(character, skill, spe=""){
@@ -726,9 +777,7 @@ export async function addAdvancedSkill(character, skill, charac, spe="") {
         }
         else {
             character.advancedSkills[skill] = {aug: 0, spe: [spe], grouped: true, charac: charac, [spe]: {aug: 0, editable: false}};
-        }
-        
-        
+        }       
     }
     else {
         if(!character.advancedSkills[skill]){
@@ -737,6 +786,23 @@ export async function addAdvancedSkill(character, skill, charac, spe="") {
     }
     await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills});
     
+}
+
+export async function addBaseSkillSpecialty(character, skill, specialty) {
+    if(character.baseSkills[skill] && !character.baseSkills[skill].spe.includes(specialty)){
+        character.baseSkills[skill].spe = [...character.baseSkills[skill].spe, specialty];
+        if(!character.baseSkills[skill][specialty]) {
+            character.baseSkills[skill][specialty] = {aug: 0, editable: false};
+        }
+        await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
+    }
+}
+
+export async function removeBaseSkillSpecialty(character, skill, specialty) {
+    if(character.baseSkills[skill] && character.baseSkills[skill].spe.includes(specialty)) {
+        character.baseSkills[skill].spe = character.baseSkills[skill].spe.filter((element) => element != specialty);
+        await updateRecord("characters", character.id, {baseSkills: character.baseSkills});
+    }
 }
 
 export const characNameMap = new Map([
