@@ -1,5 +1,6 @@
 <script>
     import { enhance } from '$app/forms';
+    import {characNameMap, baseSkillsNameMap, advancedSkillsNameMap} from "$lib/utils.js";
 
     export let data;
     export let form;
@@ -64,6 +65,7 @@
         "savoir": {selected: false, grouped: true, charac: "intelligence"},
         "signesSecrets": {selected: false, grouped: true, charac: "intelligence"},
         "soinAnimaux": {selected: false, grouped: false, charac: "intelligence"},
+        "voile": {selected: false, grouped: true, charac: "agilite"}
     };
     $: advancedSkillsPropsMap = new Map(Object.entries(advancedSkillsProps));
 
@@ -766,13 +768,12 @@
     <section class="card gap-10 bg-base-300 w-full">
         <section class="card-body">
             <h2 class="text-xl font-semibold text-center mb-5" >Sélectionner compétences avancées</h2>
-            <p>{JSON.stringify(advancedSkills)}</p>
-            <section class="grid grid-cols-1 gap-5">
+            <section class="grid grid-cols-1 gap-2 h-96 overflow-y-scroll">
                 {#each advancedSkillsPropsMap as [skill, prop]}
-                <div>
-                    <input type="checkbox" class="checkbox" bind:checked={advancedSkillsProps[skill].selected}
+                <div class="flex items-center gap-3 even:bg-base-100 odd:bg-base-200 rounded-md p-2">
+                    <input type="checkbox" class="checkbox" bind:checked={advancedSkillsProps[skill].selected} id={skill}
                     on:change={(event) => event.target.checked ? addAdvancedSkill(skill, prop) : removeAdvancedSkill(skill)} />
-                    <p>{skill} - {JSON.stringify(prop)}</p>
+                    <label for={skill} class="label">{advancedSkillsNameMap.get(skill)}</label>
                 </div>
                 {/each}
             </section>
@@ -787,7 +788,7 @@
                 {#each advancedSkillsMap as [skill, prop]}
                 <div class="flex flex-col items-center gap-3 p-3 border-2 border-base-100 rounded-xl">
                     <label for="" class="label flex flex-col items-start gap-3 2xs:flex-row 2xs:justify-center text-sm xs:text-base w-full">
-                        <p class="font-medium text-center">{skill} [{prop.charac}: {characteristics.get(prop.charac)}]</p>
+                        <p class="text-lg font-medium text-center">{advancedSkillsNameMap.get(skill)} [{characNameMap.get(prop.charac)}: {characteristics.get(prop.charac)}]</p>
                         {#if !prop.grouped}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default"
                          checked={advancedSkills[skill]?.editable ?? false} 
@@ -803,25 +804,27 @@
                     </div>
                     {:else}
                     <div class="form-control">
-                            {#each advancedSkills[skill].spe as spe}
-                            <label for="" class="label flex flex-col items-start gap-3 2xs:flex-row 2xs:justify-start 2xs:items-center text-sm xs:text-base w-full">
+                        {#each advancedSkills[skill].spe as spe}
+                            <label for="" class="label flex flex-col items-start gap-3 2xs:flex-row 2xs:justify-between 2xs:items-center text-sm xs:text-base w-full">
                                 <div>
                                     <button type="button" class="btn btn-ghost text-error"
                                     on:click={() => removeSkillSpecialty(skill, spe)}>X</button>
-                                    {skill} ({spe})
+                                    {advancedSkillsNameMap.get(skill)} ({spe})
                                 </div>
                                 <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default"
                                 checked={advancedSkills[skill][spe]?.editable ?? false} 
                                 on:change={(event) => advancedSkills[skill][spe].editable = event.target.checked}/>
                             </label>
-                                <div class="form-control items-center">
-                                    <label class="label text-sm xs:text-base" for={skill+spe}>Aug.</label>
-                                    <input type="number" class="input input-bordered w-3/4 text-center" id={skill+spe} value={advancedSkills[skill][spe]?.aug ?? 0} 
-                                    on:change={(event) => advancedSkills[skill][spe].aug = parseInt(event.target.value)} />
-                                </div>
-                            {/each}
+                            <div class="form-control items-center">
+                                <label class="label text-sm xs:text-base" for={skill+spe}>Aug.</label>
+                                <input type="number" class="input input-bordered w-3/4 text-center" id={skill+spe} value={advancedSkills[skill][spe]?.aug ?? 0} 
+                                on:change={(event) => advancedSkills[skill][spe].aug = parseInt(event.target.value)} />
+                            </div>
+                        {/each}
 
-                        <label for="specialty" class="label text-sm xs:text-base mt-5">Ajouter une spécialité</label>
+                        <div class="divider"></div>
+
+                        <label for="specialty" class="label text-sm text-center xs:text-base">Ajouter une spécialité</label>
                         <div class="flex flex-col items-center w-full xs:flex-row">
                             <input type="text" class="input input-bordered xs:flex-1 w-full" id="specialty" value={specialtyInputText.get(skill) ?? ""}
                             on:change={(event) => {
@@ -855,7 +858,7 @@
             {#if talents}
             <div class="flex flex-col gap-5 h-72 overflow-scroll overflow-x-hidden">
                 {#each talents as talent}
-                <div class="flex flex-start items-center gap-10">
+                <div class="flex flex-start items-center gap-5">
                     <input type="checkbox" id={talent.id} class="checkbox" 
                     on:change={(event) => event.target.checked ? selectTalent(talent) : unselectTalent(talent) } />
                     <label for={talent.id}>{talent.name}</label>

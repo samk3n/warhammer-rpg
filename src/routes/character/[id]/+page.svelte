@@ -6,7 +6,8 @@
         deleteMeleeWeaponFromCharac, addRangeWeaponToCharac, deleteRangeWeaponFromCharac, updateCharacterPlayable, compareObjectsString,
         isCharacCorrupted, getEncombrement, getEncombrementMax, getCharacteristicInit, getCharacteristicFull,
         getBaseSkillFull, getCharacteristicAug, getBaseSkillAug, updateBaseSkill, getAdvancedSkillAug, getAdvancedSkillFull,
-        updateAdvancedSkill, increaseAdvancedSkill, decreaseAdvancedSkill, removeAdvancedSkill, addAdvancedSkill} from "$lib/utils.js"
+        updateAdvancedSkill, increaseAdvancedSkill, decreaseAdvancedSkill, removeAdvancedSkill, addAdvancedSkill, characNameMap, baseSkillsNameMap,
+        advancedSkillsNameMap} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -70,6 +71,7 @@
         ["savoir", {selected: false, grouped: true, charac: "intelligence"}],
         ["signesSecrets", {selected: false, grouped: true, charac: "intelligence"}],
         ["soinAnimaux", {selected: false, grouped: false, charac: "intelligence", available: true}],
+        ["voile", {selected: false, grouped: true, charac: "agilite"}]
     ]);
 
 
@@ -83,50 +85,10 @@
         advancedSkillsProps.set(skill, prop);
     }
 
+    // Map used to store input text when adding advanced skills specialties
     let addAdvancedSkillSpeText = new Map();
 
-
-    const characNameMap = new Map([
-        ["capCombat", "CC"],
-        ["capTir", "CT"],
-        ["force", "F"],
-        ["endurance", "E"],
-        ["initiative", "I"],
-        ["agilite", "Ag"],
-        ["dexterite", "Dex"],
-        ["intelligence", "Int"],
-        ["forceMentale", "FM"],
-        ["sociabilite", "Soc"],
-    ]);
-
-    const baseSkillsNameMap = new Map([
-        ["art", "Art"],
-        ["athletisme", "Athlétisme"],
-        ["calme", "Calme"],
-        ["charme", "Charme"],
-        ["chevaucher", "Chevaucher"],
-        ["commandement", "Commandement"],
-        ["conduiteAttelage", "Conduite d'attelage"],
-        ["cac", "C. à C."],
-        ["discretion", "Discrétion"],
-        ["divertissement", "Divertissement"],
-        ["empriseAnimaux", "Emprise sur les animaux"],
-        ["escalade", "Escalade"],
-        ["esquive", "Esquive"],
-        ["intimidation", "Intimidation"],
-        ["intuition", "Intuition"],
-        ["marchandage", "Marchandage"],
-        ["navigation", "Navigation"],
-        ["pari", "Pari"],
-        ["perception", "Perception"],
-        ["ragot", "Ragôt"],
-        ["ramer", "Ramer"],
-        ["resistance", "Résistance"],
-        ["resistanceAlcool", "Résistance à l'alcool"],
-        ["subornation", "Subornation"],
-        ["survieExterieur", "Survie en extérieur"],
-    ]);
-
+    // Pocketbase instance
     let pb;
 
     let editCharac = false;
@@ -602,22 +564,26 @@
                     {#each advancedSkillsProps as [skill, prop]}
                         {#if prop.grouped}
                             <div class="flex flex-col gap-3 even:bg-base-100 odd:bg-base-200 p-2 rounded-md md:flex-row md:items-center">
-                                <p>{skill}</p>
+                                <p>{advancedSkillsNameMap.get(skill)}</p>
                                 <div class="flex items-center gap-3 justify-between">
                                     <input type="text" class="input input-numbered border-2 border-base-300" placeholder="Entrez une spécialité"
-                                    value={addAdvancedSkillSpeText.get(skill) ?? ""} on:change={(event) => addAdvancedSkillSpeText.set(skill, event.target.value)} />
+                                    value={addAdvancedSkillSpeText.get(skill) ?? ""} on:change={(event) => {
+                                        addAdvancedSkillSpeText.set(skill, event.target.value);
+                                        addAdvancedSkillSpeText = addAdvancedSkillSpeText;
+                                    }} />
                                     <button class="btn btn-success btn-md" 
                                     on:click={() => {
                                         if(addAdvancedSkillSpeText.get(skill) != ""){
                                             addAdvancedSkill(character, skill, prop.charac, addAdvancedSkillSpeText.get(skill));
                                             addAdvancedSkillSpeText.set(skill, "");
+                                            addAdvancedSkillSpeText = addAdvancedSkillSpeText;
                                         }
                                     }}>+</button>
                                 </div>
                             </div>
                         {:else if prop.available}
                             <div class="flex even:bg-base-100 odd:bg-base-200 p-2 rounded-md items-center">
-                                <p>{skill}</p>
+                                <p>{advancedSkillsNameMap.get(skill)}</p>
                                 <button class="btn btn-success btn-xsm" 
                                 on:click={() => {
                                     addAdvancedSkill(character, skill, prop.charac);
@@ -637,7 +603,7 @@
                         {#each prop.spe as spe}
                         <div class="form-control items-center">
                             <label class="label flex flex-col items-start gap-3 sm:flex-row sm:justify-between sm:items-center text-sm xs:text-base w-3/4" for={spe}>
-                                {skillName} ({spe})
+                                {advancedSkillsNameMap.get(skillName)} ({spe})
                                 <div class="flex gap-5 items-center">
                                     {#if isMaster}
                                     <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editAdvancedSkills} bind:checked={character.advancedSkills[skillName][spe].editable}
@@ -668,7 +634,7 @@
                     {:else}
                     <div class="form-control items-center">
                         <label class="label flex flex-col items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for={skillName}>
-                            {skillName}
+                            {advancedSkillsNameMap.get(skillName)}
                             <div class="flex gap-5 items-center">
                                 {#if isMaster}
                                 <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editAdvancedSkills} bind:checked={character.advancedSkills[skillName].editable}

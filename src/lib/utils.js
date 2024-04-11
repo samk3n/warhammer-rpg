@@ -737,4 +737,68 @@ export async function addAdvancedSkill(character, skill, charac, spe="") {
     }
     await updateRecord("characters", character.id, {advancedSkills: character.advancedSkills});
     
-} 
+}
+
+export const characNameMap = new Map([
+    ["capCombat", "CC"],
+    ["capTir", "CT"],
+    ["force", "F"],
+    ["endurance", "E"],
+    ["initiative", "I"],
+    ["agilite", "Ag"],
+    ["dexterite", "Dex"],
+    ["intelligence", "Int"],
+    ["forceMentale", "FM"],
+    ["sociabilite", "Soc"],
+]);
+
+export const baseSkillsNameMap = new Map([
+    ["art", "Art"],
+    ["athletisme", "Athlétisme"],
+    ["calme", "Calme"],
+    ["charme", "Charme"],
+    ["chevaucher", "Chevaucher"],
+    ["commandement", "Commandement"],
+    ["conduiteAttelage", "Conduite d'attelage"],
+    ["cac", "C. à C."],
+    ["discretion", "Discrétion"],
+    ["divertissement", "Divertissement"],
+    ["empriseAnimaux", "Emprise sur les animaux"],
+    ["escalade", "Escalade"],
+    ["esquive", "Esquive"],
+    ["intimidation", "Intimidation"],
+    ["intuition", "Intuition"],
+    ["marchandage", "Marchandage"],
+    ["navigation", "Navigation"],
+    ["pari", "Pari"],
+    ["perception", "Perception"],
+    ["ragot", "Ragôt"],
+    ["ramer", "Ramer"],
+    ["resistance", "Résistance"],
+    ["resistanceAlcool", "Résistance à l'alcool"],
+    ["subornation", "Subornation"],
+    ["survieExterieur", "Survie en extérieur"],
+]);
+
+export const advancedSkillsNameMap = new Map([
+    ["crochetage", "Crochetage"],
+    ["dressage", "Dressage"],
+    ["escamotage", "Escamotage"],
+    ["evaluation", "Évaluation"],
+    ["focalisation", "Focalisation"],
+    ["guerison", "Guérison"],
+    ["langue", "Langue"],
+    ["metier", "Métier"],
+    ["musicien", "Musicien"],
+    ["natation", "Natation"],
+    ["piegeage", "Piégeage"],
+    ["pistage", "Pistage"],
+    ["priere", "Prière"],
+    ["projectiles", "Projectiles"],
+    ["recherche", "Recherche"],
+    ["representation", "Représentation"],
+    ["savoir", "Savoir"],
+    ["signesSecrets", "Signes secrets"],
+    ["soinAnimaux", "Soin aux animaux"],
+    ["voile", "Voile"]
+]);
