@@ -868,3 +868,46 @@ export const advancedSkillsNameMap = new Map([
     ["soinAnimaux", "Soin aux animaux"],
     ["voile", "Voile"]
 ]);
+
+export async function convertCoins(character, from, to) {
+    if(character){
+        if(from == "gold" && character.gold > 0) {
+            character.gold -= 1;
+            if(to == "silver") {
+                character.silver += 20;
+            }
+            else if(to == "copper") {
+                character.copper += 240;
+            }
+        }
+        else if(from == "silver") {
+            if(to == "gold") {
+                if(character.silver >= 20) {
+                    character.silver -= 20;
+                    character.gold += 1;
+                }
+            }
+            else if(to == "copper") {
+                if(character.silver > 0) {
+                    character.silver -= 1;
+                    character.copper += 12;
+                }
+            }
+        }
+        else if(from == "copper") {
+            if(to == "gold") {
+                if(character.copper >= 240) {
+                    character.copper -= 240;
+                    character.gold += 1;
+                }
+            }
+            else if(to == "silver") {
+                if(character.copper >= 12) {
+                    character.copper -= 12;
+                    character.silver +=1;
+                }
+            }
+        }
+        await updateRecord("characters", character.id, {gold: character.gold, silver: character.silver, copper: character.copper});
+    }
+}

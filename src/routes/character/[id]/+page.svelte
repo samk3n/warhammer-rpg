@@ -7,7 +7,7 @@
         isCharacCorrupted, getEncombrement, getEncombrementMax, getCharacteristicInit, getCharacteristicFull,
         getBaseSkillFull, getCharacteristicAug, getBaseSkillAug, updateBaseSkill, getAdvancedSkillAug, getAdvancedSkillFull,
         updateAdvancedSkill, increaseAdvancedSkill, decreaseAdvancedSkill, removeAdvancedSkill, addAdvancedSkill, characNameMap, baseSkillsNameMap,
-        advancedSkillsNameMap, addBaseSkillSpecialty, removeBaseSkillSpecialty} from "$lib/utils.js"
+        advancedSkillsNameMap, addBaseSkillSpecialty, removeBaseSkillSpecialty, convertCoins} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -100,12 +100,13 @@
     let editMasterNotes = false;
     let editExchange = false;
 
+    // Modals
     let addObjectModal;
     let addTalentModal;
     let addSpellModal;
     let addMeleeWeaponModal;
     let addRangeWeaponModal;
-
+    let conversionModal;
     let characFormModal;
     $: if(form && form.message){
         characFormModal.showModal();
@@ -731,8 +732,12 @@
     <!-- RICHESSES -->
     <section id="richesses" class="card bg-base-300 w-full">
         <section class="card-body">
-            <h2 class="card-title self-center mb-5">Richesses</h2>
-            <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
+            <h2 class="card-title self-center mb-10">Richesses</h2>
+            <section class="flex justify-center">
+                <button class="btn btn-neutral" onclick="conversionModal.showModal()">Convertir</button>
+            </section>
+
+            <section class="grid gap-5 grid-cols-1 sm:grid-cols-3 my-10">
                 <div class="form-control items-center">
                     <label class="label" for="gold"><img src={gold} alt="Courrone d'or" class="w-14 h-14" /></label>
                     <input on:change={(event) => updateAttribute(character, "gold", parseInt(event.target.value))} 
@@ -757,23 +762,80 @@
                     type="number" name="copper" value={character.copper} />
                 </div>
             </section>
-            <section class=" flex justify-center mt-5">
-                <section class="bg-base-100 flex flex-col gap-3 items-center p-5 rounded-md">
-                    <div class="flex flex-col items-start 2xs:flex-row">
-                        <div class="text-center text-sm 2xs:text-base">
-                            &nbsp;&nbsp;&nbsp;&nbsp;1 <img src={gold} alt="Courrone d'or" class="w-7 h-7 inline" />
-                        </div>
-                        <div class="text-center text-sm 2xs:text-base">
-                            =   20 <img src={silver} alt="Pistole d'argent" class="w-7 h-7 inline" />
-                        </div>
-                        <div class="text-center text-sm 2xs:text-base">
-                            =   240 <img src={copper} alt="Sou de cuivre" class="w-7 h-7 inline" />
-                        </div>
-                    </div>
-                    <div class="divider"></div>
-                    <p class="text-center text-sm 2xs:text-base" >1 <img src={silver} alt="Pistole d'argent" class="w-7 h-7 inline" />   =   12 <img src={copper} alt="Sou de cuivre" class="w-7 h-7 inline" /></p>
+
+            <dialog id="conversionModal" class="modal modal-bottom sm:modal-middle" bind:this={conversionModal} >
+                <section class="modal-box form-control bg-base-300 gap-10">
+                    <h3 class="text-xl text-center font-semibold mb-5">Conversions</h3>
+
+                    <section class="flex justify-center gap-1 flex-wrap">
+                        <p class="flex justify-center gap-3 bg-base-100 rounded-md py-2">{character.gold} <img src={gold} alt="Courrone d'or" class="w-7 h-7" /></p>
+                        <p class="flex justify-center gap-3 bg-base-100 rounded-md py-2">{character.silver} <img src={silver} alt="Pistole d'argent" class="w-7 h-7" /></p>
+                        <p class="flex justify-center gap-3 bg-base-100 rounded-md py-2">{character.copper} <img src={copper} alt="Sou de cuivre" class="w-7 h-7" /></p>
+                    </section>
+
+                    <section class="grid grid-cols-1 2xs:grid-cols-2 gap-5 justify-center">
+                        <button class="btn btn-neutral" on:click={() => convertCoins(character, "gold", "silver")}>
+                            <img src={gold} alt="Courrone d'or" class="w-5 h-5" />
+                            <iconify-icon class="text-lg font-semibold" icon="flowbite:arrow-right-outline"></iconify-icon>
+                            <img src={silver} alt="Pistole d'argent" class="w-5 h-5" />
+                        </button>
+                        <button class="btn btn-neutral" on:click={() => convertCoins(character, "silver", "gold")}>
+                            <img src={gold} alt="Courrone d'or" class="w-5 h-5" />
+                            <iconify-icon class="text-lg font-semibold" icon="flowbite:arrow-left-outline"></iconify-icon>
+                            <img src={silver} alt="Pistole d'argent" class="w-5 h-5" />
+                        </button>
+                        
+                        <button class="btn btn-neutral" on:click={() => convertCoins(character, "gold", "copper")}>
+                            <img src={gold} alt="Courrone d'or" class="w-5 h-5" />
+                            <iconify-icon class="text-lg font-semibold" icon="flowbite:arrow-right-outline"></iconify-icon>
+                            <img src={copper} alt="Sou de cuivre" class="w-5 h-5" />
+                        </button>
+                        <button class="btn btn-neutral" on:click={() => convertCoins(character, "copper", "gold")}>
+                            <img src={gold} alt="Courrone d'or" class="w-5 h-5" />
+                            <iconify-icon class="text-lg font-semibold" icon="flowbite:arrow-left-outline"></iconify-icon>
+                            <img src={copper} alt="Sou de cuivre" class="w-5 h-5" />
+                        </button>
+
+                        <button class="btn btn-neutral" on:click={() => convertCoins(character, "silver", "copper")}>
+                            <img src={silver} alt="Pistole d'argent" class="w-5 h-5" />
+                            <iconify-icon class="text-lg font-semibold" icon="flowbite:arrow-right-outline"></iconify-icon>
+                            <img src={copper} alt="Sou de cuivre" class="w-5 h-5" />
+                        </button>
+                        <button class="btn btn-neutral" on:click={() => convertCoins(character, "copper", "silver")}>
+                            <img src={silver} alt="Pistole d'argent" class="w-5 h-5" />
+                            <iconify-icon class="text-lg font-semibold" icon="flowbite:arrow-left-outline"></iconify-icon>
+                            <img src={copper} alt="Sou de cuivre" class="w-5 h-5" />
+                        </button>
+                    </section>
+
+                    <!-- CONVERSION TABLE -->
+                    <section class=" flex justify-center">
+                        <section class="bg-base-100 flex flex-col gap-3 items-center p-5 rounded-md">
+                            <div class="flex flex-col items-start 2xs:flex-row">
+                                <div class="text-center text-sm 2xs:text-base">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;1 <img src={gold} alt="Courrone d'or" class="w-7 h-7 inline" />
+                                </div>
+                                <div class="text-center text-sm 2xs:text-base">
+                                    =   20 <img src={silver} alt="Pistole d'argent" class="w-7 h-7 inline" />
+                                </div>
+                                <div class="text-center text-sm 2xs:text-base">
+                                    =   240 <img src={copper} alt="Sou de cuivre" class="w-7 h-7 inline" />
+                                </div>
+                            </div>
+                            <div class="divider"></div>
+                            <p class="text-center text-sm 2xs:text-base" >1 <img src={silver} alt="Pistole d'argent" class="w-7 h-7 inline" />   =   12 <img src={copper} alt="Sou de cuivre" class="w-7 h-7 inline" /></p>
+                        </section>
+                    </section>
+
+                    <section class="modal-action">
+                        <button class="btn btn-warning" onclick="conversionModal.close()">Fermer</button>
+                    </section>
+                    
                 </section>
-            </section>
+                <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
+                    <button>Close</button>
+                </form>
+            </dialog>
         </section>
     </section>
 
