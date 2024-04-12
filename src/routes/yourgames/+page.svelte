@@ -6,9 +6,9 @@
 
 {#if data && data.games}
 {#if data.games.length == 0}
-<h1 class="text-3xl font-semibold">Vous n'avez rejoint aucune partie pour le moment.</h1>
+<h1 class="text-3xl font-light text-center">Vous n'avez rejoint aucune partie pour le moment.</h1>
 <a href={"/findgame"}>
-    <button class="btn btn-neutral btn-wide mt-10">Trouver une partie</button>
+    <button class="btn btn-neutral btn-wide mt-20">Trouver une partie</button>
 </a>
 {/if}
 

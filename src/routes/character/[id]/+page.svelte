@@ -473,13 +473,11 @@
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Caractéristiques</h2>
-                {#if isMaster}
                 <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editCharac} />
-                {/if}
             </div>
 
             <section class="grid gap-5 grid-cols-2">
-                {#each characteristicsMap as [characName, object]}
+                {#each characteristicsMap as [characName, prop]}
                 <div class="form-control items-center">
                     <label class="label flex flex-col gap-3 items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for={characName}>
                         {characNameMap.get(characName)}
@@ -492,7 +490,7 @@
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
                     type="number" name={characName} value={isMaster ? getCharacteristicInit(character, characName) : getCharacteristicFull(character, characName)} />
-                    {#if isMaster || character[characName].editable}
+                    {#if isMaster || character.characteristics[characName].editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{getCharacteristicAug(character, characName)} {getCharacteristicAug(character, characName) > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{getCharacteristicAug(character, characName)} aug.</p>
                     {/if}
@@ -515,9 +513,7 @@
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Compétences de base</h2>
-                {#if isMaster}
                 <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editSkills} />
-                {/if}
             </div>
 
             <!-- Section used to add basic skills specialties to the character -->
@@ -617,9 +613,7 @@
         <section class="card-body">
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Compétences Avancées</h2>
-                {#if isMaster}
                 <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editAdvancedSkills} />
-                {/if}
             </div>
 
             <!-- Section used to select advanced skills and add them to the character. If skill is grouped, enter the specialty before adding -->
@@ -1397,7 +1391,7 @@
             <section>
                 <div class="form-control">
                     <label class="label" for="corruption">Corruption</label>
-                    <input type="number" class="input input-bordered disabled:cursor-default disabled:text-base-content" 
+                    <input type="number" class="input input-bordered 2xs:w-32 text-center disabled:cursor-default disabled:text-base-content" 
                     class:input-error={isCharacCorrupted(character)}
                     class:text-error={isCharacCorrupted(character)}
                     min="0" value={character.corruption} disabled={!isMaster} 

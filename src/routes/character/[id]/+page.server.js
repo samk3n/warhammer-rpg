@@ -179,6 +179,7 @@ export const actions = {
                 message: "Un problème est survenu lorsque vous avez essayé de quitter le personnage."
             }
         }
+        throw redirect(303, '/game/'+gameId);
     },
 
     deleteCharac: async ({fetch, request}) => {

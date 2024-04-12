@@ -261,9 +261,9 @@ export async function increaseCharacteristic(character, characteristic, isMaster
     }
     else {
         for (let [key, value] of  xpCostCharac.entries()) {
-            if(character.characteristics.aug <= key && character.xpEarned - character.xpSpent >= value){
+            if(character.characteristics[characteristic].aug <= key && character.xpEarned - character.xpSpent >= value){
                 character.xpSpent += value;
-                character.characteristics.aug += 1;
+                character.characteristics[characteristic].aug += 1;
                 await updateRecord("characters", character.id, {characteristics: character.characteristics, "xpSpent": character.xpSpent});
                 return;
             }
@@ -283,7 +283,7 @@ export async function decreaseCharacteristic(character, characteristic, isMaster
                 if((character.characteristics[characteristic].aug <= key || character.characteristics[characteristic].aug == (key+1)) && character.xpSpent >= value) {
                     character.xpSpent -= value;
                     character.characteristics[characteristic].aug -= 1;
-                    await updateRecord("characters", character.id, {characteristics: character.characteristics[characteristic], "xpSpent": character.xpSpent});
+                    await updateRecord("characters", character.id, {characteristics: character.characteristics, "xpSpent": character.xpSpent});
                     return;
                 }
             }

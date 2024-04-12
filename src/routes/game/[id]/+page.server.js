@@ -31,13 +31,13 @@ export async function load({params, fetch, locals}){
 
         // If user is not master
         if(!isMaster){
-            // If user is not the master and has not already joined the game.
+            // If user is not the master and has not already joined the game, show every available character
             if(!isUserInGame) {
                 if(game.record.expand.characters) {
                     game.record.expand.characters = game.record.expand.characters.filter((charac) => charac.isPlayable && charac.user == '');
                 }
             }
-            // If user is not master and has already joined the game.
+            // If user is not master and has already joined the game, show only the user's character
             else {
                 if(game.record.expand.characters) {
                     game.record.expand.characters = game.record.expand.characters.filter((charac) => {
@@ -121,7 +121,7 @@ export const actions = {
                 };
             }
 
-            // Update the user with the game the character has joined
+            // Add the newly selected character's game to the user
             const updateUser = await fetch('/api/updateRecord', {
                 method: 'PUT',
                 body: JSON.stringify({collection: "users", updates: {'games+': gameId}, id: locals.user.id}),

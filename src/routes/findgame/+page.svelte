@@ -45,9 +45,9 @@
 {#if data && data.games}
     {#if data.games.length == 0}
 
-        <h1 class="text-3xl text-center">Aucune partie trouvée.</h1>
+        <h1 class="text-3xl font-light text-center">Aucune partie trouvée.</h1>
         <a href="/creategame">
-            <button class="btn btn-neutral xs:btn-wide mt-5" >Créer une partie</button>
+            <button class="btn btn-neutral xs:btn-wide mt-20" >Créer une partie</button>
         </a>
     
     {/if}

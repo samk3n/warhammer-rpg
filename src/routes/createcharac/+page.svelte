@@ -100,7 +100,7 @@
             "editable": false
         },
         "cac": {
-            "aug": 2,
+            "aug": 0,
             "charac": "capCombat",
             "editable": false,
             "grouped": true,
@@ -449,7 +449,7 @@
         <section class="card-body">
             <h2 class="text-xl font-semibold text-center mb-5" >Caractéristiques</h2>
 
-            <section class="grid grid-cols-2 gap-5">
+            <section class="grid grid-cols-1 xs:grid-cols-2 gap-5">
                 {#each characteristicsMap as [charac, prop]}
                 <div class="form-control items-center border-2 rounded-lg border-base-200">
                     <label for={charac} class="label flex flex-col items-start 2xs:flex-row 2xs:justify-between text-sm xs:text-base w-3/4">
@@ -579,7 +579,7 @@
                 {/if}
                 {#each advancedSkillsMap as [skill, prop]}
                 <div class="flex flex-col items-center gap-3 p-3 border-2 border-base-100 rounded-xl">
-                    <label for="" class="label flex flex-col items-start gap-3 2xs:flex-row 2xs:justify-center text-sm xs:text-base w-full">
+                    <label for="" class="label flex flex-col items-center gap-5 2xs:flex-row 2xs:justify-center text-sm xs:text-base ">
                         <p class="text-lg font-medium text-center">{advancedSkillsNameMap.get(skill)} [{characNameMap.get(prop.charac)}: {parseInt(characteristics[prop.charac].init) + parseInt(characteristics[prop.charac].aug)}]</p>
                         {#if !prop.grouped}
                         <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default"
