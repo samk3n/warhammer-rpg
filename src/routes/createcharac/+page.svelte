@@ -425,13 +425,13 @@
         <section class="card-body">
             <h2 class="text-xl font-semibold text-center mb-5" >Mouvement</h2>
 
-            <section class="grid gap-5 grid-cols-1 xs:grid-cols-3">
+            <section class="flex justify-center">
                 <div class="form-control items-center">
                     <label for="mouvement">Mouvement</label>
                     <input class="input input-bordered w-3/4" type="number" name="mouvement" value={form?.data?.mouvement ?? ""}/>
                 </div>
 
-                <div class="form-control items-center">
+                <!-- <div class="form-control items-center">
                     <label for="marche">Marche</label>
                     <input class="input input-bordered w-3/4" type="number" name="marche" value={form?.data?.marche ?? ""}/>
                 </div>
@@ -439,7 +439,7 @@
                 <div class="form-control items-center">
                     <label for="course">Course</label>
                     <input class="input input-bordered w-3/4" type="number" name="course" value={form?.data?.course ?? ""}/>
-                </div>
+                </div> -->
             </section>
         </section>
     </section>

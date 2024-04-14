@@ -1,4 +1,16 @@
-const durACuire = "000000000000022";
+// TALENTS DB IDs
+const AFFABLE = "000000000000001";
+const COSTAUD = "000000000000032";
+const DOIGTSDEFEE = "000000000000043";
+const DURACUIRE = "000000000000045";
+const GUERRIERNE = "000000000000064";
+const IMPERTURBABLE = "000000000000071";
+const PERSPICACE = "000000000000114";
+const REFLEXESFOUDROYANTS = "000000000000124";
+const TIREURDEPRECISION = "000000000000146";
+const TRESFORT = "000000000000154";
+const TRESRESISTANT = "000000000000155";
+const VIVACITE = "000000000000162";
 
 export async function getRecordFromId(collection, id){
     const response = await fetch('/api/findRecord', {
@@ -462,8 +474,8 @@ export function calculateWoundsMax(character){
 
     let wounds = bf + 2*be + bfm;
 
-    if(character.talents.includes(durACuire)) {
-        wounds ++;
+    if(character.talents.includes(DURACUIRE)) {
+        wounds += Math.floor(getCharacteristicFull(character, "endurance") / 10);
     }
 
     return wounds;
@@ -480,7 +492,7 @@ export async function updateCharacObjectCount(charac, objId, value){
 }
 
 export async function deleteObjectFromCharac(charac, objId){
-    charac.nbPossessions[objId] = {};
+    delete charac.nbPossessions[objId];
     await updateRecord("characters", charac.id, {"possessions-": objId, "nbPossessions": charac.nbPossessions});
 }
 
@@ -495,7 +507,7 @@ export async function updateCharacTalentCount(charac, talentId, value){
 }
 
 export async function deleteTalentFromCharac(charac, talentId){
-    charac.nbTalents[talentId] = {};
+    delete charac.nbTalents[talentId];
     await updateRecord("characters", charac.id, {"talents-": talentId, "nbTalents": charac.nbTalents});
 }
 
@@ -680,7 +692,11 @@ export function isCharacCorrupted(character){
 }
 
 export function getEncombrementMax(character) {
-    return Math.floor((character.characteristics.force.init + character.characteristics.force.aug) / 10) + Math.floor((character.characteristics.endurance.init + character.characteristics.endurance.aug) / 10);
+    let encombrement = Math.floor((character.characteristics.force.init + character.characteristics.force.aug) / 10) + Math.floor((character.characteristics.endurance.init + character.characteristics.endurance.aug) / 10);
+    if(character.talents.includes(COSTAUD)){
+        encombrement += character.nbTalents[COSTAUD].count;
+    }   
+    return encombrement;
 }
 
 export function getEncombrement(character) {
@@ -716,7 +732,22 @@ export function getCharacteristicAug(character, characteristic) {
 }
 
 export function getCharacteristicFull(character, characteristic){
-    return character.characteristics[characteristic].init + character.characteristics[characteristic].aug;
+    let value = character.characteristics[characteristic].init + character.characteristics[characteristic].aug;
+
+    if(("sociabilite" == characteristic && character.talents.includes(AFFABLE)) ||
+    ("dexterite" == characteristic && character.talents.includes(DOIGTSDEFEE)) ||
+    ("capCombat" == characteristic && character.talents.includes(GUERRIERNE)) ||
+    ("forceMentale" == characteristic && character.talents.includes(IMPERTURBABLE)) ||
+    ("intelligence" == characteristic && character.talents.includes(PERSPICACE)) ||
+    ("agilite" == characteristic && character.talents.includes(REFLEXESFOUDROYANTS)) ||
+    ("capTir" == characteristic && character.talents.includes(TIREURDEPRECISION)) ||
+    ("force" == characteristic && character.talents.includes(TRESFORT)) ||
+    ("endurance" == characteristic && character.talents.includes(TRESRESISTANT)) ||
+    ("initiative" == characteristic && character.talents.includes(VIVACITE))){
+        value += 5;
+    }
+
+    return value;
 }
 
 export function getBaseSkillFull(character, skill, spe=""){

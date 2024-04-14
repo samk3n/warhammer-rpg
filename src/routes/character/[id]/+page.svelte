@@ -422,18 +422,16 @@
 
                 <div class="form-control items-center">
                     <label class="label" for="marche">Marche</label>
-                    <input on:change={(event) => updateAttribute(character, "marche", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
-                    type="number" name="marche" value={character.marche} />
+                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    disabled
+                    type="number" name="marche" value={character.mouvement * 2} />
                 </div>
 
                 <div class="form-control items-center">
                     <label class="label" for="course">Course</label>
-                    <input on:change={(event) => updateAttribute(character, "course", parseInt(event.target.value))} 
-                    class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
-                    type="number" name="course" value={character.course} />
+                    <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
+                    disabled
+                    type="number" name="course" value={character.mouvement * 4} />
                 </div>
             </section>
         </section>
@@ -490,7 +488,7 @@
                     <input on:change={(event) => updateCharacteristic(character, characName, "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                     disabled={!isMaster || !editCharac} 
-                    type="number" name={characName} value={isMaster ? getCharacteristicInit(character, characName) : getCharacteristicFull(character, characName)} />
+                    type="number" name={characName} value={isMaster && editCharac ? getCharacteristicInit(character, characName) : getCharacteristicFull(character, characName)} />
                     {#if isMaster || character.characteristics[characName].editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{getCharacteristicAug(character, characName)} {getCharacteristicAug(character, characName) > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{getCharacteristicAug(character, characName)} aug.</p>
