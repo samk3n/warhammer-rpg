@@ -210,6 +210,46 @@ export async function createArmor(data){
     await createRecord("armor", data);  
 }
 
+export async function createSpell(data){
+    if(data.name.length < 3){
+        return {
+            error: true,
+            message: "Le nom du sort doit contenir au moins 3 caractères."
+        }
+    }
+    if(data.ni < 0) {
+        return {
+            error: true,
+            message: "Le NI doit être positif."
+        }
+    }
+    if(data.portee.length < 3){
+        return {
+            error: true,
+            message: "La portée du sort doit contenir au moins 3 caractères."
+        }
+    }
+    if(data.cible.length < 3){
+        return {
+            error: true,
+            message: "La cible du sort doit contenir au moins 3 caractères."
+        }
+    }
+    if(data.duree.length < 3){
+        return {
+            error: true,
+            message: "La durée du sort doit contenir au moins 3 caractères."
+        }
+    }
+    if(data.effets.length < 3){
+        return {
+            error: true,
+            message: "Les effets du sort doivent contenir au moins 3 caractères."
+        }
+    }
+   
+    await createRecord("spells", data);  
+}
 
 export async function updateAttribute(character, attribute, value){
     await updateRecord("characters", character.id, {[attribute]: value});
@@ -692,7 +732,7 @@ export function isCharacCorrupted(character){
 }
 
 export function getEncombrementMax(character) {
-    let encombrement = Math.floor((character.characteristics.force.init + character.characteristics.force.aug) / 10) + Math.floor((character.characteristics.endurance.init + character.characteristics.endurance.aug) / 10);
+    let encombrement = Math.floor( getCharacteristicFull(character, "force") / 10) + Math.floor(getCharacteristicFull(character, "endurance") / 10);
     if(character.talents.includes(COSTAUD)){
         encombrement += character.nbTalents[COSTAUD].count;
     }   
