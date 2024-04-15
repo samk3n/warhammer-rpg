@@ -495,7 +495,15 @@
                             baseSkillsSpeText = baseSkillsSpeText;
                         }} />
                         <button type="button" class="btn btn-success btn-sm xs:btn-md"
-                        on:click={() => addBaseSkillSpecialty(skill, baseSkillsSpeText.get(skill))} >+</button>
+                        on:click={() => {
+                            if(baseSkillsSpeText.get(skill) && baseSkillsSpeText.get(skill).replace(/\s+/g, "") != ""){
+                                addBaseSkillSpecialty(skill, baseSkillsSpeText.get(skill));
+                            }
+                            else if(baseSkillsSpeText.get(skill)){
+                                baseSkillsSpeText.set(skill, "");
+                                baseSkillsSpeText = baseSkillsSpeText;
+                            }
+                        }} >+</button>
                     </div>
                 </div>
                 {/if}
@@ -623,7 +631,15 @@
                                 advancedSkillsSpeText.set(skill, event.target.value);
                                 advancedSkillsSpeText = advancedSkillsSpeText;
                             }}/>
-                            <button type="button" class="btn btn-success w-1/5" on:click={() => addAdvancedSkillSpecialty(skill, advancedSkillsSpeText.get(skill))}>+</button>
+                            <button type="button" class="btn btn-success w-1/5" on:click={() => {
+                                if(advancedSkillsSpeText.get(skill) && advancedSkillsSpeText.get(skill).replace(/\s+/g, "") != "") {
+                                    addAdvancedSkillSpecialty(skill, advancedSkillsSpeText.get(skill));
+                                }
+                                else if(advancedSkillsSpeText.get(skill)) {
+                                    advancedSkillsSpeText.set(skill, "");
+                                    advancedSkillsSpeText = advancedSkillsSpeText;
+                                }
+                            }}>+</button>
                         </div>
                        
                     </div>

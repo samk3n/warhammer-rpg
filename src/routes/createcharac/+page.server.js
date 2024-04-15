@@ -166,12 +166,13 @@ export const actions = {
                 }
             }
 
-
-        data.talents = data.talents.split(",");
+        data.talents = data.talents.length > 0 ? data.talents.split(",") : [];
         data.nbTalents = {};
-        for(let talent of data.talents){
-            data.nbTalents[talent] = {};
-            data.nbTalents[talent].count = 1;
+        if(data.talents.length > 0) {
+            for(let talent of data.talents){
+                data.nbTalents[talent] = {};
+                data.nbTalents[talent].count = 1;
+            }
         }
 
         data.nbPossessions = {};
