@@ -521,9 +521,14 @@ export function calculateWoundsMax(character){
     return wounds;
 }
 
-export async function addObjectToCharac(charac, objId){
-    charac.nbPossessions[objId] = {count: 1};
-    await updateRecord("characters", charac.id, {"possessions+": objId, "nbPossessions": charac.nbPossessions});
+export async function addObjectToCharac(character, objId){
+    if(character.possessions.includes(objId)) {
+        character.nbPossessions[objId].count += 1;
+    }
+    else {
+        character.nbPossessions[objId] = {count: 1};
+    }
+    await updateRecord("characters", character.id, {"possessions+": objId, "nbPossessions": character.nbPossessions});
 }
 
 export async function updateCharacObjectCount(charac, objId, value){

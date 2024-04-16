@@ -32,14 +32,6 @@ export async function load({fetch, params, locals}){
     });
     const objectsResponseJson = await objectsResponse.json();
     let objects = objectsResponseJson.records;
-
-    // Remove objects that the character already has
-    if(character.record.expand.possessions){
-        let temp = character.record.expand.possessions.map((e) => JSON.stringify(e));
-        objects = objects.filter((obj) => {
-            return !temp.includes(JSON.stringify(obj));
-        });
-    }
     
     // Get all talents (to be shown in the add talent modal)
     const talentResponse = await fetch("/api/getFullCollection", {

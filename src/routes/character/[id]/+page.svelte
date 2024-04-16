@@ -995,41 +995,38 @@
             {#if character.possessions.length == 0}
                 <p class="text-lg italic text-center">Aucune possession</p>
             {:else}
-                <table class="table table-zebra">
-                    <thead>
-                        <tr>
-                            <th class="w-2/3">Nom</th>
-                            <th class="hidden xs:table-cell" >Enc.</th>
-                            <th>Nbre</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each character.expand.possessions as possession}
-                        <tr>
-                            <td class="text-xs 2xs:text-sm xs:text-base">
-                                {#if isMaster}
-                                <button class="btn btn-ghost btn-circle text-error btn-sm"
-                                on:click={() => {
-                                    // Deleting object from character's objects list
-                                    deleteObjectFromCharac(character, possession.id);
-                                    // Adding the deleted objects to the list of available objects
-                                    // in the add object modal, sorted alphabetically.
-                                    objects = [...objects, possession].sort((a, b) => compareObjectsString(a.name, b.name));
-                                }}>X</button>
-                                {/if}
-                                {possession.name}
-                            </td>
-                            <td data-tip="sdhbqqhsdbgh" class="tooltip text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{possession.encombrement}</td>
-                            <td>
-                                <input on:change={(event) => updateCharacObjectCount(character, possession.id, event.target.value)}
-                                class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
-                                disabled={!isMaster}
-                                type="number" value={character.nbPossessions[possession.id].count} min="1"/>
-                            </td>
-                        </tr>
-                        {/each}
-                    </tbody>
-                </table>
+            <section class="flex flex-col gap-3">
+                {#each character.expand.possessions as possession}
+                <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
+                    <input type="checkbox" /> 
+                    <div class="collapse-title flex gap-3 items-center justify-between">
+                        <div class="flex flex-col items-center gap-2 xs:flex-row">
+                            {#if isMaster}
+                            <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
+                            on:click={() => {
+                                // Deleting object from character's objects list
+                                deleteObjectFromCharac(character, possession.id);
+                            }}>X</button>
+                            {/if}
+                            {possession.name}
+                        </div>                    
+                        <div class="relative z-50">
+                            <input on:change={(event) => updateCharacObjectCount(character, possession.id, event.target.value)}
+                            class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-20 text-center disabled:text-base-content disabled:cursor-default" 
+                            disabled={!isMaster}
+                            type="number" value={character.nbPossessions[possession.id].count} min="1"/>
+                        </div>
+                    </div>
+                    <div class="collapse-content flex flex-col gap-3">
+                        <div class="divider"></div>
+                        <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                            <p class="font-semibold flex-1">Enc.</p>
+                            <p class="flex-1">{possession.encombrement}</p>
+                        </div>
+                    </div>
+                </section>
+                {/each}
+            </section>
             {/if}
         </section>
 
@@ -1058,10 +1055,6 @@
                                 on:click={() => {
                                     // Adding the object to the character objects list
                                     addObjectToCharac(character, object.id);
-                                    // Removing the object that was just added to character
-                                    // So it doesn't appear in the modal
-                                    // Because you can only add an object once.
-                                    objects = objects.filter((obj) => obj.id !== object.id);
                                 } }>+</button></td>
                             </tr>
                         {/each}
@@ -1107,7 +1100,7 @@
                             {/if}
                             {talent.name}
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 relative z-50">
                             <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent)}>+</button>
                             <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
                             class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
@@ -1266,7 +1259,7 @@
             </form>
         </dialog>
     </section>
-    
+
 
     <!-- MELEE WEAPONS -->
     <section id="meleeWeapons" class="card bg-base-300 w-full">
@@ -1282,40 +1275,45 @@
             {#if character.meleeWeapons.length == 0}
                 <p class="text-lg italic text-center">Aucune arme de mêlée</p>
             {:else}
-                <table class="table table-zebra">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th class="hidden sm:table-cell">Groupe</th>
-                            <th class="hidden sm:table-cell">Enc.</th>
-                            <th>Dégâts</th>
-                            <th class="hidden sm:table-cell">Propriétés</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each character.expand.meleeWeapons as mw}
-                        <tr>
-                            <td class="text-xs 2xs:text-sm xs:text-base">
-                                {#if isMaster}
-                                <button class="btn btn-ghost btn-circle text-error btn-sm"
-                                on:click={() => {
-                                    // Deleting melee weapon from character's melee weapons list
-                                    deleteMeleeWeaponFromCharac(character, mw.id);
-                                    // Adding the deleted melee weapon to the list of available melee weapons
-                                    // in the add melee weapon modal, sorted alphabetically.
-                                    meleeWeapons = [...meleeWeapons, mw].sort((a, b) => compareObjectsString(a.name, b.name));
-                                }}>X</button>
-                                {/if}
-                                {mw.name}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{mw.groupe}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{mw.encombrement}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base">{mw.degats}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{mw.proprietes}</td>
-                            
-                        </tr>
-                        {/each}
-                    </tbody>
-                </table>
+               <section class="flex flex-col gap-3">
+                    {#each character.expand.meleeWeapons as mw}
+                    <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
+                        <input type="checkbox" /> 
+                        <div class="collapse-title flex flex-col items-center 2xs:flex-row">
+                            {#if isMaster}
+                            <button class="btn btn-ghost btn-circle text-error btn-sm"
+                            on:click={() => {
+                                // Deleting melee weapon from character's melee weapons list
+                                deleteMeleeWeaponFromCharac(character, mw.id);
+                                // Adding the deleted melee weapon to the list of available melee weapons
+                                // in the add melee weapon modal, sorted alphabetically.
+                                meleeWeapons = [...meleeWeapons, mw].sort((a, b) => compareObjectsString(a.name, b.name));
+                            }}>X</button>
+                            {/if}
+                            {mw.name}
+                        </div>
+                        <div class="collapse-content flex flex-col gap-3">
+                            <div class="divider"></div>
+                            <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                <p class="font-semibold flex-1">Groupe</p>
+                                <p class="flex-1">{mw.groupe}</p>
+                            </div>
+                            <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                <p class="font-semibold flex-1">Enc.</p>
+                                <p class="flex-1">{mw.encombrement}</p>
+                            </div>
+                            <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                <p class="font-semibold flex-1">Dégâts</p>
+                                <p class="flex-1">{mw.degats}</p>
+                            </div>
+                            <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                <p class="font-semibold flex-1">Propriétés</p>
+                                <p class="flex-1">{mw.proprietes}</p>
+                            </div>
+                        </div>
+                    </section>
+                    {/each}
+                </section>
             {/if}
         </section>
 
@@ -1373,42 +1371,49 @@
             {#if character.rangeWeapons.length == 0}
                 <p class="text-lg italic text-center">Aucune arme à distance</p>
             {:else}
-                <table class="table table-zebra">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th class="hidden md:table-cell">Groupe</th>
-                            <th class="hidden sm:table-cell">Enc.</th>
-                            <th>Portée</th>
-                            <th class="hidden sm:table-cell">Dégâts</th>
-                            <th class="hidden sm:table-cell">Propriétés</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each character.expand.rangeWeapons as rw}
-                        <tr>
-                            <td class="text-xs 2xs:text-sm xs:text-base">
-                                {#if isMaster}
-                                <button class="btn btn-ghost btn-circle text-error btn-sm"
-                                on:click={() => {
-                                    // Deleting range weapon from character's range weapons list
-                                    deleteRangeWeaponFromCharac(character, rw.id);
-                                    // Adding the deleted range weapon to the list of available range weapons
-                                    // in the add range weapon modal, sorted alphabetically.
-                                    rangeWeapons = [...rangeWeapons, rw].sort((a, b) => compareObjectsString(a.name, b.name));
-                                }}>X</button>
-                                {/if}
-                                {rw.name}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden md:table-cell">{rw.groupe}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{rw.encombrement}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base">{rw.portee}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{rw.degats}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{rw.proprietes}</td>
-                            
-                        </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                <section class="flex flex-col gap-3">
+                    {#each character.expand.rangeWeapons as rw}
+                    <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200"> 
+                        <input type="checkbox" />
+                        <div class="collapse-title flex flex-col items-center 2xs:flex-row">
+                            {#if isMaster}
+                            <button class="btn btn-ghost btn-circle text-error btn-sm"
+                            on:click={() => {
+                                // Deleting range weapon from character's range weapons list
+                                deleteRangeWeaponFromCharac(character, rw.id);
+                                // Adding the deleted range weapon to the list of available range weapons
+                                // in the add range weapon modal, sorted alphabetically.
+                                rangeWeapons = [...rangeWeapons, rw].sort((a, b) => compareObjectsString(a.name, b.name));
+                            }}>X</button>
+                            {/if}
+                            {rw.name}
+                        </div>
+                        <div class="collapse-content flex flex-col gap-3">
+                            <div class="divider"></div>
+                            <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                <p class="font-semibold flex-1">Groupe</p>
+                                <p class="flex-1">{rw.groupe}</p>
+                            </div>
+                            <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                <p class="font-semibold flex-1">Enc.</p>
+                                <p class="flex-1">{rw.encombrement}</p>
+                            </div>
+                            <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                <p class="font-semibold flex-1">Dégâts</p>
+                                <p class="flex-1">{rw.degats}</p>
+                            </div>
+                            <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                <p class="font-semibold flex-1">Portée</p>
+                                <p class="flex-1">{rw.portee}</p>
+                            </div>
+                            <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                <p class="font-semibold flex-1">Propriétés</p>
+                                <p class="flex-1">{rw.proprietes}</p>
+                            </div>
+                        </div>
+                    </section>
+                    {/each}
+                </section>
             {/if}
         </section>
 
