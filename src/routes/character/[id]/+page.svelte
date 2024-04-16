@@ -7,7 +7,8 @@
         isCharacCorrupted, getEncombrement, getEncombrementMax, getCharacteristicInit, getCharacteristicFull,
         getBaseSkillFull, getCharacteristicAug, getBaseSkillAug, updateBaseSkill, getAdvancedSkillAug, getAdvancedSkillFull,
         updateAdvancedSkill, increaseAdvancedSkill, decreaseAdvancedSkill, removeAdvancedSkill, addAdvancedSkill, characNameMap, baseSkillsNameMap,
-        advancedSkillsNameMap, addBaseSkillSpecialty, removeBaseSkillSpecialty, convertCoins} from "$lib/utils.js"
+        advancedSkillsNameMap, addBaseSkillSpecialty, removeBaseSkillSpecialty, convertCoins, increaseTalentCount,
+        decreaseTalentCount} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -1112,10 +1113,15 @@
                                 {/if}
                                 {talent.name}</td>
                             <td>
-                                <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
-                                class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
-                                disabled={!isMaster}
-                                type="number" value={character.nbTalents[talent.id].count} min="1"/>
+                                <div class="flex flex-col items-center gap-2">
+                                    <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent)}>+</button>
+                                    <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
+                                    class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
+                                    disabled
+                                    type="number" value={character.nbTalents[talent.id].count} min="1"/>
+                                    <button class="btn btn-error btn-sm" on:click={() => decreaseTalentCount(character, talent)}>-</button>
+                                </div>
+                                
                             </td>
                             <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{talent.description}</td>
                             

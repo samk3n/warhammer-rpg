@@ -982,3 +982,61 @@ export async function convertCoins(character, from, to) {
         await updateRecord("characters", character.id, {gold: character.gold, silver: character.silver, copper: character.copper});
     }
 }
+
+export async function increaseTalentCount(character, talent) {
+    let maxi = 0;
+
+    if(!isNaN(talent.maxi)){
+        maxi = parseInt(talent.maxi);
+    }
+    else if("None" == talent.maxi) {
+        maxi = 1e1000;
+    }
+    else if(talent.maxi.toLowerCase().startsWith('b')) {
+        if(talent.maxi == "BCC") {
+            maxi = Math.floor(getCharacteristicFull(character, "capCombat") / 10);
+        }
+        else if(talent.maxi == "BCT") {
+            maxi = Math.floor(getCharacteristicFull(character, "capTir") / 10);
+        }
+        else if(talent.maxi == "BF") {
+            maxi = Math.floor(getCharacteristicFull(character, "force") / 10);
+        }
+        else if(talent.maxi == "BE") {
+            maxi = Math.floor(getCharacteristicFull(character, "endurance") / 10);
+        }
+        else if(talent.maxi == "BI") {
+            maxi = Math.floor(getCharacteristicFull(character, "initiative") / 10);
+        }
+        else if(talent.maxi == "BA") {
+            maxi = Math.floor(getCharacteristicFull(character, "agilite") / 10);
+        }
+        else if(talent.maxi == "BD") {
+            maxi = Math.floor(getCharacteristicFull(character, "dexterite") / 10);
+        }
+        else if(talent.maxi == "BInt") {
+            maxi = Math.floor(getCharacteristicFull(character, "intelligence") / 10);
+        }
+        else if(talent.maxi == "BFM") {
+            maxi = Math.floor(getCharacteristicFull(character, "forceMentale") / 10);
+        }
+        else if(talent.maxi == "BS") {
+            maxi = Math.floor(getCharacteristicFull(character, "sociabilite") / 10);
+        }
+    }
+    else {
+        console.log("Talent invalid maxi.");
+    }
+
+    if(character.nbTalents[talent.id].count + 1 <= maxi){
+        character.nbTalents[talent.id].count += 1;
+        await updateRecord("characters", character.id, {nbTalents: character.nbTalents});
+    }
+}
+
+export async function decreaseTalentCount(character, talent) {
+    if(character.nbTalents[talent.id].count > 1){
+        character.nbTalents[talent.id].count -= 1;
+        await updateRecord("characters", character.id, {nbTalents: character.nbTalents});
+    }
+}
