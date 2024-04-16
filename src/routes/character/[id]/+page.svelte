@@ -1089,46 +1089,40 @@
             {#if character.talents.length == 0}
                 <p class="text-lg italic text-center">Aucun talent</p>
             {:else}
-                <table class="table table-zebra">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Nbre</th>
-                            <th class="hidden sm:table-cell">Desc.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each character.expand.talents as talent}
-                        <tr>
-                            <td class="text-xs 2xs:text-sm xs:text-base">
-                                {#if isMaster}
-                                <button class="btn btn-ghost btn-circle text-error btn-sm"
-                                on:click={() => {
-                                    // Deleting talent from character's talents list
-                                    deleteTalentFromCharac(character, talent.id);
-                                    // Adding the deleted talent to the list of available talents
-                                    // in the add talent modal, sorted alphabetically.
-                                    talents = [...talents, talent].sort((a, b) => compareObjectsString(a.name, b.name));
-                                }}>X</button>
-                                {/if}
-                                {talent.name}</td>
-                            <td>
-                                <div class="flex flex-col items-center gap-2">
-                                    <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent)}>+</button>
-                                    <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
-                                    class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
-                                    disabled
-                                    type="number" value={character.nbTalents[talent.id].count} min="1"/>
-                                    <button class="btn btn-error btn-sm" on:click={() => decreaseTalentCount(character, talent)}>-</button>
-                                </div>
-                                
-                            </td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{talent.description}</td>
-                            
-                        </tr>
-                        {/each}
-                    </tbody>
-                </table>
+            <div class="flex flex-col gap-3">
+                {#each character.expand.talents as talent}
+                <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
+                    <input type="checkbox" /> 
+                    <div class="collapse-title flex flex-col gap-3 items-center justify-between md:flex-row">
+                        <div class="flex flex-col items-center gap-2 xs:flex-row">
+                            {#if isMaster}
+                            <button class="btn btn-ghost btn-circle text-error btn-sm"
+                            on:click={() => {
+                                // Deleting talent from character's talents list
+                                deleteTalentFromCharac(character, talent.id);
+                                // Adding the deleted talent to the list of available talents
+                                // in the add talent modal, sorted alphabetically.
+                                talents = [...talents, talent].sort((a, b) => compareObjectsString(a.name, b.name));
+                            }}>X</button>
+                            {/if}
+                            {talent.name}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent)}>+</button>
+                            <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
+                            class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
+                            disabled
+                            type="number" value={character.nbTalents[talent.id].count} min="1"/>
+                            <button class="btn btn-error btn-sm" on:click={() => decreaseTalentCount(character, talent)}>-</button>
+                        </div>
+                    </div>
+                    <div class="collapse-content">
+                        <div class="divider"></div>
+                        <p class="text-sm 2xs:text-base">{talent.description}</p>
+                    </div>
+                </section>
+                {/each}
+            </div>
             {/if}
         </section>
 
@@ -1171,7 +1165,8 @@
             </form>
         </dialog>
     </section>
-
+   
+    
     <!-- SORTS -->
     <section id="sorts" class="card bg-base-300 w-full">
         <section class="card-body">
@@ -1186,42 +1181,49 @@
             {#if character.spells.length == 0}
                 <p class="text-lg italic text-center">Aucun sort</p>
             {:else}
-                <table class="table table-zebra">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>NI</th>
-                            <th class="hidden xs:table-cell">Portée</th>
-                            <th class="hidden xs:table-cell">Cible</th>
-                            <th class="hidden sm:table-cell">Durée</th>
-                            <th class="hidden md:table-cell">Effets</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each character.expand.spells as spell}
-                        <tr>
-                            <td class="text-xs 2xs:text-sm xs:text-base">
-                                {#if isMaster}
-                                <button class="btn btn-ghost btn-circle text-error btn-sm"
-                                on:click={() => {
-                                    // Deleting spell from character's spells list
-                                    deleteSpellFromCharac(character, spell.id);
-                                    // Adding the deleted spell to the list of available spells
-                                    // in the add spell modal, sorted alphabetically.
-                                    spells = [...spells, spell].sort((a, b) => compareObjectsString(a.name, b.name));
-                                }}>X</button>
-                                {/if}
-                                {spell.name}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base">{spell.ni}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{spell.portee}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{spell.cible}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{spell.duree}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden md:table-cell">{spell.effets}</td>
-                            
-                        </tr>
-                        {/each}
-                    </tbody>
-                </table>
+            <section class="flex flex-col gap-3">
+                {#each character.expand.spells as spell}
+                <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
+                    <input type="checkbox" /> 
+                    <div class="collapse-title flex flex-col items-center 2xs:flex-row">
+                        {#if isMaster}
+                        <button class="btn btn-ghost btn-circle text-error btn-sm"
+                        on:click={() => {
+                            // Deleting spell from character's spells list
+                            deleteSpellFromCharac(character, spell.id);
+                            // Adding the deleted spell to the list of available spells
+                            // in the add spell modal, sorted alphabetically.
+                            spells = [...spells, spell].sort((a, b) => compareObjectsString(a.name, b.name));
+                        }}>X</button>
+                        {/if}
+                        {spell.name}
+                    </div>
+                    <div class="collapse-content flex flex-col gap-3">
+                        <div class="divider"></div>
+                        <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                            <p class="font-semibold flex-1">NI</p>
+                            <p class="flex-1">{spell.ni}</p>
+                        </div>
+                        <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                            <p class="font-semibold flex-1">Portée</p>
+                            <p class="flex-1">{spell.portee}</p>
+                        </div>
+                        <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                            <p class="font-semibold flex-1">Cible</p>
+                            <p class="flex-1">{spell.cible}</p>
+                        </div>
+                        <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                            <p class="font-semibold flex-1">Durée</p>
+                            <p class="flex-1">{spell.duree}</p>
+                        </div>
+                        <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                            <p class="font-semibold flex-1">Effets</p>
+                            <p class="flex-1">{spell.effets}</p>
+                        </div>
+                    </div>
+                </section>
+                {/each}
+            </section>
             {/if}
         </section>
 
@@ -1264,6 +1266,7 @@
             </form>
         </dialog>
     </section>
+    
 
     <!-- MELEE WEAPONS -->
     <section id="meleeWeapons" class="card bg-base-300 w-full">
