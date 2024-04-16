@@ -1011,7 +1011,7 @@
                             {possession.name}
                         </div>                    
                         <div class="relative z-50">
-                            <input on:change={(event) => updateCharacObjectCount(character, possession.id, event.target.value)}
+                            <input on:change={(event) => updateCharacObjectCount(character, possession.id, parseInt(event.target.value))}
                             class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-20 text-center disabled:text-base-content disabled:cursor-default" 
                             disabled={!isMaster}
                             type="number" value={character.nbPossessions[possession.id].count} min="1"/>
@@ -1291,7 +1291,7 @@
                                 {mw.name}
                             </div>
                             <div class="relative z-50">
-                                <input on:change={(event) => updateCharacMeleeWeaponsCount(character, mw.id, event.target.value)}
+                                <input on:change={(event) => updateCharacMeleeWeaponsCount(character, mw.id, parseInt(event.target.value))}
                                 class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-20 text-center disabled:text-base-content disabled:cursor-default" 
                                 disabled={!isMaster}
                                 type="number" value={character.nbMeleeWeapons[mw.id].count} min="1"/>
@@ -1388,7 +1388,7 @@
                                 {rw.name}
                             </div>
                             <div class="relative z-50">
-                                <input on:change={(event) => updateCharacRangeWeaponsCount(character, rw.id, event.target.value)}
+                                <input on:change={(event) => updateCharacRangeWeaponsCount(character, rw.id, parseInt(event.target.value))}
                                 class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-20 text-center disabled:text-base-content disabled:cursor-default" 
                                 disabled={!isMaster}
                                 type="number" value={character.nbRangeWeapons[rw.id].count} min="1"/>
