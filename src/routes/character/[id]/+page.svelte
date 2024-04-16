@@ -8,7 +8,7 @@
         getBaseSkillFull, getCharacteristicAug, getBaseSkillAug, updateBaseSkill, getAdvancedSkillAug, getAdvancedSkillFull,
         updateAdvancedSkill, increaseAdvancedSkill, decreaseAdvancedSkill, removeAdvancedSkill, addAdvancedSkill, characNameMap, baseSkillsNameMap,
         advancedSkillsNameMap, addBaseSkillSpecialty, removeBaseSkillSpecialty, convertCoins, increaseTalentCount,
-        decreaseTalentCount} from "$lib/utils.js"
+        decreaseTalentCount, updateCharacMeleeWeaponsCount, updateCharacRangeWeaponsCount} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -1089,7 +1089,7 @@
                     <div class="collapse-title flex flex-col gap-3 items-center justify-between md:flex-row">
                         <div class="flex flex-col items-center gap-2 xs:flex-row">
                             {#if isMaster}
-                            <button class="btn btn-ghost btn-circle text-error btn-sm"
+                            <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
                             on:click={() => {
                                 // Deleting talent from character's talents list
                                 deleteTalentFromCharac(character, talent.id);
@@ -1180,7 +1180,7 @@
                     <input type="checkbox" /> 
                     <div class="collapse-title flex flex-col items-center 2xs:flex-row">
                         {#if isMaster}
-                        <button class="btn btn-ghost btn-circle text-error btn-sm"
+                        <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
                         on:click={() => {
                             // Deleting spell from character's spells list
                             deleteSpellFromCharac(character, spell.id);
@@ -1279,18 +1279,23 @@
                     {#each character.expand.meleeWeapons as mw}
                     <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
                         <input type="checkbox" /> 
-                        <div class="collapse-title flex flex-col items-center 2xs:flex-row">
-                            {#if isMaster}
-                            <button class="btn btn-ghost btn-circle text-error btn-sm"
-                            on:click={() => {
-                                // Deleting melee weapon from character's melee weapons list
-                                deleteMeleeWeaponFromCharac(character, mw.id);
-                                // Adding the deleted melee weapon to the list of available melee weapons
-                                // in the add melee weapon modal, sorted alphabetically.
-                                meleeWeapons = [...meleeWeapons, mw].sort((a, b) => compareObjectsString(a.name, b.name));
-                            }}>X</button>
-                            {/if}
-                            {mw.name}
+                        <div class="collapse-title flex gap-3 items-center justify-between">
+                            <div class="flex flex-col items-center gap-2 xs:flex-row">
+                                {#if isMaster}
+                                <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
+                                on:click={() => {
+                                    // Deleting melee weapon from character's melee weapons list
+                                    deleteMeleeWeaponFromCharac(character, mw.id);
+                                }}>X</button>
+                                {/if}
+                                {mw.name}
+                            </div>
+                            <div class="relative z-50">
+                                <input on:change={(event) => updateCharacMeleeWeaponsCount(character, mw.id, event.target.value)}
+                                class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-20 text-center disabled:text-base-content disabled:cursor-default" 
+                                disabled={!isMaster}
+                                type="number" value={character.nbMeleeWeapons[mw.id].count} min="1"/>
+                            </div>
                         </div>
                         <div class="collapse-content flex flex-col gap-3">
                             <div class="divider"></div>
@@ -1336,10 +1341,6 @@
                                 on:click={() => {
                                     // Adding the melee weapon to the character melee weapons list
                                     addMeleeWeaponToCharac(character, mw.id);
-                                    // Removing the melee weapon that was just added to character
-                                    // So it doesn't appear in the modal
-                                    // Because you can only add a melee weapon once.
-                                    meleeWeapons = meleeWeapons.filter((meleeWeapon) => meleeWeapon.id !== mw.id);
                                 } }>+</button></td>
                             </tr>
                         {/each}
@@ -1375,18 +1376,23 @@
                     {#each character.expand.rangeWeapons as rw}
                     <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200"> 
                         <input type="checkbox" />
-                        <div class="collapse-title flex flex-col items-center 2xs:flex-row">
-                            {#if isMaster}
-                            <button class="btn btn-ghost btn-circle text-error btn-sm"
-                            on:click={() => {
-                                // Deleting range weapon from character's range weapons list
-                                deleteRangeWeaponFromCharac(character, rw.id);
-                                // Adding the deleted range weapon to the list of available range weapons
-                                // in the add range weapon modal, sorted alphabetically.
-                                rangeWeapons = [...rangeWeapons, rw].sort((a, b) => compareObjectsString(a.name, b.name));
-                            }}>X</button>
-                            {/if}
-                            {rw.name}
+                        <div class="collapse-title flex gap-3 items-center justify-between">
+                            <div class="flex flex-col items-center gap-2 xs:flex-row">
+                                {#if isMaster}
+                                <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
+                                on:click={() => {
+                                    // Deleting range weapon from character's range weapons list
+                                    deleteRangeWeaponFromCharac(character, rw.id);
+                                }}>X</button>
+                                {/if}
+                                {rw.name}
+                            </div>
+                            <div class="relative z-50">
+                                <input on:change={(event) => updateCharacRangeWeaponsCount(character, rw.id, event.target.value)}
+                                class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-20 text-center disabled:text-base-content disabled:cursor-default" 
+                                disabled={!isMaster}
+                                type="number" value={character.nbRangeWeapons[rw.id].count} min="1"/>
+                            </div>
                         </div>
                         <div class="collapse-content flex flex-col gap-3">
                             <div class="divider"></div>
@@ -1436,10 +1442,6 @@
                                 on:click={() => {
                                     // Adding the range weapon to the character range weapons list
                                     addRangeWeaponToCharac(character, rw.id);
-                                    // Removing the range weapon that was just added to character
-                                    // So it doesn't appear in the modal
-                                    // Because you can only add a range weapon once.
-                                    rangeWeapons = rangeWeapons.filter((rangeWeapon) => rangeWeapon.id !== rw.id);
                                 } }>+</button></td>
                             </tr>
                         {/each}

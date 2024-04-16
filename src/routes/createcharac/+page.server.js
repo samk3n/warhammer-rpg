@@ -176,6 +176,8 @@ export const actions = {
         }
 
         data.nbPossessions = {};
+        data.nbMeleeWeapons = {};
+        data.nbRangeWeapons = {};
         
 
         try {

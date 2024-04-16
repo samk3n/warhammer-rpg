@@ -82,13 +82,6 @@ export async function load({fetch, params, locals}){
     const meleeWeaponsResponseJson = await meleeWeaponsResponse.json();
     let meleeWeapons = meleeWeaponsResponseJson.records;
 
-    // Remove melee weapons that the character already has
-    if(character.record.expand.meleeWeapons){
-        let temp = character.record.expand.meleeWeapons.map((e) => JSON.stringify(e));
-        meleeWeapons = meleeWeapons.filter((mw) => {
-            return !temp.includes(JSON.stringify(mw));
-        });
-    }
 
     // Get all range weapons (to be shown in the add range weapons modal)
     const rangeWeaponsResponse = await fetch("/api/getFullCollection", {
@@ -100,14 +93,6 @@ export async function load({fetch, params, locals}){
     });
     const rangeWeaponsResponseJson = await rangeWeaponsResponse.json();
     let rangeWeapons = rangeWeaponsResponseJson.records;
-
-    // Remove range weapons that the character already has
-    if(character.record.expand.rangeWeapons){
-        let temp = character.record.expand.rangeWeapons.map((e) => JSON.stringify(e));
-        rangeWeapons = rangeWeapons.filter((rw) => {
-            return !temp.includes(JSON.stringify(rw));
-        });
-    }
 
     return {
         character: character.record,

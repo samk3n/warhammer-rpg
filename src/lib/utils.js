@@ -541,6 +541,48 @@ export async function deleteObjectFromCharac(charac, objId){
     await updateRecord("characters", charac.id, {"possessions-": objId, "nbPossessions": charac.nbPossessions});
 }
 
+export async function addMeleeWeaponToCharac(character, mwId){
+    if(character.meleeWeapons.includes(mwId)) {
+        character.nbMeleeWeapons[mwId].count += 1;
+        await updateRecord("characters", character.id, {"nbMeleeWeapons": character.nbMeleeWeapons});
+    }
+    else {
+        character.nbMeleeWeapons[mwId] = {count: 1};
+        await updateRecord("characters", character.id, {"meleeWeapons+": mwId, "nbMeleeWeapons": character.nbMeleeWeapons});
+    }
+}
+
+export async function updateCharacMeleeWeaponsCount(charac, mwId, value){
+    charac.nbMeleeWeapons[mwId].count = value;
+    await updateRecord("characters", charac.id, {"nbMeleeWeapons": charac.nbMeleeWeapons});
+}
+
+export async function deleteMeleeWeaponFromCharac(charac, mwId){
+    delete charac.nbMeleeWeapons[mwId];
+    await updateRecord("characters", charac.id, {"meleeWeapons-": mwId, "nbMeleeWeapons": charac.nbMeleeWeapons});
+}
+
+export async function addRangeWeaponToCharac(character, rwId){
+    if(character.rangeWeapons.includes(rwId)) {
+        character.nbRangeWeapons[rwId].count += 1;
+        await updateRecord("characters", character.id, {"nbRangeWeapons": character.nbRangeWeapons});
+    }
+    else {
+        character.nbRangeWeapons[rwId] = {count: 1};
+        await updateRecord("characters", character.id, {"rangeWeapons+": rwId, "nbRangeWeapons": character.nbRangeWeapons});
+    }
+}
+
+export async function updateCharacRangeWeaponsCount(charac, rwId, value){
+    charac.nbRangeWeapons[rwId].count = value;
+    await updateRecord("characters", charac.id, {"nbRangeWeapons": charac.nbRangeWeapons});
+}
+
+export async function deleteRangeWeaponFromCharac(charac, rwId){
+    delete charac.nbRangeWeapons[rwId];
+    await updateRecord("characters", charac.id, {"rangeWeapons-": rwId, "nbRangeWeapons": charac.nbRangeWeapons});
+}
+
 export async function addTalentToCharac(charac, talentId){
     charac.nbTalents[talentId] = {count: 1};
     await updateRecord("characters", charac.id, {"talents+": talentId, "nbTalents": charac.nbTalents});
@@ -578,22 +620,6 @@ export async function updateRangeWeapon(rw, data){
 
 export async function updateArmor(armor, data){
     await updateRecord("armor", armor.id, data);
-}
-
-export async function addMeleeWeaponToCharac(charac, mwId){
-    await updateRecord("characters", charac.id, {"meleeWeapons+": mwId});
-}
-
-export async function deleteMeleeWeaponFromCharac(charac, mwId){
-    await updateRecord("characters", charac.id, {"meleeWeapons-": mwId});
-}
-
-export async function addRangeWeaponToCharac(charac, rwId){
-    await updateRecord("characters", charac.id, {"rangeWeapons+": rwId});
-}
-
-export async function deleteRangeWeaponFromCharac(charac, rwId){
-    await updateRecord("characters", charac.id, {"rangeWeapons-": rwId});
 }
 
 export function transformWordIntoColor(word){
