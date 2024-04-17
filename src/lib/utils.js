@@ -57,6 +57,7 @@ export async function updateRecord(collection, id, updates){
 }
 
 export async function createRecord(collection, data){
+    let record;
     try {
         const response = await fetch('/api/createRecord', {
             method: "PUT",
@@ -65,8 +66,8 @@ export async function createRecord(collection, data){
                 'content-type': "application/json"
             }
         });
-        const respJson = await response.json();
-        if(respJson.error){
+        record = await response.json();
+        if(record.error){
             return {
                 error: true,
                 message: "Erreur lors de la création de l'élément dans " + collection
@@ -81,7 +82,8 @@ export async function createRecord(collection, data){
     }
 
     return {
-        success: true
+        success: true,
+        record: record.record
     }
 }
 
@@ -1070,4 +1072,36 @@ export async function decreaseTalentCount(character, talent) {
         character.nbTalents[talent.id].count -= 1;
         await updateRecord("characters", character.id, {nbTalents: character.nbTalents});
     }
+}
+
+export async function createGroup(group, character){
+    if(group.name.length < 3){
+        return {
+            error: true,
+            message: "Le nom du groupe doit contenir au moins 3 caractères."
+        }
+    }
+    group.game = character.game;
+    group.characters = group.join ? [character.id] : [];
+
+    const groupResp = await createRecord("groups", group);
+    if(groupResp.error){
+        return {
+            error: true,
+            message: "Erreur lors de la création du groupe."
+        }
+    }
+    if(!character.group && group.join){
+        await updateRecord("characters", character.id, {group: groupResp.record.id});
+    }
+}
+
+export async function findGroups(){
+    const records = await getFullCollection("groups");
+    return records;
+}
+
+export async function joinGroup(character, group) {
+    await updateRecord("characters", character.id, {group: group.id});
+    await updateRecord("groups", group.id, {"characters+": character.id});
 }

@@ -2,7 +2,7 @@
     export let form;
 </script>
 
-<section class="w-11/12 sm:w-4/5 md:w-3/5 lg:w-2/6">
+<section class="w-11/12 sm:w-4/5 md:w-3/5 xl:w-3/6">
     {#if form}
         <p class="text-warning font-semibold text-center">{form.message}</p>
     {/if}

@@ -8,7 +8,7 @@
         getBaseSkillFull, getCharacteristicAug, getBaseSkillAug, updateBaseSkill, getAdvancedSkillAug, getAdvancedSkillFull,
         updateAdvancedSkill, increaseAdvancedSkill, decreaseAdvancedSkill, removeAdvancedSkill, addAdvancedSkill, characNameMap, baseSkillsNameMap,
         advancedSkillsNameMap, addBaseSkillSpecialty, removeBaseSkillSpecialty, convertCoins, increaseTalentCount,
-        decreaseTalentCount, updateCharacMeleeWeaponsCount, updateCharacRangeWeaponsCount} from "$lib/utils.js"
+        decreaseTalentCount, updateCharacMeleeWeaponsCount, updateCharacRangeWeaponsCount,createGroup, findGroups, joinGroup} from "$lib/utils.js"
     import { onDestroy, onMount } from "svelte";
     import PocketBase from 'pocketbase';
     import gold from '$lib/assets/images/gold.webp';
@@ -94,12 +94,13 @@
     // Pocketbase instance
     let pb;
 
-    let editCharac = false;
-    let editSkills = false;
-    let editAdvancedSkills = false;
     let editNotes = false;
     let editMasterNotes = false;
     let editExchange = false;
+    let editEnabled = false;
+    function toggleEdit(){
+        editEnabled = !editEnabled;
+    }
 
     // Modals
     let addObjectModal;
@@ -107,11 +108,15 @@
     let addSpellModal;
     let addMeleeWeaponModal;
     let addRangeWeaponModal;
-    let conversionModal;
+    let createGroupModal;
+    let findGroupModal;
     let characFormModal;
     $: if(form && form.message){
         characFormModal.showModal();
     }
+
+    let groupToCreate = {name: "", join: false};
+    let createGroupMessage = "";
 
     onMount(async () => {
         pb = new PocketBase(PUBLIC_DB_ADDRESS);
@@ -241,6 +246,15 @@
 
 {#if data && character}
 
+    <!-- EDIT SWITCH -->
+    <button on:click={() => toggleEdit()}>
+        {#if editEnabled}
+        <div class="bg-warning w-10 h-10 fixed bottom-5 right-5 rounded-full"></div>
+        {:else}
+        <div class="bg-success w-10 h-10 fixed bottom-5 right-5 rounded-full"></div>
+        {/if}
+    </button>
+
     <!-- Character name -->
     <h1 class="text-3xl font-bold text-center">{character.name}</h1>
 
@@ -273,7 +287,7 @@
                 <label class="label" for="race">Race</label>
                 <input on:change={(event) => updateAttribute(character, "race", event.target.value)} 
                     class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
+                    disabled={!isMaster || !editEnabled} 
                     type="text" name="race" value={character.race} />
             </div>
 
@@ -281,7 +295,7 @@
                 <label class="label" for="classe">Classe</label>
                 <input on:change={(event) => updateAttribute(character, "classe", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!isMaster} 
+                disabled={!isMaster || !editEnabled} 
                 type="text" name="classe" value={character.classe} />
             </div>
 
@@ -289,7 +303,7 @@
                 <label class="label" for="carriere">Carrière</label>
                 <input on:change={(event) => updateAttribute(character, "carriere", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!isMaster} 
+                disabled={!isMaster || !editEnabled} 
                 type="text" name="carriere" value={character.carriere} />
             </div>
 
@@ -297,7 +311,7 @@
                 <label class="label" for="echelon">Échelon</label>
                 <input on:change={(event) => updateAttribute(character, "echelon", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!isMaster} 
+                disabled={!isMaster || !editEnabled} 
                 type="text" name="echelon" value={character.echelon} />
             </div>
 
@@ -305,7 +319,7 @@
                 <label class="label" for="schemaCarriere">Schéma de carrière</label>
                 <input on:change={(event) => updateAttribute(character, "schemaCarriere", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!isMaster} 
+                disabled={!isMaster || !editEnabled} 
                 type="text" name="schemaCarriere" value={character.schemaCarriere} />
             </div>
 
@@ -313,7 +327,7 @@
                 <label class="label" for="statut">Statut</label>
                 <input on:change={(event) => updateAttribute(character, "statut", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!isMaster} 
+                disabled={!isMaster || !editEnabled} 
                 type="text" name="statut" value={character.statut} />
             </div>
 
@@ -321,7 +335,7 @@
                 <label class="label" for="age">Âge</label>
                 <input on:change={(event) => updateAttribute(character, "age", parseInt(event.target.value))} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!isMaster} 
+                disabled={!isMaster || !editEnabled} 
                 type="number" name="age" value={character.age} />
             </div>
 
@@ -329,7 +343,7 @@
                 <label class="label" for="taille">Taille</label>
                 <input on:change={(event) => updateAttribute(character, "taille", parseInt(event.target.value))} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!isMaster} 
+                disabled={!isMaster || !editEnabled} 
                 type="number" name="taille" value={character.taille} />
             </div>
 
@@ -337,7 +351,7 @@
                 <label class="label" for="cheveux">Cheveux</label>
                 <input on:change={(event) => updateAttribute(character, "cheveux", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!isMaster} 
+                disabled={!isMaster || !editEnabled} 
                 type="text" name="cheveux" value={character.cheveux} />
             </div>
 
@@ -345,7 +359,7 @@
                 <label class="label" for="yeux">Yeux</label>
                 <input on:change={(event) => updateAttribute(character, "yeux", event.target.value)} 
                 class="input input-bordered disabled:text-base-content disabled:cursor-default" 
-                disabled={!isMaster} 
+                disabled={!isMaster || !editEnabled} 
                 type="text" name="yeux" value={character.yeux} />
             </div>
 
@@ -361,7 +375,7 @@
                     <label class="label" for="destin">Destin</label>
                     <input on:change={(event) => updateAttribute(character, "destin", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
+                    disabled={!isMaster || !editEnabled} 
                     type="number" name="destin" value={character.destin} />
                 </div>
 
@@ -369,7 +383,7 @@
                     <label class="label" for="taille">Chance</label>
                     <input on:change={(event) => updateAttribute(character, "chance", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
+                    disabled={!isMaster || !editEnabled} 
                     type="number" name="chance" value={character.chance} />
                 </div>
             </section>
@@ -385,7 +399,7 @@
                     <label class="label" for="destin">Résilience</label>
                     <input on:change={(event) => updateAttribute(character, "resilience", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
+                    disabled={!isMaster || !editEnabled} 
                     type="number" name="resilience" value={character.resilience} />
                 </div>
 
@@ -393,7 +407,7 @@
                     <label class="label" for="determination">Détermination</label>
                     <input on:change={(event) => updateAttribute(character, "determination", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
+                    disabled={!isMaster || !editEnabled} 
                     type="number" name="determination" value={character.determination} />
                 </div>
 
@@ -401,7 +415,7 @@
                     <label class="label" for="motivation">Motivation</label>
                     <input on:change={(event) => updateAttribute(character, "motivation", event.target.value)} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
+                    disabled={!isMaster || !editEnabled} 
                     type="text" name="motivation" value={character.motivation} />
                 </div>
             </section>
@@ -417,7 +431,7 @@
                     <label class="label" for="mouvement">Mouvement</label>
                     <input on:change={(event) => updateAttribute(character, "mouvement", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
+                    disabled={!isMaster || !editEnabled} 
                     type="number" name="mouvement" value={character.mouvement} />
                 </div>
 
@@ -447,7 +461,7 @@
                     <label class="label" for="xpEarned">Gagnée</label>
                     <input on:change={(event) => updateAttribute(character, "xpEarned", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
+                    disabled={!isMaster || !editEnabled} 
                     type="number" name="xpEarned" value={character.xpEarned} />
                 </div>
 
@@ -471,10 +485,7 @@
     <!-- CARACTERISTIQUES -->
     <section id="carac" class="card bg-base-300 w-full">
         <section class="card-body">
-            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
-                <h2 class="card-title">Caractéristiques</h2>
-                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editCharac} />
-            </div>
+            <h2 class="card-title self-center mb-5">Caractéristiques</h2>
 
             <section class="grid gap-5 grid-cols-2">
                 {#each characteristicsMap as [characName, prop]}
@@ -482,19 +493,19 @@
                     <label class="label flex flex-col gap-3 items-start sm:flex-row sm:justify-between text-sm xs:text-base w-3/4" for={characName}>
                         {characNameMap.get(characName)}
                         {#if isMaster}
-                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editCharac}  bind:checked={character.characteristics[characName].editable}
+                        <input type="checkbox" class="checkbox checkbox-neutral disabled:cursor-default" disabled={!editEnabled}  bind:checked={character.characteristics[characName].editable}
                         on:change={(event) => updateCharacteristic(character, characName, "editable", event.target.checked)} />
                         {/if}
                     </label>
                     <input on:change={(event) => updateCharacteristic(character, characName, "init", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster || !editCharac} 
-                    type="number" name={characName} value={isMaster && editCharac ? getCharacteristicInit(character, characName) : getCharacteristicFull(character, characName)} />
+                    disabled={!isMaster || !editEnabled} 
+                    type="number" name={characName} value={isMaster && editEnabled ? getCharacteristicInit(character, characName) : getCharacteristicFull(character, characName)} />
                     {#if isMaster || character.characteristics[characName].editable}
                     <p class="italic font-semibold text-sm hidden xs:block">{getCharacteristicAug(character, characName)} {getCharacteristicAug(character, characName) > 1 ? "augmentations" : "augmentation"}</p>
                     <p class="italic font-semibold text-sm block xs:hidden">{getCharacteristicAug(character, characName)} aug.</p>
                     {/if}
-                    {#if character.characteristics[characName].editable && editCharac}
+                    {#if character.characteristics[characName].editable && editEnabled}
                     <div class="w-1/3 flex justify-center">
                         <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseCharacteristic(character, characName, isMaster)}>-</button>
                         <button class="btn btn-success text-2xl flex-1" on:click={() => increaseCharacteristic(character, characName, isMaster)}>+</button>
@@ -511,10 +522,7 @@
     <!-- COMPETENCES DE BASE -->
     <section id="competences" class="card bg-base-300 w-full">
         <section class="card-body">
-            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
-                <h2 class="card-title">Compétences de base</h2>
-                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editSkills} />
-            </div>
+            <h2 class="card-title self-center mb-5">Compétences de base</h2>
 
             <!-- Section used to add basic skills specialties to the character -->
             {#if isMaster}
@@ -550,19 +558,19 @@
                         <label class="label flex gap-5 flex-col items-start sm:flex-row sm:justify-between text-sm 2xs:text-base w-3/4" for={skillName}>
                             {baseSkillsNameMap.get(skillName)}
                             {#if isMaster}
-                            <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkills} bind:checked={character.baseSkills[skillName].editable}
+                            <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editEnabled} bind:checked={character.baseSkills[skillName].editable}
                             on:change={(event) => updateBaseSkill(character, skillName, "editable", event.target.checked)} />
                             {/if}
                         </label>
                         <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                         disabled
                         type="number" name={skillName} 
-                        value={isMaster ? getCharacteristicFull(character, prop.charac) : getBaseSkillFull(character, skillName)} />
+                        value={getBaseSkillFull(character, skillName)} />
                         {#if isMaster || prop.editable}
                         <p class="italic font-semibold text-sm hidden xs:block">{getBaseSkillAug(character, skillName)} {getBaseSkillAug(character, skillName) > 1 ? "augmentations" : "augmentation"}</p>
                         <p class="italic font-semibold text-sm block xs:hidden">{getBaseSkillAug(character, skillName)} aug.</p>
                         {/if}
-                        {#if character.baseSkills[skillName].editable && editSkills}
+                        {#if character.baseSkills[skillName].editable && editEnabled}
                         <div class="w-1/3 flex justify-center">
                             <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseBaseSkill(character, skillName, isMaster)}>-</button>
                             <button class="btn btn-success text-2xl flex-1" on:click={() => increaseBaseSkill(character, skillName, isMaster)}>+</button>
@@ -577,10 +585,10 @@
                                 {baseSkillsNameMap.get(skillName)} ({spe})
                                 <div class="flex gap-5 items-center">
                                     {#if isMaster}
-                                    <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editSkills} bind:checked={character.baseSkills[skillName][spe].editable}
+                                    <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editEnabled} bind:checked={character.baseSkills[skillName][spe].editable}
                                     on:change={(event) => updateBaseSkill(character, skillName, "editable", event.target.checked, spe)} />
                                     {/if}
-                                    {#if isMaster && editSkills && ((skillName == "cac" && spe != "Base") || skillName != "cac")}
+                                    {#if isMaster && editEnabled && ((skillName == "cac" && spe != "Base") || skillName != "cac")}
                                     <button type="button" class="btn btn-ghost text-error btn-xs"
                                     on:click={() => removeBaseSkillSpecialty(character, skillName, spe)}>X</button>
                                     {/if}
@@ -589,12 +597,12 @@
                             <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                             disabled
                             type="number" name={skillName+spe} 
-                            value={isMaster ? getCharacteristicFull(character, prop.charac) : getBaseSkillFull(character, skillName)} />
+                            value={getBaseSkillFull(character, skillName, spe)} />
                             {#if isMaster || prop[spe].editable}
                             <p class="italic font-semibold text-sm hidden xs:block">{getBaseSkillAug(character, skillName, spe)} {getBaseSkillAug(character, skillName, spe) > 1 ? "augmentations" : "augmentation"}</p>
                             <p class="italic font-semibold text-sm block xs:hidden">{getBaseSkillAug(character, skillName, spe)} aug.</p>
                             {/if}
-                            {#if character.baseSkills[skillName][spe].editable && editSkills}
+                            {#if character.baseSkills[skillName][spe].editable && editEnabled}
                             <div class="w-1/3 flex justify-center">
                                 <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseBaseSkill(character, skillName, isMaster, spe)}>-</button>
                                 <button class="btn btn-success text-2xl flex-1" on:click={() => increaseBaseSkill(character, skillName, isMaster, spe)}>+</button>
@@ -611,10 +619,7 @@
     <!-- COMPETENCES AVANCEES -->
     <section id="competencesAvancees" class="card bg-base-300 w-full">
         <section class="card-body">
-            <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
-                <h2 class="card-title">Compétences Avancées</h2>
-                <input type="checkbox" class="toggle toggle-info justify-self-end" bind:checked={editAdvancedSkills} />
-            </div>
+            <h2 class="card-title self-center mb-5">Compétences Avancées</h2>
 
             <!-- Section used to select advanced skills and add them to the character. If skill is grouped, enter the specialty before adding -->
             {#if isMaster}
@@ -666,10 +671,10 @@
                                 {advancedSkillsNameMap.get(skillName)} ({spe})
                                 <div class="flex gap-5 items-center">
                                     {#if isMaster}
-                                    <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editAdvancedSkills} bind:checked={character.advancedSkills[skillName][spe].editable}
+                                    <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editEnabled} bind:checked={character.advancedSkills[skillName][spe].editable}
                                     on:change={(event) => updateAdvancedSkill(character, skillName, "editable", event.target.checked, spe)} />
                                     {/if}
-                                    {#if isMaster && editAdvancedSkills}
+                                    {#if isMaster && editEnabled}
                                     <button type="button" class="btn btn-ghost text-error btn-xs"
                                     on:click={() => removeAdvancedSkill(character, skillName, spe)}>X</button>
                                     {/if}
@@ -678,12 +683,12 @@
                             <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                             disabled
                             type="number" name={spe} 
-                            value={isMaster ? getCharacteristicFull(character, prop.charac) : getAdvancedSkillFull(character, skillName, spe)} />
+                            value={getAdvancedSkillFull(character, skillName, spe)} />
                             {#if isMaster || prop[spe].editable}
                             <p class="italic font-semibold text-sm hidden xs:block">{getAdvancedSkillAug(character, skillName, spe)} {getAdvancedSkillAug(character, skillName, spe) > 1 ? "augmentations" : "augmentation"}</p>
                             <p class="italic font-semibold text-sm block xs:hidden">{getAdvancedSkillAug(character, skillName, spe)} aug.</p>
                             {/if}
-                            {#if prop[spe].editable && editAdvancedSkills}
+                            {#if prop[spe].editable && editEnabled}
                             <div class="w-1/3 flex justify-center">
                                 <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseAdvancedSkill(character, skillName, spe, isMaster)}>-</button>
                                 <button class="btn btn-success text-2xl flex-1" on:click={() => increaseAdvancedSkill(character, skillName, spe, isMaster)}>+</button>
@@ -697,10 +702,10 @@
                             {advancedSkillsNameMap.get(skillName)}
                             <div class="flex gap-5 items-center">
                                 {#if isMaster}
-                                <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editAdvancedSkills} bind:checked={character.advancedSkills[skillName].editable}
+                                <input type="checkbox" class="checkbox checkbox-neutral" disabled={!editEnabled} bind:checked={character.advancedSkills[skillName].editable}
                                 on:change={(event) => updateAdvancedSkill(character, skillName, "editable", event.target.checked)} />
                                 {/if}
-                                {#if isMaster && editAdvancedSkills}
+                                {#if isMaster && editEnabled}
                                     <button type="button" class="btn btn-ghost text-error btn-xs"
                                     on:click={() => removeAdvancedSkill(character, skillName, "")}>X</button>
                                 {/if}
@@ -709,12 +714,12 @@
                         <input class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
                         disabled
                         type="number" name={skillName} 
-                        value={isMaster ? getCharacteristicFull(character, prop.charac) : getAdvancedSkillFull(character, skillName)} />
+                        value={getAdvancedSkillFull(character, skillName)} />
                         {#if isMaster || prop.editable}
                         <p class="italic font-semibold text-sm hidden xs:block">{getAdvancedSkillAug(character, skillName)} {getAdvancedSkillAug(character, skillName) > 1 ? "augmentations" : "augmentation"}</p>
                         <p class="italic font-semibold text-sm block xs:hidden">{getAdvancedSkillAug(character, skillName)} aug.</p>
                         {/if}
-                        {#if prop.editable && editAdvancedSkills}
+                        {#if prop.editable && editEnabled}
                         <div class="w-1/3 flex justify-center">
                             <button class="btn btn-error text-2xl flex-1" on:click={() => decreaseAdvancedSkill(character, skillName, "", isMaster)}>-</button>
                             <button class="btn btn-success text-2xl flex-1" on:click={() => increaseAdvancedSkill(character, skillName, "", isMaster)}>+</button>
@@ -741,7 +746,7 @@
                     <label class="label" for="gold"><img src={gold} alt="Courrone d'or" class="w-14 h-14" /></label>
                     <input on:change={(event) => updateAttribute(character, "gold", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster} 
+                    disabled={!isMaster || !editEnabled} 
                     type="number" name="gold" value={character.gold} />
                 </div>
 
@@ -749,7 +754,7 @@
                     <label class="label" for="silver"><img src={silver} alt="Pistole d'argent" class="w-14 h-14" /></label>
                     <input on:change={(event) => updateAttribute(character, "silver", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster}  
+                    disabled={!isMaster || !editEnabled}  
                     type="number" name="silver" value={character.silver} />
                 </div>
 
@@ -757,12 +762,12 @@
                     <label class="label" for="copper"><img src={copper} alt="Sou de cuivre" class="w-14 h-14" /></label>
                     <input  on:change={(event) => updateAttribute(character, "copper", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster}  
+                    disabled={!isMaster || !editEnabled}  
                     type="number" name="copper" value={character.copper} />
                 </div>
             </section>
 
-            <dialog id="conversionModal" class="modal modal-bottom sm:modal-middle" bind:this={conversionModal} >
+            <dialog id="conversionModal" class="modal modal-bottom sm:modal-middle" >
                 <section class="modal-box form-control bg-base-300 gap-10">
                     <h3 class="text-xl text-center font-semibold mb-5">Conversions</h3>
 
@@ -853,7 +858,7 @@
                     <label class="label" for="blessuresInfligees">Infligées</label>
                     <input on:change={(event) => updateAttribute(character, "blessuresInfligees", parseInt(event.target.value))} 
                     class="text-center input input-bordered w-3/4 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster}  
+                    disabled={!isMaster || !editEnabled}  
                     type="number" name="blessuresInfligees" value={character.blessuresInfligees} />
                 </div>
 
@@ -878,7 +883,7 @@
                     <label class="label" for="ambitionCourt">Court terme</label>
                     <textarea on:change={(event) => updateAttribute(character, "ambitionCourt", event.target.value)} 
                     class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
-                    disabled={isMaster}  
+                    disabled={isMaster || !editEnabled}  
                      name="ambitionCourt" value={character.ambitionCourt} />
                 </div>
 
@@ -886,7 +891,7 @@
                     <label class="label" for="ambitionLong">Long terme</label>
                     <textarea on:change={(event) => updateAttribute(character, "ambitionLong", event.target.value)} 
                     class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
-                    disabled={isMaster}  
+                    disabled={isMaster || !editEnabled}  
                      name="ambitionLong" value={character.ambitionLong} />
                 </div>
             </section>
@@ -907,12 +912,8 @@
 
                     {#if !isMaster}
                     <div class="flex justify-center gap-5 mt-5">
-                        <a href={"/creategroup/?characId=" + character.id}>
-                            <button class="btn btn-neutral">Créer un groupe</button>
-                        </a>
-                        <a href={"/findgroup/?gameId=" + character.game + "&characId=" + character.id}>
-                            <button class="btn btn-neutral">Trouver un groupe</button>
-                        </a>
+                        <button class="btn btn-neutral" onclick="createGroupModal.showModal()">Créer un groupe</button>
+                        <button class="btn btn-neutral" onclick="findGroupModal.showModal()">Trouver un groupe</button>
                     </div>
                     {/if}
                 {:else}
@@ -920,7 +921,7 @@
                         <label class="label" for="groupName">Nom</label>
                         <input on:change={(event) => updateGroup(character.expand.group, "name", event.target.value)} 
                         class="text-center input input-bordered disabled:text-base-content disabled:cursor-default" 
-                        disabled={isMaster}  
+                        disabled={isMaster || !editEnabled}  
                         type="text" name="groupName" value={character.expand.group.name} />
                     </div>
 
@@ -929,8 +930,10 @@
                         <div class="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 gap-3">
                             {#each character.expand.group.characters as groupCharacId}
                                 {#await getRecordFromId("characters", groupCharacId) then groupCharac}
-                                    <input class="input input-bordered w-full text-center disabled:text-base-content disabled:cursor-default" 
-                                    type="text" value={groupCharac.name} disabled/>
+                                    {#if groupCharacId != character.id}
+                                        <input class="input input-bordered w-full text-center disabled:text-base-content disabled:cursor-default" 
+                                        type="text" value={groupCharac.name} disabled/>
+                                    {/if}
                                 {/await}
                             {/each}
                         </div>
@@ -940,7 +943,7 @@
                         <label class="label" for="ambitionCourt">Ambition court terme</label>
                         <textarea on:change={(event) => updateGroup(character.expand.group, "ambitionCourt", event.target.value)} 
                             class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
-                            disabled={isMaster} 
+                            disabled={isMaster || !editEnabled} 
                             name="ambitionCourt" value={character.expand.group.ambitionCourt} />
                     </div>
 
@@ -948,20 +951,115 @@
                         <label class="label" for="ambitionLong">Ambition long terme</label>
                         <textarea on:change={(event) => updateGroup(character.expand.group, "ambitionLong", event.target.value)} 
                             class="textarea textarea-bordered sm:text-lg h-60 disabled:text-base-content disabled:cursor-default" 
-                            disabled={isMaster}  
+                            disabled={isMaster || !editEnabled}  
                             name="ambitionLong" value={character.expand.group.ambitionLong} />
                     </div>
                     
                 {/if}
             </section>
         </section>
-        {#if character.group && !isMaster}
+        {#if character.group && !isMaster && editEnabled}
         <form class="card-actions justify-center" method="POST" action="?/leaveGroup">
             <input type="hidden" name="characId" value={character.id} />
             <input type="hidden" name="groupId" value={character.group} />
             <button class="btn btn-warning">Quitter le groupe</button>
         </form>
         {/if}
+
+        <!-- CREATE GROUP MODAL -->
+        <dialog id="createGroupModal" class="modal modal-bottom sm:modal-middle" bind:this={createGroupModal} >
+            <section class="modal-box form-control bg-base-300">
+
+                <div class="form-control">
+                    <label class="label" for="">Nom</label>
+                    <input class="input input-bordered" type="text" bind:value={groupToCreate.name}/>
+                </div>
+
+                <div class="form-control">
+                    <label class="label" for="">Rejoindre</label>
+                    <input class="checkbox" type="checkbox" bind:checked={groupToCreate.join} />
+                </div>
+
+                {#if createGroupMessage != ""}
+                <p class="text-warning text-center text-lg">{createGroupMessage}</p>
+                {/if}
+                
+                <section class="card-actions mt-5">
+                    <button class="btn btn-neutral"
+                    on:click={() => {
+                        groupToCreate = {name: "", join: false};
+                        createGroupModal.close();
+                    }}>Fermer</button>
+                    <button class="btn btn-success"
+                    on:click={async () => {
+                        const resp = await createGroup(groupToCreate, character);
+                        if(resp && resp.error){
+                            createGroupMessage = resp.message;
+                        }else {
+                            createGroupMessage = "";
+                            groupToCreate = {name: "", join: false};
+                            createGroupModal.close();
+                        }
+                    }}>Valider</button>
+                </section>
+            </section>
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
+                <button>Close</button>
+            </form>
+        </dialog>
+
+        <!-- FIND GROUP MODAL -->
+        <dialog id="findGroupModal" class="modal modal-bottom sm:modal-middle" bind:this={findGroupModal} >
+            <section class="modal-box form-control bg-base-300">
+
+                {#await findGroups()}
+                <p>Chargement...</p>
+                {:then groups}
+                    <section class="flex flex-col gap-3">
+                        {#each groups as group}
+                        <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
+                            <input type="checkbox" /> 
+                            <div class="collapse-title flex gap-3 items-center justify-between">
+                                <p>{group.name}</p>
+                                <button class="btn btn-success relative z-50"
+                                on:click={async() => {
+                                    await joinGroup(character, group);
+                                    findGroupModal.close();
+                                }}
+                                >Rejoindre</button>
+                            </div>
+                            <div class="collapse-content">
+                                <div class="divider"></div>
+                                
+                                {#if !group.characters || group.characters.length == 0}
+                                <p>Aucun joueur dans le groupe.</p>
+                                {:else}
+                                <p><span class="font-bold">Membres:</span> 
+                                    {#each group.characters as characId}
+                                        {#await getRecordFromId("characters", characId) then charac}
+                                            {charac.name}
+                                        {/await}
+                                        {group.characters.indexOf(characId) == group.characters.length -1 ? "" : ", "}
+                                    {/each}
+                                </p>
+                                {/if}
+                            </div>
+                        </section>
+                        {/each}
+                    </section>
+                {/await}
+
+
+                
+                <section class="card-actions justify-center mt-5">
+                    <button class="btn btn-neutral"
+                    on:click={() => findGroupModal.close()}>Fermer</button>
+                </section>
+            </section>
+            <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
+                <button>Close</button>
+            </form>
+        </dialog>
     </section>
 
     <!-- ECHANGE -->
@@ -1001,7 +1099,7 @@
                     <input type="checkbox" /> 
                     <div class="collapse-title flex gap-3 items-center justify-between">
                         <div class="flex flex-col items-center gap-2 xs:flex-row">
-                            {#if isMaster}
+                            {#if isMaster && editEnabled}
                             <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
                             on:click={() => {
                                 // Deleting object from character's objects list
@@ -1013,7 +1111,7 @@
                         <div class="relative z-50">
                             <input on:change={(event) => updateCharacObjectCount(character, possession.id, parseInt(event.target.value))}
                             class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-20 text-center disabled:text-base-content disabled:cursor-default" 
-                            disabled={!isMaster}
+                            disabled={!isMaster || !editEnabled}
                             type="number" value={character.nbPossessions[possession.id].count} min="1"/>
                         </div>
                     </div>
@@ -1088,7 +1186,7 @@
                     <input type="checkbox" /> 
                     <div class="collapse-title flex flex-col gap-3 items-center justify-between md:flex-row">
                         <div class="flex flex-col items-center gap-2 xs:flex-row">
-                            {#if isMaster}
+                            {#if isMaster && editEnabled}
                             <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
                             on:click={() => {
                                 // Deleting talent from character's talents list
@@ -1101,12 +1199,16 @@
                             {talent.name}
                         </div>
                         <div class="flex items-center gap-2 relative z-50">
-                            <button class="btn btn-error btn-sm" on:click={() => decreaseTalentCount(character, talent)}>-</button>
+                            {#if isMaster && editEnabled}
+                                <button class="btn btn-error btn-sm" on:click={() => decreaseTalentCount(character, talent)}>-</button>
+                            {/if}
                             <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
                             class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
                             disabled
                             type="number" value={character.nbTalents[talent.id].count} min="1"/>
-                            <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent)}>+</button>
+                            {#if isMaster && editEnabled}
+                                <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent)}>+</button>
+                            {/if}
                         </div>
                     </div>
                     <div class="collapse-content flex flex-col gap-3">
@@ -1185,7 +1287,7 @@
                 <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
                     <input type="checkbox" /> 
                     <div class="collapse-title flex flex-col items-center 2xs:flex-row">
-                        {#if isMaster}
+                        {#if isMaster && editEnabled}
                         <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
                         on:click={() => {
                             // Deleting spell from character's spells list
@@ -1306,7 +1408,7 @@
                         <input type="checkbox" /> 
                         <div class="collapse-title flex gap-3 items-center justify-between">
                             <div class="flex flex-col items-center gap-2 xs:flex-row">
-                                {#if isMaster}
+                                {#if isMaster && editEnabled}
                                 <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
                                 on:click={() => {
                                     // Deleting melee weapon from character's melee weapons list
@@ -1318,7 +1420,7 @@
                             <div class="relative z-50">
                                 <input on:change={(event) => updateCharacMeleeWeaponsCount(character, mw.id, parseInt(event.target.value))}
                                 class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-20 text-center disabled:text-base-content disabled:cursor-default" 
-                                disabled={!isMaster}
+                                disabled={!isMaster || !editEnabled}
                                 type="number" value={character.nbMeleeWeapons[mw.id].count} min="1"/>
                             </div>
                         </div>
@@ -1418,7 +1520,7 @@
                         <input type="checkbox" />
                         <div class="collapse-title flex gap-3 items-center justify-between">
                             <div class="flex flex-col items-center gap-2 xs:flex-row">
-                                {#if isMaster}
+                                {#if isMaster && editEnabled}
                                 <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
                                 on:click={() => {
                                     // Deleting range weapon from character's range weapons list
@@ -1430,7 +1532,7 @@
                             <div class="relative z-50">
                                 <input on:change={(event) => updateCharacRangeWeaponsCount(character, rw.id, parseInt(event.target.value))}
                                 class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-20 text-center disabled:text-base-content disabled:cursor-default" 
-                                disabled={!isMaster}
+                                disabled={!isMaster || !editEnabled}
                                 type="number" value={character.nbRangeWeapons[rw.id].count} min="1"/>
                             </div>
                         </div>
@@ -1529,14 +1631,14 @@
                     <input type="number" class="input input-bordered 2xs:w-32 text-center disabled:cursor-default disabled:text-base-content" 
                     class:input-error={isCharacCorrupted(character)}
                     class:text-error={isCharacCorrupted(character)}
-                    min="0" value={character.corruption} disabled={!isMaster} 
+                    min="0" value={character.corruption} disabled={!isMaster || !editEnabled} 
                     on:change={(event) => updateAttribute(character, "corruption", event.target.value)} />
                 </div>
                 <div class="form-control">
                     <label for="mutations" class="label">Mutations</label>
                     <textarea on:change={(event) => updateAttribute(character, "mutations", event.target.value)} 
                     class="textarea textarea-bordered sm:text-lg h-96 disabled:text-base-content disabled:cursor-default" 
-                    disabled={!isMaster}  
+                    disabled={!isMaster || !editEnabled}  
                      name="mutations" value={character.notes} />
                 </div>
             </section>
@@ -1611,7 +1713,7 @@
 
 
     <!-- If master, expel player and delete character buttons + modal for deleting confirmation -->
-    {#if isMaster}
+    {#if isMaster && editEnabled}
         <section class="flex items-center gap-5 mt-10">
             <label class="text-lg" for="isPlayable">Jouable</label>
             <input type="checkbox" class="checkbox" name="isPlayable" bind:checked={character.isPlayable}
@@ -1653,7 +1755,7 @@
         </dialog>
     
         <!-- If not master, leave character button -->
-    {:else}
+    {:else if editEnabled}
         <form method="POST" action="?/leaveCharac">
             <input type="hidden" name="characId" value={character.id} />
             <input type="hidden" name="gameId" value={character.game} />
