@@ -63,27 +63,28 @@
         <table class="card-body table table-zebra">
             <thead>
                 <tr>
-                    <th class="w-2/3">Nom</th>
+                    <th>Nom</th>
                     <th>Enc.</th>
                 </tr>
             </thead>
             <tbody>
                 {#each objects as object}
-                    <tr>
-                        <td class="text-[0.7rem] xs:text-sm lg:text-lg">{object.name}</td>
-                        <td class="text-[0.7rem] xs:text-sm lg:text-lg">{object.encombrement}</td>
-                        <td><button class="btn btn-neutral btn-xs xs:btn-md" 
-                        on:click={() => {
-                            objectToEdit.id = object.id;
-                            objectToEdit.name = object.name;
-                            objectToEdit.encombrement = object.encombrement;
-                            editObjectModal.show();
-                        }}>Modifier</button></td>
-                        <td><button class="btn btn-error btn-xs xs:btn-md"
-                            on:click={() => {
+                    <tr class="cursor-pointer" on:click={() => {
+                        objectToEdit.id = object.id;
+                        objectToEdit.name = object.name;
+                        objectToEdit.encombrement = object.encombrement;
+                        editObjectModal.show();
+                    }}>
+                        <td class="flex flex-col items-center justify-center 2xs:flex-row 2xs:justify-start">
+                            <button class="btn btn-ghost text-error"
+                            on:click={(event) => {
+                                event.stopPropagation();
                                 objectToDelete = object;
                                 deletObjectModal.show();
-                            }}>Supprimer</button></td>
+                            }}>X</button>
+                            {object.name}
+                        </td>
+                        <td class="">{object.encombrement}</td>
                     </tr>
                 {/each}
             </tbody>

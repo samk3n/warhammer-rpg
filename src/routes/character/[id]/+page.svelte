@@ -1101,16 +1101,19 @@
                             {talent.name}
                         </div>
                         <div class="flex items-center gap-2 relative z-50">
-                            <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent)}>+</button>
+                            <button class="btn btn-error btn-sm" on:click={() => decreaseTalentCount(character, talent)}>-</button>
                             <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
                             class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
                             disabled
                             type="number" value={character.nbTalents[talent.id].count} min="1"/>
-                            <button class="btn btn-error btn-sm" on:click={() => decreaseTalentCount(character, talent)}>-</button>
+                            <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent)}>+</button>
                         </div>
                     </div>
-                    <div class="collapse-content">
+                    <div class="collapse-content flex flex-col gap-3">
                         <div class="divider"></div>
+                        {#if talent.test}
+                        <p><span class="font-bold">Tests:</span> {talent.test}</p>
+                        {/if}
                         <p class="text-sm 2xs:text-base">{talent.description}</p>
                     </div>
                 </section>
@@ -1124,29 +1127,32 @@
                 {#if talents.length == 0}
                 <p class="text-lg text-center mb-5">Aucun talent disponible</p>
                 {:else}
-                <table class="card-body table table-zebra">
-                    <thead>
-                        <tr>
-                            <th class="w-full">Nom</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each talents as talent}
-                            <tr>
-                                <td class="text-xs 2xs:text-sm xs:text-base">{talent.name}</td>
-                                <td><button class="btn btn-success btn-sm xs:btn-md" 
-                                on:click={() => {
-                                    // Adding the talent to the character talents list
-                                    addTalentToCharac(character, talent.id);
-                                    // Removing the talent that was just added to character
-                                    // So it doesn't appear in the modal
-                                    // Because you can only add an talent once.
-                                    talents = talents.filter((tal) => tal.id !== talent.id);
-                                } }>+</button></td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                <section>
+                    {#each talents as talent}
+                    <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
+                        <input type="checkbox" /> 
+                        <div class="collapse-title flex gap-3 items-center justify-between">
+                            <p class="flex-1">{talent.name}</p>
+                            <button class="btn btn-success btn-xs xs:btn-md relative z-50" 
+                            on:click={() => {
+                                // Adding the talent to the character talents list
+                                addTalentToCharac(character, talent.id);
+                                // Removing the talent that was just added to character
+                                // So it doesn't appear in the modal
+                                // Because you can only add a talent once.
+                                talents = talents.filter((tal) => tal.id !== talent.id);
+                            }}>+</button>
+                        </div>
+                        <div class="collapse-content flex flex-col gap-3">
+                            <div class="divider"></div>
+                            {#if talent.test}
+                            <p><span class="font-bold">Tests:</span> {talent.test}</p>
+                            {/if}
+                            <p>{talent.description}</p>
+                        </div>
+                    </section>
+                    {/each}
+                </section>
                 {/if}
                 <section class="card-actions justify-center mt-5">
                     <button class="btn btn-neutral"
@@ -1225,17 +1231,13 @@
                 {#if spells.length == 0}
                 <p class="text-lg text-center mb-5">Aucun sort disponible</p>
                 {:else}
-                <table class="card-body table table-zebra">
-                    <thead>
-                        <tr>
-                            <th class="w-full">Nom</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                    <section>
                         {#each spells as spell}
-                            <tr>
-                                <td class="text-xs 2xs:text-sm xs:text-base">{spell.name}</td>
-                                <td><button class="btn btn-success btn-sm xs:btn-md" 
+                        <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
+                            <input type="checkbox" /> 
+                            <div class="collapse-title flex flex-col items-center 2xs:flex-row">
+                                <p class="flex-1">{spell.name}</p>
+                                <button class="btn btn-success btn-xs xs:btn-md relative z-50" 
                                 on:click={() => {
                                     // Adding the spell to the character spells list
                                     addSpellToCharac(character, spell.id);
@@ -1243,11 +1245,34 @@
                                     // So it doesn't appear in the modal
                                     // Because you can only add an spell once.
                                     spells = spells.filter((spe) => spe.id !== spell.id);
-                                } }>+</button></td>
-                            </tr>
+                                } }>+</button>
+                            </div>
+                            <div class="collapse-content flex flex-col gap-3">
+                                <div class="divider"></div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">NI</p>
+                                    <p class="flex-1">{spell.ni}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Portée</p>
+                                    <p class="flex-1">{spell.portee}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Cible</p>
+                                    <p class="flex-1">{spell.cible}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Durée</p>
+                                    <p class="flex-1">{spell.duree}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Effets</p>
+                                    <p class="flex-1">{spell.effets}</p>
+                                </div>
+                            </div>
+                        </section>
                         {/each}
-                    </tbody>
-                </table>
+                    </section>
                 {/if}
                 <section class="card-actions justify-center mt-5">
                     <button class="btn btn-neutral"
@@ -1327,25 +1352,40 @@
                 {#if meleeWeapons.length == 0}
                 <p class="text-lg text-center mb-5">Aucune arme de mêlée disponible</p>
                 {:else}
-                <table class="card-body table table-zebra">
-                    <thead>
-                        <tr>
-                            <th class="w-full">Nom</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                    <section>
                         {#each meleeWeapons as mw}
-                            <tr>
-                                <td class="text-xs 2xs:text-sm xs:text-base">{mw.name}</td>
-                                <td><button class="btn btn-success btn-sm xs:btn-md" 
+                        <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
+                            <input type="checkbox" /> 
+                            <div class="collapse-title flex flex-col items-center 2xs:flex-row">
+                                <p class="flex-1">{mw.name}</p>
+                                <button class="btn btn-success btn-xs xs:btn-md relative z-50" 
                                 on:click={() => {
-                                    // Adding the melee weapon to the character melee weapons list
+                                    // Adding the melee weapon to the character melee weapons list or increasing its count
                                     addMeleeWeaponToCharac(character, mw.id);
-                                } }>+</button></td>
-                            </tr>
+                                } }>+</button>
+                            </div>
+                            <div class="collapse-content flex flex-col gap-3">
+                                <div class="divider"></div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Groupe</p>
+                                    <p class="flex-1">{mw.groupe}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Enc.</p>
+                                    <p class="flex-1">{mw.encombrement}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Dégâts</p>
+                                    <p class="flex-1">{mw.degats}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Propriétés</p>
+                                    <p class="flex-1">{mw.proprietes}</p>
+                                </div>
+                            </div>
+                        </section>
                         {/each}
-                    </tbody>
-                </table>
+                    </section>
                 {/if}
                 <section class="card-actions justify-center mt-5">
                     <button class="btn btn-neutral"
@@ -1428,25 +1468,44 @@
                 {#if rangeWeapons.length == 0}
                 <p class="text-lg text-center mb-5">Aucune arme à distance disponible</p>
                 {:else}
-                <table class="card-body table table-zebra">
-                    <thead>
-                        <tr>
-                            <th class="w-full">Nom</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                    <section>
                         {#each rangeWeapons as rw}
-                            <tr>
-                                <td class="text-xs 2xs:text-sm xs:text-base">{rw.name}</td>
-                                <td><button class="btn btn-success btn-sm xs:btn-md" 
+                        <section class="collapse p-2 rounded-lg odd:bg-base-100 even:bg-base-200">
+                            <input type="checkbox" /> 
+                            <div class="collapse-title flex flex-col items-center 2xs:flex-row">
+                                <p class="flex-1">{rw.name}</p>
+                                <button class="btn btn-success btn-xs xs:btn-md relative z-50" 
                                 on:click={() => {
-                                    // Adding the range weapon to the character range weapons list
+                                    // Adding the range weapon to the character range weapons list or increasing its count
                                     addRangeWeaponToCharac(character, rw.id);
-                                } }>+</button></td>
-                            </tr>
+                                } }>+</button>
+                            </div>
+                            <div class="collapse-content flex flex-col gap-3">
+                                <div class="divider"></div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Groupe</p>
+                                    <p class="flex-1">{rw.groupe}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Enc.</p>
+                                    <p class="flex-1">{rw.encombrement}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Dégâts</p>
+                                    <p class="flex-1">{rw.degats}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Portée</p>
+                                    <p class="flex-1">{rw.portee}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 odd:bg-base-100 even:bg-base-200 p-1 rounded-md 2xs:flex-row">
+                                    <p class="font-semibold flex-1">Propriétés</p>
+                                    <p class="flex-1">{rw.proprietes}</p>
+                                </div>
+                            </div>
+                        </section>
                         {/each}
-                    </tbody>
-                </table>
+                    </section>
                 {/if}
                 <section class="card-actions justify-center mt-5">
                     <button class="btn btn-neutral"

@@ -49,7 +49,7 @@
     <h2 class="text-2xl font-semibold text-center">Aucun sort trouvé!</h2>
     {/if}
     <h1 class="text-3xl font-bold text-center mb-5">Sorts</h1>
-    <button class="btn btn-primary mt-5 xs:btn-wide" onclick="addSpellModal.showModal()">Créer un sort</button>
+    <button class="btn btn-primary mt-5 xs:btn-wide mb-5" onclick="addSpellModal.showModal()">Créer un sort</button>
 
     <section class="card w-full">
         <section class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2">

@@ -7,10 +7,6 @@
     export let data;
 
     // MELEE WEAPONS
-    // Melee weapon used in the edit modal
-    let meleeWeaponToEdit = {id: ""};
-    // Ref to the edit modal
-    let editMeleeWeaponModal;
     // Melee weapon used in the delete modal
     let meleeWeaponToDelete = {name: ""};
     // Ref to the delete modal
@@ -23,10 +19,6 @@
     let createMeleeWeaponMessage = "";
 
     // RANGE WEAPONS
-    // Range weapon used in the edit modal
-    let rangeWeaponToEdit = {id: ""};
-    // Ref to the edit modal
-    let editRangeWeaponModal;
     // Range weapon used in the delete modal
     let rangeWeaponToDelete = {name: ""};
     // Ref to the delete modal
@@ -106,45 +98,46 @@
         {:else}
 
         <section class="card bg-base-300 w-full">
-            <table class="card-body table table-zebra">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th class="hidden xs:table-cell">Groupe</th>
-                        <th class="hidden 2xs:table-cell">Enc.</th>
-                        <th class="hidden 2xs:table-cell">Dégâts</th>
-                        <th class="hidden sm:table-cell">Propriétés</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each meleeWeapons as mw}
-                        <tr class="cursor-pointer hover:ring-0" on:click={() => {
-                            meleeWeaponToEdit.id = mw.id;
-                            meleeWeaponToEdit.name = mw.name;
-                            meleeWeaponToEdit.encombrement = mw.encombrement;
-                            meleeWeaponToEdit.groupe = mw.groupe;
-                            meleeWeaponToEdit.degats = mw.degats;
-                            meleeWeaponToEdit.proprietes = mw.proprietes;
-                            editMeleeWeaponModal.show();
-                        }}>
-                            <td class="text-xs 2xs:text-sm xs:text-base">
-                                <button class="btn btn-ghost btn-circle text-error btn-sm"
-                                on:click={(event) => {
-                                    event.stopPropagation();
-                                    meleeWeaponToDelete = mw;
-                                    deleteMeleeWeaponModal.show();
-                                }}>X</button>
-                                {mw.name}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{mw.groupe}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden 2xs:table-cell">{mw.encombrement}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden 2xs:table-cell">{mw.degats}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{mw.proprietes}</td>
-                            <td></td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
-
+            {#each meleeWeapons as mw}
+            <section class="collapse p-2 rounded-lg odd:bg-base-200 even:bg-base-300">
+                <input type="checkbox" /> 
+                <div class="collapse-title flex gap-3 items-center">
+                    <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
+                        on:click={() => {
+                            meleeWeaponToDelete = mw;
+                            deleteMeleeWeaponModal.show();
+                    }}>X</button>
+                    {mw.name}
+                </div>
+                <div class="collapse-content flex flex-col gap-3">
+                    <div class="form-control">
+                        <label class="label" for="name">Nom</label>
+                        <input on:change={(event) => updateMeleeWeapon(mw, "name", event.target.value)}
+                        class="input input-bordered" type="text" name="name" value={mw.name}/>
+                    </div>
+                    <div class="form-control">
+                        <label class="label" for="encombrement">Enc.</label>
+                        <input on:change={(event) => updateMeleeWeapon(mw, "encombrement", parseInt(event.target.value))}
+                        class="input input-bordered" type="number" name="encombrement" value={mw.encombrement}/>
+                    </div>
+                    <div class="form-control">
+                        <label class="label" for="groupe">Groupe</label>
+                        <input on:change={(event) => updateMeleeWeapon(mw, "groupe", event.target.value)}
+                        class="input input-bordered" type="text" name="groupe" value={mw.groupe}/>
+                    </div>
+                    <div class="form-control">
+                        <label class="label" for="degats">Dégâts</label>
+                        <input on:change={(event) => updateMeleeWeapon(mw, "degats", parseInt(event.target.value))}
+                        class="input input-bordered" type="number" name="degats" value={mw.degats}/>
+                    </div>
+                    <div class="form-control">
+                        <label class="label" for="proprietes">Propriétés</label>
+                        <input on:change={(event) => updateMeleeWeapon(mw, "proprietes", event.target.value)}
+                        class="input input-bordered" type="text" name="proprietes" value={mw.proprietes}/>
+                    </div>      
+                </div>
+            </section>
+            {/each}
         </section>
         {/if}
         
@@ -156,48 +149,51 @@
         {:else}
 
         <section class="card bg-base-300 w-full">
-            <table class="card-body table table-zebra">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th class="hidden sm:table-cell">Groupe</th>
-                        <th class="hidden xs:table-cell">Enc.</th>
-                        <th class="hidden xs:table-cell">Dégâts</th>
-                        <th class="hidden xs:table-cell">Portée</th>
-                        <th class="hidden md:table-cell">Propriétés</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each rangeWeapons as rw}
-                        <tr class="cursor-pointer hover:ring-0" on:click={() => {
-                            rangeWeaponToEdit.id = rw.id;
-                            rangeWeaponToEdit.name = rw.name;
-                            rangeWeaponToEdit.encombrement = rw.encombrement;
-                            rangeWeaponToEdit.groupe = rw.groupe;
-                            rangeWeaponToEdit.degats = rw.degats;
-                            rangeWeaponToEdit.portee = rw.portee;
-                            rangeWeaponToEdit.proprietes = rw.proprietes;
-                            editRangeWeaponModal.show();
-                        }}>
-                            <td class="text-[0.7rem] xs:text-sm lg:text-lg">
-                                <button class="btn btn-ghost btn-circle text-error btn-sm"
-                                on:click={(event) => {
-                                    event.stopPropagation();
-                                    rangeWeaponToDelete = rw;
-                                    deleteRangeWeaponModal.show();
-                                }}>X</button>
-                                {rw.name}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden sm:table-cell">{rw.groupe}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{rw.encombrement}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{rw.degats}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden xs:table-cell">{rw.portee}</td>
-                            <td class="text-xs 2xs:text-sm xs:text-base hidden md:table-cell">{rw.proprietes}</td>
-                            <td></td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
-
+            {#each rangeWeapons as rw}
+            <section class="collapse p-2 rounded-lg odd:bg-base-200 even:bg-base-300">
+                <input type="checkbox" /> 
+                <div class="collapse-title flex gap-3 items-center">
+                    <button class="btn btn-ghost btn-circle text-error btn-sm relative z-50"
+                        on:click={() => {
+                            rangeWeaponToDelete = rw;
+                            deleteRangeWeaponModal.show();
+                    }}>X</button>
+                    {rw.name}
+                </div>
+                <div class="collapse-content flex flex-col gap-3">
+                    <div class="form-control">
+                        <label class="label" for="name">Nom</label>
+                        <input on:change={(event) => updateRangeWeapon(rw, "name", event.target.value)}
+                        class="input input-bordered" type="text" name="name" value={rw.name}/>
+                    </div>
+                    <div class="form-control">
+                        <label class="label" for="encombrement">Enc.</label>
+                        <input on:change={(event) => updateRangeWeapon(rw, "encombrement", parseInt(event.target.value))}
+                        class="input input-bordered" type="number" name="encombrement" value={rw.encombrement}/>
+                    </div>
+                    <div class="form-control">
+                        <label class="label" for="groupe">Groupe</label>
+                        <input on:change={(event) => updateRangeWeapon(rw, "groupe", event.target.value)}
+                        class="input input-bordered" type="text" name="groupe" value={rw.groupe}/>
+                    </div>
+                    <div class="form-control">
+                        <label class="label" for="degats">Dégâts</label>
+                        <input on:change={(event) => updateRangeWeapon(rw, "degats", parseInt(event.target.value))}
+                        class="input input-bordered" type="number" name="degats" value={rw.degats}/>
+                    </div>
+                    <div class="form-control">
+                        <label class="label" for="degats">Portée</label>
+                        <input on:change={(event) => updateRangeWeapon(rw, "portee", event.target.value)}
+                        class="input input-bordered" type="text" name="portee" value={rw.portee}/>
+                    </div>
+                    <div class="form-control">
+                        <label class="label" for="proprietes">Propriétés</label>
+                        <input on:change={(event) => updateRangeWeapon(rw, "proprietes", event.target.value)}
+                        class="input input-bordered" type="text" name="proprietes" value={rw.proprietes}/>
+                    </div>      
+                </div>
+            </section>
+            {/each}
         </section>
         {/if}
     {/if}
@@ -268,64 +264,6 @@
                 meleeWeaponToCreate.degats = "";
                 meleeWeaponToCreate.proprietes = "";
             }}>close</button>
-        </form>
-    </dialog>
-
-    <dialog id="editMeleeWeaponModal" class="modal modal-bottom sm:modal-middle" bind:this={editMeleeWeaponModal} >
-        <section class="modal-box form-control bg-base-300">
-            <input type="hidden" name="id" value={meleeWeaponToEdit.id} />
-
-            <div class="form-control">
-                <label class="label" for="name">Nom</label>
-                <input on:change={(event) => meleeWeaponToEdit.name = event.target.value}
-                class="input input-bordered" type="text" name="name" value={meleeWeaponToEdit.name}/>
-            </div>
-            <div class="form-control">
-                <label class="label" for="encombrement">Enc.</label>
-                <input on:change={(event) => meleeWeaponToEdit.encombrement = event.target.value}
-                class="input input-bordered" type="number" name="encombrement" value={meleeWeaponToEdit.encombrement}/>
-            </div>
-            <div class="form-control">
-                <label class="label" for="groupe">Groupe</label>
-                <input on:change={(event) => meleeWeaponToEdit.groupe = event.target.value}
-                class="input input-bordered" type="text" name="groupe" value={meleeWeaponToEdit.groupe}/>
-            </div>
-            <div class="form-control">
-                <label class="label" for="degats">Dégâts</label>
-                <input on:change={(event) => meleeWeaponToEdit.degats = event.target.value}
-                class="input input-bordered" type="number" name="degats" value={meleeWeaponToEdit.degats}/>
-            </div>
-            <div class="form-control">
-                <label class="label" for="proprietes">Propriétés</label>
-                <input on:change={(event) => meleeWeaponToEdit.proprietes = event.target.value}
-                class="input input-bordered" type="text" name="proprietes" value={meleeWeaponToEdit.proprietes}/>
-            </div>                
-
-            <div class="modal-action">
-                <button class="btn btn-neutral" type="button" onclick="editMeleeWeaponModal.close()"
-                on:click={() => {
-                    meleeWeaponToEdit.name = "";
-                    meleeWeaponToEdit.id="";
-                    meleeWeaponToEdit.encombrement = 0;
-                    meleeWeaponToEdit.groupe = "";
-                    meleeWeaponToEdit.degats = 0;
-                    meleeWeaponToEdit.proprietes = "";
-                }}>Fermer</button>
-                <button class="btn btn-success" type="submit" onclick="editMeleeWeaponModal.close()" 
-                on:click={() => {
-                    updateMeleeWeapon(meleeWeaponToEdit, meleeWeaponToEdit);
-                }}>Valider</button>
-            </div>
-        </section>
-        <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
-            <button on:click={() => {
-                meleeWeaponToEdit.name = "";
-                meleeWeaponToEdit.id="";
-                meleeWeaponToEdit.encombrement = "";
-                meleeWeaponToEdit.groupe = "";
-                meleeWeaponToEdit.degats = "";
-                meleeWeaponToEdit.proprietes = "";
-            }}>Close</button>
         </form>
     </dialog>
 
@@ -419,70 +357,6 @@
                 rangeWeaponToCreate.portee = "";
                 rangeWeaponToCreate.proprietes = "";
             }}>close</button>
-        </form>
-    </dialog>
-
-    <dialog id="editRangeWeaponModal" class="modal modal-bottom sm:modal-middle" bind:this={editRangeWeaponModal} >
-        <section class="modal-box form-control bg-base-300">
-
-            <div class="form-control">
-                <label class="label" for="name">Nom</label>
-                <input on:change={(event) => rangeWeaponToEdit.name = event.target.value}
-                class="input input-bordered" type="text" name="name" value={rangeWeaponToEdit.name}/>
-            </div>
-            <div class="form-control">
-                <label class="label" for="encombrement">Enc.</label>
-                <input on:change={(event) => rangeWeaponToEdit.encombrement = event.target.value}
-                class="input input-bordered" type="number" name="encombrement" value={rangeWeaponToEdit.encombrement}/>
-            </div>
-            <div class="form-control">
-                <label class="label" for="groupe">Groupe</label>
-                <input on:change={(event) => rangeWeaponToEdit.groupe = event.target.value}
-                class="input input-bordered" type="text" name="groupe" value={rangeWeaponToEdit.groupe}/>
-            </div>
-            <div class="form-control">
-                <label class="label" for="degats">Dégâts</label>
-                <input on:change={(event) => rangeWeaponToEdit.degats = event.target.value}
-                class="input input-bordered" type="number" name="degats" value={rangeWeaponToEdit.degats}/>
-            </div>
-            <div class="form-control">
-                <label class="label" for="portee">Portée</label>
-                <input on:change={(event) => rangeWeaponToEdit.degats = event.target.value}
-                class="input input-bordered" type="text" name="portee" value={rangeWeaponToEdit.portee}/>
-            </div>
-            <div class="form-control">
-                <label class="label" for="proprietes">Propriétés</label>
-                <input on:change={(event) => rangeWeaponToEdit.proprietes = event.target.value}
-                class="input input-bordered" type="text" name="proprietes" value={rangeWeaponToEdit.proprietes}/>
-            </div>                
-
-            <div class="modal-action">
-                <button class="btn btn-neutral" type="button" onclick="editRangeWeaponModal.close()"
-                on:click={() => {
-                    rangeWeaponToEdit.name = "";
-                    rangeWeaponToEdit.id="";
-                    rangeWeaponToEdit.encombrement = "";
-                    rangeWeaponToEdit.groupe = "";
-                    rangeWeaponToEdit.degats = "";
-                    rangeWeaponToEdit.portee = "";
-                    rangeWeaponToEdit.proprietes = "";
-                }}>Fermer</button>
-                <button class="btn btn-success" type="submit" onclick="editRangeWeaponModal.close()" 
-                on:click={() => {
-                    updateRangeWeapon(rangeWeaponToEdit, rangeWeaponToEdit);
-                }}>Valider</button>
-            </div>
-        </section>
-        <form method="dialog" class="modal-backdrop bg-neutral bg-opacity-40">
-            <button on:click={() => {
-                rangeWeaponToEdit.name = "";
-                rangeWeaponToEdit.id="";
-                rangeWeaponToEdit.encombrement = "";
-                rangeWeaponToEdit.groupe = "";
-                rangeWeaponToEdit.degats = "";
-                rangeWeaponToEdit.portee = "";
-                rangeWeaponToEdit.proprietes = "";
-            }}>Close</button>
         </form>
     </dialog>
 

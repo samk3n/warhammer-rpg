@@ -1,19 +1,8 @@
 <script>
     import {PUBLIC_DB_ADDRESS} from "$env/static/public";
-    import {updateObject, deleteRecord} from "$lib/utils.js";
     import PocketBase from 'pocketbase';
     import { onDestroy, onMount } from "svelte";
     export let data;
-
-    // Object used in the edit modal
-    let objectToEdit = {id: ""};
-    // Ref to the edit modal
-    let editObjectModal;
-
-    // Object used in the delete modal
-    let objectToDelete = {name: ""};
-    // Ref to the delete modal
-    let deletObjectModal;
 
     let pb;
     let talents = data.talents;
@@ -52,23 +41,21 @@
     <h1 class="text-3xl font-bold text-center">Talents</h1>
 
     <section class="card bg-base-300 w-full mt-5">
-        <table class="card-body table table-zebra">
-            <thead>
-                <tr>
-                    <th class="w-1/3">Nom</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each talents as talent}
-                    <tr>
-                        <td class="text-[0.75rem] xs:text-sm lg:text-lg font-medium">{talent.name}</td>
-                        <td class="text-[0.7rem] lg:text-lg">{talent.description}</td>
-                    </tr>
-                {/each}
-            </tbody>
-        </table>
-
+            {#each talents as talent}
+            <section class="collapse p-2 odd:bg-base-200 even:bg-base-300">
+                <input type="checkbox" /> 
+                <div class="collapse-title flex gap-3 items-center justify-between">
+                    <p>{talent.name}</p>
+                </div>
+                <div class="collapse-content flex flex-col gap-3">
+                    <div class="divider"></div>
+                    {#if talent.test}
+                    <p><span class="font-bold">Tests:</span> {talent.test}</p>
+                    {/if}
+                    <p>{talent.description}</p>
+                </div>
+            </section>
+            {/each}
     </section>
 
 

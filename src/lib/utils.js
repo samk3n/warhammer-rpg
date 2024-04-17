@@ -610,16 +610,16 @@ export async function deleteSpellFromCharac(charac, spellId){
     await updateRecord("characters", charac.id, {"spells-": spellId});
 }
 
-export async function updateMeleeWeapon(mw, data){
-    await updateRecord("meleeWeapons", mw.id, data);
+export async function updateMeleeWeapon(mw, attribute, value){
+    await updateRecord("meleeWeapons", mw.id, {[attribute]: value});
 }
 
-export async function updateRangeWeapon(rw, data){
-    await updateRecord("rangeWeapons", rw.id, data);
+export async function updateRangeWeapon(rw, attribute, value){
+    await updateRecord("rangeWeapons", rw.id, {[attribute]: value});
 }
 
-export async function updateArmor(armor, data){
-    await updateRecord("armor", armor.id, data);
+export async function updateArmor(armor, attribute, value){
+    await updateRecord("armor", armor.id, {[attribute]: value});
 }
 
 export function transformWordIntoColor(word){
