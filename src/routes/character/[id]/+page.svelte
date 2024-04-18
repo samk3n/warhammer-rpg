@@ -247,13 +247,15 @@
 {#if data && character}
 
     <!-- EDIT SWITCH -->
-    <button on:click={() => toggleEdit()}>
-        {#if editEnabled}
-        <div class="bg-warning w-10 h-10 fixed bottom-5 right-5 rounded-full"></div>
-        {:else}
-        <div class="bg-success w-10 h-10 fixed bottom-5 right-5 rounded-full"></div>
-        {/if}
+    {#if editEnabled}
+    <button class="btn btn-warning w-12 h-12 fixed bottom-5 right-5 z-50 rounded-full xs:w-20 xs:h-20" on:click={() => toggleEdit()}>
+        <iconify-icon class="xs:text-3xl" icon="fluent:edit-28-filled"></iconify-icon>
     </button>
+    {:else}
+    <button class="btn btn-success w-12 h-12 fixed bottom-5 right-5 z-50 rounded-full xs:w-20 xs:h-20" on:click={() => toggleEdit()}>
+        <iconify-icon class="xs:text-3xl" icon="fluent:edit-off-28-filled"></iconify-icon>
+    </button>
+    {/if}
 
     <!-- Character name -->
     <h1 class="text-3xl font-bold text-center">{character.name}</h1>
@@ -1172,11 +1174,13 @@
             <div class="flex justify-center items-center flex-wrap gap-5 mb-5">
                 <h2 class="card-title">Talents</h2>
             </div>
-            {#if isMaster}
+            
             <div class="card-actions justify-center mb-5">
-                <button class="btn btn-neutral w-32 xs:w-48" on:click={() => addTalentModal.show()} >Ajouter des talents</button>
+                <button class="btn btn-neutral w-32 xs:w-48" on:click={() => addTalentModal.show()} >
+                    {isMaster ? "Ajouter des talents" : "Acheter des talents"}
+                </button>
             </div>
-            {/if}
+
             {#if character.talents.length == 0}
                 <p class="text-lg italic text-center">Aucun talent</p>
             {:else}
@@ -1199,15 +1203,15 @@
                             {talent.name}
                         </div>
                         <div class="flex items-center gap-2 relative z-50">
-                            {#if isMaster && editEnabled}
-                                <button class="btn btn-error btn-sm" on:click={() => decreaseTalentCount(character, talent)}>-</button>
+                            {#if editEnabled}
+                                <button class="btn btn-error btn-sm" on:click={() => decreaseTalentCount(character, talent, isMaster)}>-</button>
                             {/if}
                             <input on:change={(event) => updateCharacTalentCount(character, talent.id, event.target.value)}
                             class="text-xs 2xs:text-sm xs:text-base input input-bordered w-10 xs:w-16 text-center disabled:text-base-content disabled:cursor-default" 
                             disabled
                             type="number" value={character.nbTalents[talent.id].count} min="1"/>
-                            {#if isMaster && editEnabled}
-                                <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent)}>+</button>
+                            {#if editEnabled}
+                                <button class="btn btn-success btn-sm" on:click={() => increaseTalentCount(character, talent, isMaster)}>+</button>
                             {/if}
                         </div>
                     </div>
@@ -1238,7 +1242,7 @@
                             <button class="btn btn-success btn-xs xs:btn-md relative z-50" 
                             on:click={() => {
                                 // Adding the talent to the character talents list
-                                addTalentToCharac(character, talent.id);
+                                addTalentToCharac(character, talent.id, isMaster);
                                 // Removing the talent that was just added to character
                                 // So it doesn't appear in the modal
                                 // Because you can only add a talent once.

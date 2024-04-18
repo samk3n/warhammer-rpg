@@ -18,7 +18,11 @@
             </div>
             <div class="form-control">
                 <label class="label" for="password">Mot de passe</label>
-                <input class="input input-bordered" type="password" name="password" value={form?.password ?? ""}/>
+                <input class="input input-bordered" type="password" name="password" />
+            </div>
+            <div class="form-control">
+                <label class="label" for="passwordConfirm">Confirmer mot de passe</label>
+                <input class="input input-bordered" type="password" name="passwordConfirm" />
             </div>
         </section>
         

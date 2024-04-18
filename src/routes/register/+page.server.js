@@ -24,7 +24,14 @@ export const actions = {
 			}
 		}
 
-		data["passwordConfirm"] = data.password;
+		if(data.password != data.passwordConfirm) {
+			return {
+				error: true,
+				message: "Les mots de passe doivent être identiques.",
+				username: data.username,
+				email: data.email,
+			}
+		}
 
         try {
 

@@ -585,9 +585,18 @@ export async function deleteRangeWeaponFromCharac(charac, rwId){
     await updateRecord("characters", charac.id, {"rangeWeapons-": rwId, "nbRangeWeapons": charac.nbRangeWeapons});
 }
 
-export async function addTalentToCharac(charac, talentId){
-    charac.nbTalents[talentId] = {count: 1};
-    await updateRecord("characters", charac.id, {"talents+": talentId, "nbTalents": charac.nbTalents});
+export async function addTalentToCharac(character, talentId, isMaster=false){
+    if(isMaster){
+        character.nbTalents[talentId] = {count: 1};
+        await updateRecord("characters", character.id, {"talents+": talentId, "nbTalents": character.nbTalents});
+    }
+    else {
+        if(character.xpEarned - character.xpSpent >= 100){
+            character.xpSpent += 100;
+            character.nbTalents[talentId] = {count: 1};
+            await updateRecord("characters", character.id, {"talents+": talentId, "nbTalents": character.nbTalents, xpSpent: character.xpSpent});
+        }
+    }
 }
 
 export async function updateCharacTalentCount(charac, talentId, value){
@@ -1016,7 +1025,7 @@ export async function convertCoins(character, from, to) {
     }
 }
 
-export async function increaseTalentCount(character, talent) {
+export async function increaseTalentCount(character, talent, isMaster=false) {
     let maxi = 0;
 
     if(!isNaN(talent.maxi)){
@@ -1062,15 +1071,31 @@ export async function increaseTalentCount(character, talent) {
     }
 
     if(character.nbTalents[talent.id].count + 1 <= maxi){
-        character.nbTalents[talent.id].count += 1;
-        await updateRecord("characters", character.id, {nbTalents: character.nbTalents});
+        if(isMaster) {
+            character.nbTalents[talent.id].count += 1;
+            await updateRecord("characters", character.id, {nbTalents: character.nbTalents});
+        }
+        else {
+            if(character.xpEarned - character.xpSpent >= (character.nbTalents[talent.id].count + 1) * 100) {
+                character.xpSpent += (character.nbTalents[talent.id].count + 1) * 100
+                character.nbTalents[talent.id].count += 1;
+                await updateRecord("characters", character.id, {nbTalents: character.nbTalents, xpSpent: character.xpSpent});
+            }
+        }
+        
     }
 }
 
-export async function decreaseTalentCount(character, talent) {
+export async function decreaseTalentCount(character, talent, isMaster=false) {
     if(character.nbTalents[talent.id].count > 1){
+        if(!isMaster) {
+            character.xpSpent -= character.nbTalents[talent.id].count * 100;
+        }
+        
         character.nbTalents[talent.id].count -= 1;
-        await updateRecord("characters", character.id, {nbTalents: character.nbTalents});
+        await updateRecord("characters", character.id, {nbTalents: character.nbTalents, xpSpent: character.xpSpent});
+
+        
     }
 }
 
